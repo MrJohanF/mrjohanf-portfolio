@@ -1,14 +1,13 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 @import "tailwindcss";
 
-/* Fuentes estilo Apple */
-
 @theme {
   --font-family-apple: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', system-ui, sans-serif;
   --animate-fade-up: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   --animate-slide-up: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   --animate-scale-in: scaleIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   --animate-float-subtle: floatSubtle 4s ease-in-out infinite;
+  --animate-gradient: gradientMove 20s ease infinite;
 }
 
 @keyframes fadeUp {
@@ -53,6 +52,15 @@
   }
 }
 
+@keyframes gradientMove {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
 /* Configuración global */
 * {
   font-family: var(--font-family-apple);
@@ -61,6 +69,34 @@
 html {
   scroll-behavior: smooth;
   font-feature-settings: 'cv01', 'cv02', 'cv03', 'cv04';
+  overflow: hidden; /* Ocultar scroll global */
+}
+
+body {
+  overflow: hidden; /* Ocultar scroll del body */
+}
+
+/* Perspectiva 3D para el carousel */
+.perspective-1000 {
+  perspective: 1000px;
+}
+
+/* ELIMINAR TODAS LAS SCROLLBARS */
+::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+/* Para Firefox */
+* {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+/* Asegurar que no aparezcan scrollbars */
+html, body, #__next, [data-nextjs-scroll-focus-boundary] {
+  overflow: hidden !important;
 }
 
 /* Efectos suaves */
@@ -81,4 +117,11 @@ html {
 
 .hover-lift:hover {
   transform: translateY(-8px);
+}
+
+/* Gradient animado de fondo */
+.animated-gradient {
+  background: linear-gradient(-45deg, #000000, #0a0a0a, #1a1a1a, #0f0f0f, #000000);
+  background-size: 400% 400%;
+  animation: gradientMove 20s ease infinite;
 }

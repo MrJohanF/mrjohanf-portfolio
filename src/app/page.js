@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
 import { 
   HomeIcon, 
   UserIcon, 
@@ -8,57 +9,129 @@ import {
   CpuChipIcon, 
   EnvelopeIcon,
   ArrowRightIcon,
-  ArrowTopRightOnSquareIcon
+  ArrowTopRightOnSquareIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon
 } from '@heroicons/react/24/outline'
 
 export default function Portfolio() {
   const [currentSection, setCurrentSection] = useState('home')
   const [isLoaded, setIsLoaded] = useState(false)
+  const [currentProject, setCurrentProject] = useState(0)
+
+  // Array con el orden de las secciones para navegación
+  const sectionOrder = ['home', 'about', 'projects', 'skills', 'contact']
 
   useEffect(() => {
     setIsLoaded(true)
   }, [])
 
+  // Función para navegar entre secciones
+  const navigateSection = (direction) => {
+    const currentIndex = sectionOrder.indexOf(currentSection)
+    let nextIndex
+    
+    if (direction === 'down') {
+      nextIndex = (currentIndex + 1) % sectionOrder.length
+    } else {
+      nextIndex = (currentIndex - 1 + sectionOrder.length) % sectionOrder.length
+    }
+    
+    setCurrentSection(sectionOrder[nextIndex])
+  }
+
+  // Event listener para navegación con scroll
+  useEffect(() => {
+    let isScrolling = false
+    
+    const handleWheel = (e) => {
+      e.preventDefault() // Prevenir scroll normal
+      
+      if (isScrolling) return
+      
+      isScrolling = true
+      
+      if (e.deltaY > 0) {
+        // Scroll hacia abajo
+        navigateSection('down')
+      } else {
+        // Scroll hacia arriba
+        navigateSection('up')
+      }
+      
+      // Debounce para evitar cambios muy rápidos
+      setTimeout(() => {
+        isScrolling = false
+      }, 800)
+    }
+    
+    window.addEventListener('wheel', handleWheel, { passive: false })
+    
+    return () => {
+      window.removeEventListener('wheel', handleWheel)
+    }
+  }, [currentSection])
+
   const projects = [
     {
       id: 1,
       title: "E-Commerce Platform",
-      description: "Plataforma completa de comercio electrónico con Next.js",
-      tech: ["Next.js", "JavaScript", "Stripe"],
+      description: "Plataforma completa de comercio electrónico con Next.js y microservicios. Incluye sistema de pagos, gestión de inventario y análisis en tiempo real.",
+      tech: ["Next.js", "JavaScript", "Stripe", "PostgreSQL"],
       year: "2024",
       status: "Activo",
       demo: "https://demo1.com",
-      github: "https://github.com/mrjohanf/ecommerce"
+      github: "https://github.com/mrjohanf/ecommerce",
+      image: "🛒",
+      color: "from-blue-600/20 to-purple-600/20"
     },
     {
       id: 2,
-      title: "Task Management",
-      description: "Aplicación de gestión de tareas con colaboración en tiempo real",
-      tech: ["React", "Node.js", "Socket.io"],
+      title: "Task Management App",
+      description: "Aplicación de gestión de tareas con colaboración en tiempo real. Incluye notificaciones, asignación de tareas y reportes de productividad.",
+      tech: ["React", "Node.js", "Socket.io", "MongoDB"],
       year: "2024",
       status: "Desarrollo",
       demo: "https://demo2.com",
-      github: "https://github.com/mrjohanf/taskmanager"
+      github: "https://github.com/mrjohanf/taskmanager",
+      image: "📋",
+      color: "from-green-600/20 to-teal-600/20"
     },
     {
       id: 3,
       title: "AI Dashboard",
-      description: "Dashboard con integración de IA y análisis de datos",
-      tech: ["Python", "TensorFlow", "React"],
+      description: "Dashboard con integración de IA y análisis predictivo avanzado. Machine learning para detección de patrones y predicciones de negocio.",
+      tech: ["Python", "TensorFlow", "React", "FastAPI"],
       year: "2023",
       status: "Completado",
       demo: "https://demo3.com",
-      github: "https://github.com/mrjohanf/ai-dashboard"
+      github: "https://github.com/mrjohanf/ai-dashboard",
+      image: "🤖",
+      color: "from-orange-600/20 to-red-600/20"
     },
     {
       id: 4,
-      title: "Portfolio Website",
-      description: "Sitio web personal con animaciones y diseño minimalista",
-      tech: ["Next.js", "Tailwind", "Framer Motion"],
-      year: "2024",
-      status: "Activo",
-      demo: "https://mrjohanf.dev",
-      github: "https://github.com/mrjohanf/portfolio"
+      title: "Real Estate Platform",
+      description: "Aplicación para búsqueda y gestión de propiedades inmobiliarias. Incluye mapas interactivos, filtros avanzados y tours virtuales.",
+      tech: ["React Native", "Firebase", "Maps API", "Expo"],
+      year: "2023",
+      status: "Completado",
+      demo: "https://demo4.com",
+      github: "https://github.com/mrjohanf/realestate",
+      image: "🏠",
+      color: "from-indigo-600/20 to-blue-600/20"
+    },
+    {
+      id: 5,
+      title: "Cryptocurrency Tracker",
+      description: "Aplicación para seguimiento de criptomonedas con análisis técnico. Alertas de precio, portfolio tracking y noticias en tiempo real.",
+      tech: ["Vue.js", "Node.js", "WebSocket", "Chart.js"],
+      year: "2023",
+      status: "Completado",
+      demo: "https://demo5.com",
+      github: "https://github.com/mrjohanf/crypto-tracker",
+      image: "₿",
+      color: "from-yellow-600/20 to-orange-600/20"
     }
   ]
 
@@ -96,20 +169,61 @@ export default function Portfolio() {
   }
 
   const handleDownloadCV = () => {
-    // Aquí puedes agregar la lógica para descargar el CV
     console.log('Descargando CV...')
   }
 
+  const nextProject = () => {
+    setCurrentProject((prev) => (prev + 1) % projects.length)
+  }
+
+  const prevProject = () => {
+    setCurrentProject((prev) => (prev - 1 + projects.length) % projects.length)
+  }
+
+  const goToProject = (index) => {
+    setCurrentProject(index)
+  }
+
   return (
-    <div className="h-screen w-full bg-black text-white overflow-hidden relative">
+    <div className="h-screen w-full animated-gradient text-white overflow-hidden relative">
+      
+      {/* Partículas flotantes animadas */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {[...Array(25)].map((_, i) => (
+          <motion.div
+            key={i}
+            className="absolute w-1 h-1 bg-white/20 rounded-full"
+            initial={{ 
+              x: Math.random() * (typeof window !== 'undefined' ? window.innerWidth : 1920),
+              y: Math.random() * (typeof window !== 'undefined' ? window.innerHeight : 1080),
+              opacity: 0 
+            }}
+            animate={{ 
+              y: [null, Math.random() * (typeof window !== 'undefined' ? window.innerHeight : 1080)],
+              opacity: [0, 0.4, 0],
+              scale: [0, 1, 0]
+            }}
+            transition={{
+              duration: Math.random() * 6 + 4,
+              repeat: Infinity,
+              delay: Math.random() * 3
+            }}
+          />
+        ))}
+      </div>
       
       {/* Navegación minimalista */}
-      <nav className="fixed top-8 left-1/2 -translate-x-1/2 z-50">
+      <motion.nav 
+        className="fixed top-8 left-1/2 -translate-x-1/2 z-50"
+        initial={{ opacity: 0, y: -50 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.5, duration: 0.8, type: "spring", damping: 20 }}
+      >
         <div className="flex items-center space-x-1 bg-white/5 glass-minimal rounded-full p-1 border border-white/10">
-          {navigation.map((item) => {
+          {navigation.map((item, index) => {
             const Icon = item.icon
             return (
-              <button
+              <motion.button
                 key={item.id}
                 onClick={() => handleSectionChange(item.id)}
                 className={`flex items-center space-x-2 px-4 py-2 rounded-full text-sm font-medium organic-transition ${
@@ -117,347 +231,427 @@ export default function Portfolio() {
                     ? 'bg-white text-black' 
                     : 'text-white/70 hover:text-white hover:bg-white/10'
                 }`}
+                initial={{ opacity: 0, scale: 0 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ 
+                  delay: 0.7 + index * 0.1, 
+                  type: "spring", 
+                  damping: 15,
+                  stiffness: 200 
+                }}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
               >
                 <Icon className="w-4 h-4" />
                 <span className="hidden sm:block">{item.label}</span>
-              </button>
+              </motion.button>
             )
           })}
         </div>
-      </nav>
+      </motion.nav>
 
-      {/* Contenido principal */}
-      <main className="h-full flex items-center justify-center px-6">
-        <div className="w-full max-w-4xl">
-          
-          {/* Sección Inicio */}
-          {currentSection === 'home' && (
-            <div className={`text-center space-y-12 organic-transition ${
-              isLoaded ? 'animate-fade-up' : 'opacity-0'
-            }`}>
-              <div className="space-y-6">
-                <div className="inline-block">
-                  <p className="text-white/60 text-lg font-medium mb-4 animate-float-subtle">
-                    Hola, soy
-                  </p>
-                  <h1 className="text-6xl md:text-8xl font-light tracking-tight mb-6">
-                    Johan Fernández
-                  </h1>
-                </div>
-                
-                <p className="text-2xl md:text-3xl text-white/80 font-light leading-relaxed max-w-3xl mx-auto">
-                  Desarrollador Full Stack especializado en crear 
-                  <span className="text-white"> experiencias digitales excepcionales</span>
-                </p>
-                
-                <p className="text-lg text-white/60 max-w-2xl mx-auto">
-                  Combinando diseño elegante con código limpio para crear aplicaciones 
-                  web modernas que realmente importan.
-                </p>
-              </div>
-
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-8">
-                <button
-                  onClick={() => handleSectionChange('projects')}
-                  className="group flex items-center space-x-2 bg-white text-black px-8 py-4 rounded-full font-medium hover-lift organic-transition"
-                >
-                  <span>Ver mi trabajo</span>
-                  <ArrowRightIcon className="w-4 h-4 group-hover:translate-x-1 organic-transition" />
-                </button>
-                
-                <button
-                  onClick={() => handleSectionChange('contact')}
-                  className="flex items-center space-x-2 border border-white/20 px-8 py-4 rounded-full font-medium hover:border-white/40 organic-transition"
-                >
-                  <span>Contactar</span>
-                </button>
-              </div>
-            </div>
-          )}
-
-          {/* Sección Acerca */}
-          {currentSection === 'about' && (
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center animate-slide-up">
-              <div className="space-y-8">
-                <div>
-                  <h2 className="text-5xl md:text-6xl font-light mb-6">Acerca de mí</h2>
-                  <div className="w-12 h-0.5 bg-white/60 mb-8"></div>
-                </div>
-                
-                <div className="space-y-6 text-lg text-white/80 leading-relaxed">
-                  <p>
-                    Con más de 5 años de experiencia en desarrollo web, me especializo en crear 
-                    aplicaciones modernas que combinan diseño elegante con funcionalidad robusta.
-                  </p>
-                  <p>
-                    Mi filosofía se centra en la simplicidad, la performance y la experiencia 
-                    del usuario. Creo firmemente que las mejores soluciones son las más elegantes.
-                  </p>
-                  <p>
-                    Trabajo principalmente con React, Next.js y Node.js, pero siempre estoy 
-                    explorando nuevas tecnologías que puedan aportar valor a mis proyectos.
-                  </p>
-                  <p>
-                    Cuando no estoy programando, me gusta estudiar diseño, leer sobre tecnología 
-                    y explorar nuevas tendencias en el desarrollo web.
-                  </p>
-                </div>
-              </div>
-              
-              <div className="lg:pl-16">
-                <div className="grid grid-cols-2 gap-8">
-                  {[
-                    { number: '60+', label: 'Proyectos' },
-                    { number: '5+', label: 'Años' },
-                    { number: '25+', label: 'Clientes' },
-                    { number: '100%', label: 'Dedicación' }
-                  ].map((stat, index) => (
-                    <div key={stat.label} className="text-center">
-                      <div className="text-4xl font-light mb-2">{stat.number}</div>
-                      <div className="text-white/60 text-sm">{stat.label}</div>
-                    </div>
-                  ))}
-                </div>
-                
-                <div className="mt-12 pt-8 border-t border-white/10">
-                  <h3 className="text-xl font-medium mb-4">Actualmente</h3>
-                  <div className="space-y-3 text-white/70">
-                    <p>🚀 Explorando Web3 y Blockchain</p>
-                    <p>🎨 Perfeccionando habilidades de UI/UX</p>
-                    <p>📚 Aprendiendo Machine Learning</p>
+      {/* Contenido principal - SIN SCROLL */}
+      <main className="h-full pt-24 pb-8 pl-6 pr-20 overflow-hidden">
+        <div className="h-full flex items-center justify-center">
+          <div className="w-full max-w-4xl">
+            
+            {/* Sección Inicio */}
+            {currentSection === 'home' && (
+              <div className={`text-center space-y-12 organic-transition ${
+                isLoaded ? 'animate-fade-up' : 'opacity-0'
+              }`}>
+                <div className="space-y-6">
+                  <div className="inline-block">
+                    <p className="text-white/60 text-lg font-medium mb-4 animate-float-subtle">
+                      Hola, soy
+                    </p>
+                    <h1 className="text-6xl md:text-8xl font-light tracking-tight mb-6">
+                      Johan Fernández
+                    </h1>
                   </div>
+                  
+                  <p className="text-2xl md:text-3xl text-white/80 font-light leading-relaxed max-w-3xl mx-auto">
+                    Desarrollador Full Stack especializado en crear 
+                    <span className="text-white"> experiencias digitales excepcionales</span>
+                  </p>
+                  
+                  <p className="text-lg text-white/60 max-w-2xl mx-auto">
+                    Combinando diseño elegante con código limpio para crear aplicaciones 
+                    web modernas que realmente importan.
+                  </p>
                 </div>
-              </div>
-            </div>
-          )}
 
-          {/* Sección Proyectos */}
-          {currentSection === 'projects' && (
-            <div className="animate-fade-up">
-              <div className="mb-16">
-                <h2 className="text-5xl md:text-6xl font-light mb-6">Trabajo Seleccionado</h2>
-                <div className="w-12 h-0.5 bg-white/60 mb-4"></div>
-                <p className="text-white/60 text-lg">Algunos de mis proyectos más destacados</p>
-              </div>
-              
-              <div className="space-y-8">
-                {projects.map((project, index) => (
-                  <div
-                    key={project.id}
-                    className="group border-t border-white/10 pt-8 hover-lift organic-transition"
-                    style={{ animationDelay: `${index * 0.1}s` }}
-                  >
-                    <div className="grid grid-cols-1 md:grid-cols-4 gap-8 items-center">
-                      <div className="md:col-span-2">
-                        <div className="flex items-center space-x-4 mb-4">
-                          <h3 className="text-2xl font-medium">{project.title}</h3>
-                          <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-                            project.status === 'Activo' ? 'bg-green-500/20 text-green-400' :
-                            project.status === 'Desarrollo' ? 'bg-yellow-500/20 text-yellow-400' :
-                            'bg-blue-500/20 text-blue-400'
-                          }`}>
-                            {project.status}
-                          </span>
-                        </div>
-                        <p className="text-white/70 leading-relaxed mb-4">{project.description}</p>
-                        
-                        <div className="flex space-x-3 opacity-0 group-hover:opacity-100 organic-transition">
-                          <button 
-                            onClick={() => handleProjectClick(project.demo)}
-                            className="text-sm text-white/60 hover:text-white organic-transition"
-                          >
-                            Ver demo ↗
-                          </button>
-                          <button 
-                            onClick={() => handleProjectClick(project.github)}
-                            className="text-sm text-white/60 hover:text-white organic-transition"
-                          >
-                            Ver código ↗
-                          </button>
-                        </div>
-                      </div>
-                      
-                      <div className="space-y-2">
-                        {project.tech.map((tech) => (
-                          <div key={tech} className="text-sm text-white/50">{tech}</div>
-                        ))}
-                      </div>
-                      
-                      <div className="flex items-center justify-between">
-                        <span className="text-white/40 text-sm">{project.year}</span>
-                        <button 
-                          onClick={() => handleProjectClick(project.demo)}
-                          className="opacity-0 group-hover:opacity-100 p-2 hover:bg-white/10 rounded-full organic-transition"
-                        >
-                          <ArrowTopRightOnSquareIcon className="w-5 h-5" />
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-              
-              <div className="mt-16 pt-8 border-t border-white/10 text-center">
-                <p className="text-white/60 mb-6">¿Interesado en ver más proyectos?</p>
-                <button 
-                  onClick={() => handleProjectClick('https://github.com/mrjohanf')}
-                  className="border border-white/20 px-6 py-3 rounded-full text-sm hover:border-white/40 organic-transition"
-                >
-                  Ver GitHub completo
-                </button>
-              </div>
-            </div>
-          )}
-
-          {/* Sección Skills */}
-          {currentSection === 'skills' && (
-            <div className="animate-slide-up">
-              <div className="mb-16">
-                <h2 className="text-5xl md:text-6xl font-light mb-6">Habilidades</h2>
-                <div className="w-12 h-0.5 bg-white/60 mb-4"></div>
-                <p className="text-white/60 text-lg">Tecnologías y herramientas que domino</p>
-              </div>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-12 max-w-3xl">
-                {skills.map((skill, index) => (
-                  <div
-                    key={skill.name}
-                    className="space-y-4"
-                    style={{ animationDelay: `${index * 0.1}s` }}
-                  >
-                    <div className="flex justify-between items-center">
-                      <span className="text-lg font-medium">{skill.name}</span>
-                      <span className="text-white/60">{skill.level}%</span>
-                    </div>
-                    <div className="h-1 bg-white/10 rounded-full overflow-hidden">
-                      <div
-                        className="h-full bg-white rounded-full organic-transition"
-                        style={{ 
-                          width: `${skill.level}%`,
-                          transitionDelay: `${index * 0.1}s`
-                        }}
-                      />
-                    </div>
-                  </div>
-                ))}
-              </div>
-              
-              <div className="mt-16 pt-12 border-t border-white/10">
-                <h3 className="text-2xl font-light mb-8">Herramientas y tecnologías adicionales</h3>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-                  {[
-                    {
-                      category: 'Frontend',
-                      tools: ['React', 'Next.js', 'Vue.js', 'Tailwind CSS']
-                    },
-                    {
-                      category: 'Backend', 
-                      tools: ['Node.js', 'Express', 'Python', 'Django']
-                    },
-                    {
-                      category: 'Database',
-                      tools: ['PostgreSQL', 'MongoDB', 'Redis', 'Firebase']
-                    },
-                    {
-                      category: 'DevOps',
-                      tools: ['Docker', 'AWS', 'Vercel', 'GitHub Actions']
-                    }
-                  ].map((group, index) => (
-                    <div key={group.category} className="space-y-4">
-                      <h4 className="font-medium text-white/90">{group.category}</h4>
-                      <div className="space-y-2">
-                        {group.tools.map((tool) => (
-                          <div key={tool} className="text-sm text-white/60">{tool}</div>
-                        ))}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Sección Contacto */}
-          {currentSection === 'contact' && (
-            <div className="text-center animate-fade-up">
-              <div className="mb-16">
-                <h2 className="text-5xl md:text-6xl font-light mb-6">Conversemos</h2>
-                <div className="w-12 h-0.5 bg-white/60 mx-auto mb-8"></div>
-                <p className="text-xl text-white/80 max-w-2xl mx-auto leading-relaxed">
-                  Siempre estoy interesado en nuevos proyectos y oportunidades de colaboración.
-                  No dudes en contactarme.
-                </p>
-              </div>
-              
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto mb-16">
-                {[
-                  { 
-                    label: 'Email', 
-                    value: 'johan@mrjohanf.dev',
-                    action: 'mailto:johan@mrjohanf.dev'
-                  },
-                  { 
-                    label: 'LinkedIn', 
-                    value: 'linkedin.com/in/mrjohanf',
-                    action: 'https://linkedin.com/in/mrjohanf'
-                  },
-                  { 
-                    label: 'GitHub', 
-                    value: 'github.com/mrjohanf',
-                    action: 'https://github.com/mrjohanf'
-                  }
-                ].map((contact, index) => (
+                <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-8">
                   <button
-                    key={contact.label}
-                    onClick={() => handleContactClick(contact.action)}
-                    className="block w-full p-8 border border-white/10 rounded-2xl hover:border-white/30 hover-lift organic-transition text-left"
-                    style={{ animationDelay: `${index * 0.1}s` }}
+                    onClick={() => handleSectionChange('projects')}
+                    className="group flex items-center space-x-2 bg-white text-black px-8 py-4 rounded-full font-medium hover-lift organic-transition"
                   >
-                    <div className="text-white/60 text-sm mb-2">{contact.label}</div>
-                    <div className="font-medium">{contact.value}</div>
+                    <span>Ver mi trabajo</span>
+                    <ArrowRightIcon className="w-4 h-4 group-hover:translate-x-1 organic-transition" />
                   </button>
-                ))}
+                  
+                  <button
+                    onClick={() => handleSectionChange('contact')}
+                    className="flex items-center space-x-2 border border-white/20 px-8 py-4 rounded-full font-medium hover:border-white/40 organic-transition"
+                  >
+                    <span>Contactar</span>
+                  </button>
+                </div>
               </div>
-              
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
+            )}
+
+            {/* Sección Acerca */}
+            {currentSection === 'about' && (
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center animate-slide-up">
+                <div className="space-y-8">
+                  <div>
+                    <h2 className="text-5xl md:text-6xl font-light mb-6">Acerca de mí</h2>
+                    <div className="w-12 h-0.5 bg-white/60 mb-8"></div>
+                  </div>
+                  
+                  <div className="space-y-6 text-lg text-white/80 leading-relaxed">
+                    <p>
+                      Con más de 5 años de experiencia en desarrollo web, me especializo en crear 
+                      aplicaciones modernas que combinan diseño elegante con funcionalidad robusta.
+                    </p>
+                    <p>
+                      Mi filosofía se centra en la simplicidad, la performance y la experiencia 
+                      del usuario. Creo firmemente que las mejores soluciones son las más elegantes.
+                    </p>
+                    <p>
+                      Trabajo principalmente con React, Next.js y Node.js, pero siempre estoy 
+                      explorando nuevas tecnologías que puedan aportar valor a mis proyectos.
+                    </p>
+                  </div>
+                </div>
+                
+                <div className="lg:pl-16">
+                  <div className="grid grid-cols-2 gap-8">
+                    {[
+                      { number: '60+', label: 'Proyectos' },
+                      { number: '5+', label: 'Años' },
+                      { number: '25+', label: 'Clientes' },
+                      { number: '100%', label: 'Dedicación' }
+                    ].map((stat, index) => (
+                      <div key={stat.label} className="text-center">
+                        <div className="text-4xl font-light mb-2">{stat.number}</div>
+                        <div className="text-white/60 text-sm">{stat.label}</div>
+                      </div>
+                    ))}
+                  </div>
+                  
+                  <div className="mt-12 pt-8 border-t border-white/10">
+                    <h3 className="text-xl font-medium mb-4">Actualmente</h3>
+                    <div className="space-y-3 text-white/70">
+                      <p>🚀 Explorando Web3 y Blockchain</p>
+                      <p>🎨 Perfeccionando habilidades de UI/UX</p>
+                      <p>📚 Aprendiendo Machine Learning</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Sección Proyectos */}
+            {currentSection === 'projects' && (
+              <div className="animate-fade-up space-y-12 overflow-hidden">
+                <div className="text-center">
+                  <h2 className="text-4xl md:text-5xl font-light mb-4">Trabajo Seleccionado</h2>
+                  <div className="w-12 h-0.5 bg-white/60 mx-auto mb-4"></div>
+                  <p className="text-white/60 text-lg">Algunos de mis proyectos más destacados</p>
+                </div>
+                
+                {/* Carousel 3D Container */}
+                <div className="relative h-[500px] flex items-center justify-center perspective-1000">
+                  <div className="relative w-full max-w-6xl h-full">
+                    {projects.map((project, index) => {
+                      const offset = index - currentProject
+                      const absOffset = Math.abs(offset)
+                      const isActive = offset === 0
+                      const isVisible = absOffset <= 2
+                      
+                      return (
+                        <motion.div
+                          key={project.id}
+                          className={`absolute top-1/2 left-1/2 w-80 h-96 cursor-pointer ${
+                            isVisible ? 'block' : 'hidden'
+                          }`}
+                          initial={false}
+                          animate={{
+                            x: `calc(-50% + ${offset * 200}px)`,
+                            y: '-50%',
+                            z: isActive ? 0 : -100 * absOffset,
+                            rotateY: offset * -25,
+                            scale: isActive ? 1 : 0.8 - absOffset * 0.1,
+                            opacity: isActive ? 1 : 0.4 - absOffset * 0.2
+                          }}
+                          transition={{
+                            type: "spring",
+                            damping: 20,
+                            stiffness: 100,
+                            duration: 0.8
+                          }}
+                          onClick={() => goToProject(index)}
+                          style={{
+                            transformStyle: 'preserve-3d',
+                            zIndex: isActive ? 10 : 10 - absOffset
+                          }}
+                        >
+                          <div className={`w-full h-full rounded-3xl p-8 glass-minimal border border-white/10 relative overflow-hidden group ${
+                            isActive ? 'bg-white/10' : 'bg-white/5'
+                          }`}>
+                            {/* Background gradient */}
+                            <div className={`absolute inset-0 bg-gradient-to-br ${project.color} opacity-0 group-hover:opacity-100 transition-opacity duration-500`} />
+                            
+                            {/* Content */}
+                            <div className="relative z-10 h-full flex flex-col">
+                              <div className="text-center mb-6">
+                                <div className="text-6xl mb-4">{project.image}</div>
+                                <div className="flex items-center justify-center space-x-3 mb-2">
+                                  <h3 className="text-xl font-semibold">{project.title}</h3>
+                                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                                    project.status === 'Activo' ? 'bg-green-500/20 text-green-400' :
+                                    project.status === 'Desarrollo' ? 'bg-yellow-500/20 text-yellow-400' :
+                                    'bg-blue-500/20 text-blue-400'
+                                  }`}>
+                                    {project.status}
+                                  </span>
+                                </div>
+                                <div className="text-white/40 text-sm">{project.year}</div>
+                              </div>
+                              
+                              <p className="text-white/70 text-sm leading-relaxed mb-6 flex-1">
+                                {project.description}
+                              </p>
+                              
+                              <div className="space-y-4">
+                                <div className="flex flex-wrap gap-2 justify-center">
+                                  {project.tech.map((tech) => (
+                                    <span
+                                      key={tech}
+                                      className="px-3 py-1 bg-white/10 rounded-full text-xs text-white/80"
+                                    >
+                                      {tech}
+                                    </span>
+                                  ))}
+                                </div>
+                                
+                                {isActive && (
+                                  <motion.div 
+                                    className="flex space-x-3 justify-center"
+                                    initial={{ opacity: 0, y: 20 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ delay: 0.2 }}
+                                  >
+                                    <button 
+                                      onClick={(e) => {
+                                        e.stopPropagation()
+                                        handleProjectClick(project.demo)
+                                      }}
+                                      className="flex items-center space-x-1 px-4 py-2 bg-white/20 hover:bg-white/30 rounded-lg text-sm transition-all duration-300"
+                                    >
+                                      <span>Demo</span>
+                                      <ArrowTopRightOnSquareIcon className="w-3 h-3" />
+                                    </button>
+                                    <button 
+                                      onClick={(e) => {
+                                        e.stopPropagation()
+                                        handleProjectClick(project.github)
+                                      }}
+                                      className="flex items-center space-x-1 px-4 py-2 bg-white/20 hover:bg-white/30 rounded-lg text-sm transition-all duration-300"
+                                    >
+                                      <span>Código</span>
+                                      <ArrowTopRightOnSquareIcon className="w-3 h-3" />
+                                    </button>
+                                  </motion.div>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        </motion.div>
+                      )
+                    })}
+                  </div>
+                  
+                  {/* Navigation Controls */}
+                  <button
+                    onClick={prevProject}
+                    className="absolute left-4 top-1/2 -translate-y-1/2 z-20 p-3 bg-white/10 hover:bg-white/20 rounded-full transition-all duration-300 backdrop-blur-sm"
+                  >
+                    <ChevronLeftIcon className="w-6 h-6" />
+                  </button>
+                  
+                  <button
+                    onClick={nextProject}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 z-20 p-3 bg-white/10 hover:bg-white/20 rounded-full transition-all duration-300 backdrop-blur-sm"
+                  >
+                    <ChevronRightIcon className="w-6 h-6" />
+                  </button>
+                </div>
+                
+                {/* Indicators */}
+                <div className="flex justify-center space-x-3 mt-8">
+                  {projects.map((_, index) => (
+                    <button
+                      key={index}
+                      onClick={() => goToProject(index)}
+                      className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                        index === currentProject ? 'bg-white scale-125' : 'bg-white/30 hover:bg-white/50'
+                      }`}
+                    />
+                  ))}
+                </div>
+                
+                <div className="text-center pt-8">
+                  <p className="text-white/60 mb-4">¿Interesado en ver más proyectos?</p>
+                  <button 
+                    onClick={() => handleProjectClick('https://github.com/mrjohanf')}
+                    className="border border-white/20 px-6 py-3 rounded-full text-sm hover:border-white/40 organic-transition"
+                  >
+                    Ver GitHub completo
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Sección Skills */}
+            {currentSection === 'skills' && (
+              <div className="animate-slide-up">
+                <div className="mb-16">
+                  <h2 className="text-5xl md:text-6xl font-light mb-6">Habilidades</h2>
+                  <div className="w-12 h-0.5 bg-white/60 mb-4"></div>
+                  <p className="text-white/60 text-lg">Tecnologías y herramientas que domino</p>
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-12 max-w-3xl">
+                  {skills.map((skill, index) => (
+                    <div
+                      key={skill.name}
+                      className="space-y-4"
+                      style={{ animationDelay: `${index * 0.1}s` }}
+                    >
+                      <div className="flex justify-between items-center">
+                        <span className="text-lg font-medium">{skill.name}</span>
+                        <span className="text-white/60">{skill.level}%</span>
+                      </div>
+                      <div className="h-1 bg-white/10 rounded-full overflow-hidden">
+                        <div
+                          className="h-full bg-white rounded-full organic-transition"
+                          style={{ 
+                            width: `${skill.level}%`,
+                            transitionDelay: `${index * 0.1}s`
+                          }}
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                
+                <div className="mt-16 pt-12 border-t border-white/10">
+                  <h3 className="text-2xl font-light mb-8">Herramientas adicionales</h3>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+                    {[
+                      { category: 'Frontend', tools: ['React', 'Next.js', 'Vue.js', 'Tailwind'] },
+                      { category: 'Backend', tools: ['Node.js', 'Express', 'Python', 'Django'] },
+                      { category: 'Database', tools: ['PostgreSQL', 'MongoDB', 'Redis', 'Firebase'] },
+                      { category: 'DevOps', tools: ['Docker', 'AWS', 'Vercel', 'GitHub Actions'] }
+                    ].map((group) => (
+                      <div key={group.category} className="space-y-4">
+                        <h4 className="font-medium text-white/90">{group.category}</h4>
+                        <div className="space-y-2">
+                          {group.tools.map((tool) => (
+                            <div key={tool} className="text-sm text-white/60">{tool}</div>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Sección Contacto */}
+            {currentSection === 'contact' && (
+              <div className="text-center animate-fade-up">
+                <div className="mb-16">
+                  <h2 className="text-5xl md:text-6xl font-light mb-6">Conversemos</h2>
+                  <div className="w-12 h-0.5 bg-white/60 mx-auto mb-8"></div>
+                  <p className="text-xl text-white/80 max-w-2xl mx-auto leading-relaxed">
+                    Siempre estoy interesado en nuevos proyectos y oportunidades de colaboración.
+                  </p>
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto mb-16">
+                  {[
+                    { label: 'Email', value: 'johan@mrjohanf.dev', action: 'mailto:johan@mrjohanf.dev' },
+                    { label: 'LinkedIn', value: 'linkedin.com/in/mrjohanf', action: 'https://linkedin.com/in/mrjohanf' },
+                    { label: 'GitHub', value: 'github.com/mrjohanf', action: 'https://github.com/mrjohanf' }
+                  ].map((contact, index) => (
+                    <button
+                      key={contact.label}
+                      onClick={() => handleContactClick(contact.action)}
+                      className="block w-full p-8 border border-white/10 rounded-2xl hover:border-white/30 hover-lift organic-transition text-left"
+                      style={{ animationDelay: `${index * 0.1}s` }}
+                    >
+                      <div className="text-white/60 text-sm mb-2">{contact.label}</div>
+                      <div className="font-medium">{contact.value}</div>
+                    </button>
+                  ))}
+                </div>
+                
                 <button 
                   onClick={handleDownloadCV}
                   className="bg-white text-black px-8 py-4 rounded-full font-medium hover-lift organic-transition"
                 >
                   Descargar CV
                 </button>
-                <div className="text-white/60 text-center">
-                  <p>Disponible para proyectos freelance</p>
-                  <p className="text-sm text-white/40">Respuesta garantizada en 24h</p>
-                </div>
               </div>
-              
-              <div className="mt-16 pt-8 border-t border-white/10">
-                <p className="text-white/40 text-sm">
-                  Ubicado en tu ciudad • Disponible para trabajar remotamente • 
-                  Horario flexible según tu zona horaria
-                </p>
-              </div>
-            </div>
-          )}
+            )}
+          </div>
         </div>
       </main>
 
-      {/* Indicador de sección */}
-      <div className="fixed right-8 top-1/2 -translate-y-1/2 z-40">
+      {/* Indicador de sección animado */}
+      <motion.div 
+        className="fixed right-6 top-1/2 -translate-y-1/2 z-50"
+        initial={{ opacity: 0, x: 50 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ delay: 1, duration: 0.8 }}
+      >
         <div className="space-y-3">
-          {navigation.map((item) => (
-            <button
+          {navigation.map((item, index) => (
+            <motion.button
               key={item.id}
               onClick={() => handleSectionChange(item.id)}
               className={`block w-2 h-8 rounded-full organic-transition ${
                 currentSection === item.id ? 'bg-white' : 'bg-white/20 hover:bg-white/40'
               }`}
               title={item.label}
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ delay: 1.2 + index * 0.1, type: "spring", damping: 15 }}
+              whileHover={{ scale: 1.2 }}
             />
           ))}
         </div>
-      </div>
+      </motion.div>
+
+      {/* Indicador de scroll hint */}
+      <motion.div
+        className="fixed bottom-8 left-1/2 -translate-x-1/2 text-white/40 text-sm flex items-center space-x-2"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 2, duration: 0.8 }}
+      >
+        <span>Usa scroll para navegar</span>
+        <motion.div
+          animate={{ y: [0, 4, 0] }}
+          transition={{ duration: 1.5, repeat: Infinity }}
+          className="text-lg"
+        >
+          ↕️
+        </motion.div>
+      </motion.div>
     </div>
   )
 }
