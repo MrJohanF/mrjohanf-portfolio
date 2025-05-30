@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { 
   HomeIcon, 
@@ -11,13 +11,16 @@ import {
   ArrowRightIcon,
   ArrowTopRightOnSquareIcon,
   ChevronLeftIcon,
-  ChevronRightIcon
+  ChevronRightIcon,
+  PlayIcon
 } from '@heroicons/react/24/outline'
 
 export default function Portfolio() {
   const [currentSection, setCurrentSection] = useState('home')
   const [isLoaded, setIsLoaded] = useState(false)
-  const [currentProject, setCurrentProject] = useState(0)
+  const [scrollX, setScrollX] = useState(0)
+  const [maxScroll, setMaxScroll] = useState(0)
+  const sliderRef = useRef(null)
 
   // Array con el orden de las secciones para navegación
   const sectionOrder = ['home', 'about', 'projects', 'skills', 'contact']
@@ -45,21 +48,28 @@ export default function Portfolio() {
     let isScrolling = false
     
     const handleWheel = (e) => {
-      e.preventDefault() // Prevenir scroll normal
+      // Si estamos en proyectos, permitir scroll horizontal
+      if (currentSection === 'projects') {
+        e.preventDefault()
+        const newScrollX = scrollX + e.deltaY
+        const clampedScrollX = Math.max(0, Math.min(newScrollX, maxScroll))
+        setScrollX(clampedScrollX)
+        return
+      }
+      
+      // Para otras secciones, navegación vertical normal
+      e.preventDefault()
       
       if (isScrolling) return
       
       isScrolling = true
       
       if (e.deltaY > 0) {
-        // Scroll hacia abajo
         navigateSection('down')
       } else {
-        // Scroll hacia arriba
         navigateSection('up')
       }
       
-      // Debounce para evitar cambios muy rápidos
       setTimeout(() => {
         isScrolling = false
       }, 800)
@@ -70,68 +80,95 @@ export default function Portfolio() {
     return () => {
       window.removeEventListener('wheel', handleWheel)
     }
+  }, [currentSection, scrollX, maxScroll])
+
+  // Calcular el máximo scroll cuando cambie el contenido
+  useEffect(() => {
+    if (sliderRef.current && currentSection === 'projects') {
+      const containerWidth = sliderRef.current.parentElement.offsetWidth
+      const contentWidth = sliderRef.current.scrollWidth
+      setMaxScroll(Math.max(0, contentWidth - containerWidth))
+    }
   }, [currentSection])
 
   const projects = [
     {
       id: 1,
       title: "E-Commerce Platform",
-      description: "Plataforma completa de comercio electrónico con Next.js y microservicios. Incluye sistema de pagos, gestión de inventario y análisis en tiempo real.",
-      tech: ["Next.js", "JavaScript", "Stripe", "PostgreSQL"],
+      description: "Plataforma completa de comercio electrónico con Next.js y microservicios. Sistema de pagos integrado con Stripe, gestión avanzada de inventario y dashboard de análisis en tiempo real.",
+      tech: ["Next.js", "JavaScript", "Stripe", "PostgreSQL", "Redis"],
       year: "2024",
       status: "Activo",
       demo: "https://demo1.com",
       github: "https://github.com/mrjohanf/ecommerce",
       image: "🛒",
-      color: "from-blue-600/20 to-purple-600/20"
+      gradient: "from-blue-500/20 to-purple-600/20",
+      category: "Web App"
     },
     {
       id: 2,
-      title: "Task Management App",
-      description: "Aplicación de gestión de tareas con colaboración en tiempo real. Incluye notificaciones, asignación de tareas y reportes de productividad.",
-      tech: ["React", "Node.js", "Socket.io", "MongoDB"],
+      title: "Task Management",
+      description: "Aplicación de gestión de tareas con colaboración en tiempo real. Incluye notificaciones push, asignación inteligente de tareas y reportes de productividad avanzados.",
+      tech: ["React", "Node.js", "Socket.io", "MongoDB", "Express"],
       year: "2024",
       status: "Desarrollo",
       demo: "https://demo2.com",
       github: "https://github.com/mrjohanf/taskmanager",
       image: "📋",
-      color: "from-green-600/20 to-teal-600/20"
+      gradient: "from-green-500/20 to-teal-600/20",
+      category: "Productivity"
     },
     {
       id: 3,
       title: "AI Dashboard",
-      description: "Dashboard con integración de IA y análisis predictivo avanzado. Machine learning para detección de patrones y predicciones de negocio.",
-      tech: ["Python", "TensorFlow", "React", "FastAPI"],
+      description: "Dashboard inteligente con integración de IA y análisis predictivo avanzado. Machine learning para detección de patrones, predicciones de negocio y automatización de procesos.",
+      tech: ["Python", "TensorFlow", "React", "FastAPI", "Docker"],
       year: "2023",
       status: "Completado",
       demo: "https://demo3.com",
       github: "https://github.com/mrjohanf/ai-dashboard",
       image: "🤖",
-      color: "from-orange-600/20 to-red-600/20"
+      gradient: "from-orange-500/20 to-red-600/20",
+      category: "AI/ML"
     },
     {
       id: 4,
       title: "Real Estate Platform",
-      description: "Aplicación para búsqueda y gestión de propiedades inmobiliarias. Incluye mapas interactivos, filtros avanzados y tours virtuales.",
-      tech: ["React Native", "Firebase", "Maps API", "Expo"],
+      description: "Plataforma completa para búsqueda y gestión de propiedades inmobiliarias. Incluye mapas interactivos, filtros avanzados, tours virtuales y sistema de citas.",
+      tech: ["React Native", "Firebase", "Maps API", "Expo", "Node.js"],
       year: "2023",
       status: "Completado",
       demo: "https://demo4.com",
       github: "https://github.com/mrjohanf/realestate",
       image: "🏠",
-      color: "from-indigo-600/20 to-blue-600/20"
+      gradient: "from-indigo-500/20 to-blue-600/20",
+      category: "Mobile App"
     },
     {
       id: 5,
-      title: "Cryptocurrency Tracker",
-      description: "Aplicación para seguimiento de criptomonedas con análisis técnico. Alertas de precio, portfolio tracking y noticias en tiempo real.",
-      tech: ["Vue.js", "Node.js", "WebSocket", "Chart.js"],
+      title: "Crypto Tracker",
+      description: "Aplicación avanzada para seguimiento de criptomonedas con análisis técnico profesional. Alertas de precio personalizadas, portfolio tracking y noticias en tiempo real.",
+      tech: ["Vue.js", "Node.js", "WebSocket", "Chart.js", "Redis"],
       year: "2023",
       status: "Completado",
       demo: "https://demo5.com",
       github: "https://github.com/mrjohanf/crypto-tracker",
       image: "₿",
-      color: "from-yellow-600/20 to-orange-600/20"
+      gradient: "from-yellow-500/20 to-orange-600/20",
+      category: "FinTech"
+    },
+    {
+      id: 6,
+      title: "Social Media Analytics",
+      description: "Herramienta de análisis para redes sociales con métricas avanzadas. Seguimiento de engagement, análisis de audiencia y reportes automatizados para múltiples plataformas.",
+      tech: ["React", "D3.js", "Python", "PostgreSQL", "AWS"],
+      year: "2023",
+      status: "Completado",
+      demo: "https://demo6.com",
+      github: "https://github.com/mrjohanf/social-analytics",
+      image: "📊",
+      gradient: "from-pink-500/20 to-rose-600/20",
+      category: "Analytics"
     }
   ]
 
@@ -154,6 +191,9 @@ export default function Portfolio() {
 
   const handleSectionChange = (section) => {
     setCurrentSection(section)
+    if (section !== 'projects') {
+      setScrollX(0) // Reset scroll cuando salimos de proyectos
+    }
   }
 
   const handleProjectClick = (url) => {
@@ -172,16 +212,15 @@ export default function Portfolio() {
     console.log('Descargando CV...')
   }
 
-  const nextProject = () => {
-    setCurrentProject((prev) => (prev + 1) % projects.length)
+  // Navegación con botones en slider
+  const slideLeft = () => {
+    const newScrollX = Math.max(0, scrollX - 400)
+    setScrollX(newScrollX)
   }
 
-  const prevProject = () => {
-    setCurrentProject((prev) => (prev - 1 + projects.length) % projects.length)
-  }
-
-  const goToProject = (index) => {
-    setCurrentProject(index)
+  const slideRight = () => {
+    const newScrollX = Math.min(maxScroll, scrollX + 400)
+    setScrollX(newScrollX)
   }
 
   return (
@@ -250,10 +289,10 @@ export default function Portfolio() {
         </div>
       </motion.nav>
 
-      {/* Contenido principal - SIN SCROLL */}
+      {/* Contenido principal */}
       <main className="h-full pt-24 pb-8 pl-6 pr-20 overflow-hidden">
         <div className="h-full flex items-center justify-center">
-          <div className="w-full max-w-4xl">
+          <div className="w-full max-w-7xl">
             
             {/* Sección Inicio */}
             {currentSection === 'home' && (
@@ -352,81 +391,105 @@ export default function Portfolio() {
               </div>
             )}
 
-            {/* Sección Proyectos */}
+            {/* Sección Proyectos - SLIDER HORIZONTAL MODERNO */}
             {currentSection === 'projects' && (
-              <div className="animate-fade-up space-y-12 overflow-hidden">
-                <div className="text-center">
-                  <h2 className="text-4xl md:text-5xl font-light mb-4">Trabajo Seleccionado</h2>
-                  <div className="w-12 h-0.5 bg-white/60 mx-auto mb-4"></div>
-                  <p className="text-white/60 text-lg">Algunos de mis proyectos más destacados</p>
+              <div className="animate-fade-up h-full flex flex-col">
+                {/* Header minimalista */}
+                <div className="text-center mb-12">
+                  <h2 className="text-4xl md:text-5xl font-light mb-6">Portfolio</h2>
+                  <div className="w-12 h-0.5 bg-white/60 mx-auto"></div>
                 </div>
                 
-                {/* Carousel 3D Container */}
-                <div className="relative h-[500px] flex items-center justify-center perspective-1000">
-                  <div className="relative w-full max-w-6xl h-full">
-                    {projects.map((project, index) => {
-                      const offset = index - currentProject
-                      const absOffset = Math.abs(offset)
-                      const isActive = offset === 0
-                      const isVisible = absOffset <= 2
-                      
-                      return (
+                {/* Slider Container */}
+                <div className="flex-1 relative">
+                  {/* Navigation Buttons */}
+                  <button
+                    onClick={slideLeft}
+                    disabled={scrollX === 0}
+                    className={`absolute left-0 top-1/2 -translate-y-1/2 z-20 p-4 rounded-full transition-all duration-300 backdrop-blur-sm ${
+                      scrollX === 0 
+                        ? 'bg-white/5 text-white/30 cursor-not-allowed' 
+                        : 'bg-white/10 hover:bg-white/20 text-white'
+                    }`}
+                  >
+                    <ChevronLeftIcon className="w-6 h-6" />
+                  </button>
+                  
+                  <button
+                    onClick={slideRight}
+                    disabled={scrollX >= maxScroll}
+                    className={`absolute right-0 top-1/2 -translate-y-1/2 z-20 p-4 rounded-full transition-all duration-300 backdrop-blur-sm ${
+                      scrollX >= maxScroll 
+                        ? 'bg-white/5 text-white/30 cursor-not-allowed' 
+                        : 'bg-white/10 hover:bg-white/20 text-white'
+                    }`}
+                  >
+                    <ChevronRightIcon className="w-6 h-6" />
+                  </button>
+                  
+                  {/* Scrollable Content */}
+                  <div className="overflow-hidden h-full px-16">
+                    <motion.div
+                      ref={sliderRef}
+                      className="flex gap-8 h-full items-center"
+                      animate={{ x: -scrollX }}
+                      transition={{ type: "spring", damping: 25, stiffness: 200 }}
+                    >
+                      {projects.map((project, index) => (
                         <motion.div
                           key={project.id}
-                          className={`absolute top-1/2 left-1/2 w-80 h-96 cursor-pointer ${
-                            isVisible ? 'block' : 'hidden'
-                          }`}
-                          initial={false}
-                          animate={{
-                            x: `calc(-50% + ${offset * 200}px)`,
-                            y: '-50%',
-                            z: isActive ? 0 : -100 * absOffset,
-                            rotateY: offset * -25,
-                            scale: isActive ? 1 : 0.8 - absOffset * 0.1,
-                            opacity: isActive ? 1 : 0.4 - absOffset * 0.2
-                          }}
-                          transition={{
+                          className="flex-shrink-0 w-80 h-96 group cursor-pointer"
+                          initial={{ opacity: 0, y: 50 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ 
+                            delay: index * 0.1,
                             type: "spring",
-                            damping: 20,
-                            stiffness: 100,
-                            duration: 0.8
+                            damping: 20
                           }}
-                          onClick={() => goToProject(index)}
-                          style={{
-                            transformStyle: 'preserve-3d',
-                            zIndex: isActive ? 10 : 10 - absOffset
+                          whileHover={{ 
+                            scale: 1.05,
+                            transition: { type: "spring", damping: 15 }
                           }}
                         >
-                          <div className={`w-full h-full rounded-3xl p-8 glass-minimal border border-white/10 relative overflow-hidden group ${
-                            isActive ? 'bg-white/10' : 'bg-white/5'
-                          }`}>
+                          <div className="w-full h-full rounded-3xl p-8 glass-minimal border border-white/10 relative overflow-hidden hover:border-white/30 organic-transition">
                             {/* Background gradient */}
-                            <div className={`absolute inset-0 bg-gradient-to-br ${project.color} opacity-0 group-hover:opacity-100 transition-opacity duration-500`} />
+                            <div className={`absolute inset-0 bg-gradient-to-br ${project.gradient} opacity-0 group-hover:opacity-100 transition-opacity duration-500`} />
+                            
+                            {/* Status Badge */}
+                            <div className="absolute top-6 right-6 z-10">
+                              <span className={`px-3 py-1 rounded-full text-xs font-medium backdrop-blur-sm ${
+                                project.status === 'Activo' ? 'bg-green-500/20 text-green-400 border border-green-500/30' :
+                                project.status === 'Desarrollo' ? 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30' :
+                                'bg-blue-500/20 text-blue-400 border border-blue-500/30'
+                              }`}>
+                                {project.status}
+                              </span>
+                            </div>
                             
                             {/* Content */}
                             <div className="relative z-10 h-full flex flex-col">
+                              {/* Header */}
                               <div className="text-center mb-6">
-                                <div className="text-6xl mb-4">{project.image}</div>
-                                <div className="flex items-center justify-center space-x-3 mb-2">
-                                  <h3 className="text-xl font-semibold">{project.title}</h3>
-                                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                                    project.status === 'Activo' ? 'bg-green-500/20 text-green-400' :
-                                    project.status === 'Desarrollo' ? 'bg-yellow-500/20 text-yellow-400' :
-                                    'bg-blue-500/20 text-blue-400'
-                                  }`}>
-                                    {project.status}
-                                  </span>
+                                <div className="text-5xl mb-4">{project.image}</div>
+                                <h3 className="text-xl font-semibold mb-2">{project.title}</h3>
+                                <div className="flex items-center justify-center space-x-3 text-sm text-white/60">
+                                  <span>{project.category}</span>
+                                  <span>•</span>
+                                  <span>{project.year}</span>
                                 </div>
-                                <div className="text-white/40 text-sm">{project.year}</div>
                               </div>
                               
-                              <p className="text-white/70 text-sm leading-relaxed mb-6 flex-1">
-                                {project.description}
-                              </p>
+                              {/* Description */}
+                              <div className="flex-1 mb-6">
+                                <p className="text-white/70 text-sm leading-relaxed line-clamp-4">
+                                  {project.description}
+                                </p>
+                              </div>
                               
+                              {/* Tech Stack */}
                               <div className="space-y-4">
                                 <div className="flex flex-wrap gap-2 justify-center">
-                                  {project.tech.map((tech) => (
+                                  {project.tech.slice(0, 3).map((tech) => (
                                     <span
                                       key={tech}
                                       className="px-3 py-1 bg-white/10 rounded-full text-xs text-white/80"
@@ -434,82 +497,57 @@ export default function Portfolio() {
                                       {tech}
                                     </span>
                                   ))}
+                                  {project.tech.length > 3 && (
+                                    <span className="px-3 py-1 bg-white/5 rounded-full text-xs text-white/60">
+                                      +{project.tech.length - 3}
+                                    </span>
+                                  )}
                                 </div>
                                 
-                                {isActive && (
-                                  <motion.div 
-                                    className="flex space-x-3 justify-center"
-                                    initial={{ opacity: 0, y: 20 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    transition={{ delay: 0.2 }}
+                                {/* Action buttons */}
+                                <div className="flex space-x-3 justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                  <button 
+                                    onClick={(e) => {
+                                      e.stopPropagation()
+                                      handleProjectClick(project.demo)
+                                    }}
+                                    className="flex items-center space-x-2 px-4 py-2 bg-white/20 hover:bg-white/30 rounded-lg text-sm transition-all duration-300"
                                   >
-                                    <button 
-                                      onClick={(e) => {
-                                        e.stopPropagation()
-                                        handleProjectClick(project.demo)
-                                      }}
-                                      className="flex items-center space-x-1 px-4 py-2 bg-white/20 hover:bg-white/30 rounded-lg text-sm transition-all duration-300"
-                                    >
-                                      <span>Demo</span>
-                                      <ArrowTopRightOnSquareIcon className="w-3 h-3" />
-                                    </button>
-                                    <button 
-                                      onClick={(e) => {
-                                        e.stopPropagation()
-                                        handleProjectClick(project.github)
-                                      }}
-                                      className="flex items-center space-x-1 px-4 py-2 bg-white/20 hover:bg-white/30 rounded-lg text-sm transition-all duration-300"
-                                    >
-                                      <span>Código</span>
-                                      <ArrowTopRightOnSquareIcon className="w-3 h-3" />
-                                    </button>
-                                  </motion.div>
-                                )}
+                                    <PlayIcon className="w-4 h-4" />
+                                    <span>Demo</span>
+                                  </button>
+                                  <button 
+                                    onClick={(e) => {
+                                      e.stopPropagation()
+                                      handleProjectClick(project.github)
+                                    }}
+                                    className="flex items-center space-x-2 px-4 py-2 bg-white/20 hover:bg-white/30 rounded-lg text-sm transition-all duration-300"
+                                  >
+                                    <span>Código</span>
+                                    <ArrowTopRightOnSquareIcon className="w-4 h-4" />
+                                  </button>
+                                </div>
                               </div>
                             </div>
                           </div>
                         </motion.div>
-                      )
-                    })}
+                      ))}
+                    </motion.div>
                   </div>
-                  
-                  {/* Navigation Controls */}
-                  <button
-                    onClick={prevProject}
-                    className="absolute left-4 top-1/2 -translate-y-1/2 z-20 p-3 bg-white/10 hover:bg-white/20 rounded-full transition-all duration-300 backdrop-blur-sm"
-                  >
-                    <ChevronLeftIcon className="w-6 h-6" />
-                  </button>
-                  
-                  <button
-                    onClick={nextProject}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 z-20 p-3 bg-white/10 hover:bg-white/20 rounded-full transition-all duration-300 backdrop-blur-sm"
-                  >
-                    <ChevronRightIcon className="w-6 h-6" />
-                  </button>
                 </div>
-                
-                {/* Indicators */}
-                <div className="flex justify-center space-x-3 mt-8">
-                  {projects.map((_, index) => (
-                    <button
-                      key={index}
-                      onClick={() => goToProject(index)}
-                      className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                        index === currentProject ? 'bg-white scale-125' : 'bg-white/30 hover:bg-white/50'
-                      }`}
+
+                {/* Progress indicator */}
+                <div className="flex justify-center mt-8 space-x-2">
+                  <div className="h-1 w-32 bg-white/10 rounded-full overflow-hidden">
+                    <motion.div
+                      className="h-full bg-white/60 rounded-full"
+                      initial={{ width: 0 }}
+                      animate={{ 
+                        width: `${maxScroll > 0 ? ((scrollX / maxScroll) * 100) : 0}%` 
+                      }}
+                      transition={{ type: "spring", damping: 20 }}
                     />
-                  ))}
-                </div>
-                
-                <div className="text-center pt-8">
-                  <p className="text-white/60 mb-4">¿Interesado en ver más proyectos?</p>
-                  <button 
-                    onClick={() => handleProjectClick('https://github.com/mrjohanf')}
-                    className="border border-white/20 px-6 py-3 rounded-full text-sm hover:border-white/40 organic-transition"
-                  >
-                    Ver GitHub completo
-                  </button>
+                  </div>
                 </div>
               </div>
             )}
@@ -637,21 +675,42 @@ export default function Portfolio() {
       </motion.div>
 
       {/* Indicador de scroll hint */}
-      <motion.div
-        className="fixed bottom-8 left-1/2 -translate-x-1/2 text-white/40 text-sm flex items-center space-x-2"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 2, duration: 0.8 }}
-      >
-        <span>Usa scroll para navegar</span>
+      {currentSection !== 'projects' && (
         <motion.div
-          animate={{ y: [0, 4, 0] }}
-          transition={{ duration: 1.5, repeat: Infinity }}
-          className="text-lg"
+          className="fixed bottom-8 left-1/2 -translate-x-1/2 text-white/40 text-sm flex items-center space-x-2"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 2, duration: 0.8 }}
         >
-          ↕️
+          <span>Usa scroll para navegar</span>
+          <motion.div
+            animate={{ y: [0, 4, 0] }}
+            transition={{ duration: 1.5, repeat: Infinity }}
+            className="text-lg"
+          >
+            ↕️
+          </motion.div>
         </motion.div>
-      </motion.div>
+      )}
+
+      {/* Hint para proyectos */}
+      {currentSection === 'projects' && (
+        <motion.div
+          className="fixed bottom-8 left-1/2 -translate-x-1/2 text-white/40 text-sm flex items-center space-x-2"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5, duration: 0.8 }}
+        >
+          <span>Scroll horizontal para navegar • Click en las flechas</span>
+          <motion.div
+            animate={{ x: [0, 4, 0] }}
+            transition={{ duration: 1.5, repeat: Infinity }}
+            className="text-lg"
+          >
+            ↔️
+          </motion.div>
+        </motion.div>
+      )}
     </div>
   )
 }
