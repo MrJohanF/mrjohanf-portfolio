@@ -20,7 +20,9 @@ export default function Portfolio() {
   const [isLoaded, setIsLoaded] = useState(false)
   const [scrollX, setScrollX] = useState(0)
   const [maxScroll, setMaxScroll] = useState(0)
+  const [isMouseInSlider, setIsMouseInSlider] = useState(false)
   const sliderRef = useRef(null)
+  const sliderContainerRef = useRef(null)
 
   // Array con el orden de las secciones para navegación
   const sectionOrder = ['home', 'about', 'projects', 'skills', 'contact']
@@ -48,8 +50,8 @@ export default function Portfolio() {
     let isScrolling = false
     
     const handleWheel = (e) => {
-      // Si estamos en proyectos, permitir scroll horizontal
-      if (currentSection === 'projects') {
+      // Si estamos en proyectos Y el mouse está dentro del slider, scroll horizontal
+      if (currentSection === 'projects' && isMouseInSlider) {
         e.preventDefault()
         const newScrollX = scrollX + e.deltaY
         const clampedScrollX = Math.max(0, Math.min(newScrollX, maxScroll))
@@ -57,7 +59,7 @@ export default function Portfolio() {
         return
       }
       
-      // Para otras secciones, navegación vertical normal
+      // Para otras secciones O cuando el mouse está fuera del slider, navegación vertical
       e.preventDefault()
       
       if (isScrolling) return
@@ -80,7 +82,7 @@ export default function Portfolio() {
     return () => {
       window.removeEventListener('wheel', handleWheel)
     }
-  }, [currentSection, scrollX, maxScroll])
+  }, [currentSection, scrollX, maxScroll, isMouseInSlider])
 
   // Calcular el máximo scroll cuando cambie el contenido
   useEffect(() => {
@@ -88,6 +90,14 @@ export default function Portfolio() {
       const containerWidth = sliderRef.current.parentElement.offsetWidth
       const contentWidth = sliderRef.current.scrollWidth
       setMaxScroll(Math.max(0, contentWidth - containerWidth))
+    }
+  }, [currentSection])
+
+  // Reset slider state cuando salimos de proyectos
+  useEffect(() => {
+    if (currentSection !== 'projects') {
+      setScrollX(0)
+      setIsMouseInSlider(false)
     }
   }, [currentSection])
 
@@ -191,9 +201,6 @@ export default function Portfolio() {
 
   const handleSectionChange = (section) => {
     setCurrentSection(section)
-    if (section !== 'projects') {
-      setScrollX(0) // Reset scroll cuando salimos de proyectos
-    }
   }
 
   const handleProjectClick = (url) => {
@@ -221,6 +228,15 @@ export default function Portfolio() {
   const slideRight = () => {
     const newScrollX = Math.min(maxScroll, scrollX + 400)
     setScrollX(newScrollX)
+  }
+
+  // Handlers para detectar mouse en slider
+  const handleSliderMouseEnter = () => {
+    setIsMouseInSlider(true)
+  }
+
+  const handleSliderMouseLeave = () => {
+    setIsMouseInSlider(false)
   }
 
   return (
@@ -391,7 +407,7 @@ export default function Portfolio() {
               </div>
             )}
 
-            {/* Sección Proyectos - SLIDER HORIZONTAL MODERNO */}
+            {/* Sección Proyectos - SLIDER HORIZONTAL CON NAVEGACIÓN CONTEXTUAL */}
             {currentSection === 'projects' && (
               <div className="animate-fade-up h-full flex flex-col">
                 {/* Header minimalista */}
@@ -400,8 +416,24 @@ export default function Portfolio() {
                   <div className="w-12 h-0.5 bg-white/60 mx-auto"></div>
                 </div>
                 
-                {/* Slider Container */}
-                <div className="flex-1 relative">
+                {/* Slider Container CON DETECCIÓN DE MOUSE */}
+                <div 
+                  className="flex-1 relative"
+                  ref={sliderContainerRef}
+                  onMouseEnter={handleSliderMouseEnter}
+                  onMouseLeave={handleSliderMouseLeave}
+                >
+                  {/* Visual indicator cuando el mouse está en el slider */}
+                  {isMouseInSlider && (
+                    <motion.div
+                      className="absolute inset-0 border-2 border-white/20 rounded-3xl pointer-events-none z-10"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.3 }}
+                    />
+                  )}
+                  
                   {/* Navigation Buttons */}
                   <button
                     onClick={slideLeft}
@@ -674,43 +706,65 @@ export default function Portfolio() {
         </div>
       </motion.div>
 
-      {/* Indicador de scroll hint */}
-      {currentSection !== 'projects' && (
-        <motion.div
-          className="fixed bottom-8 left-1/2 -translate-x-1/2 text-white/40 text-sm flex items-center space-x-2"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 2, duration: 0.8 }}
-        >
-          <span>Usa scroll para navegar</span>
+      {/* Indicadores de navegación dinámicos */}
+      <AnimatePresence>
+        {currentSection !== 'projects' && !isMouseInSlider && (
           <motion.div
-            animate={{ y: [0, 4, 0] }}
-            transition={{ duration: 1.5, repeat: Infinity }}
-            className="text-lg"
+            className="fixed bottom-8 left-1/2 -translate-x-1/2 text-white/40 text-sm flex items-center space-x-2"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 20 }}
+            transition={{ duration: 0.3 }}
           >
-            ↕️
+            <span>Scroll para navegar entre secciones</span>
+            <motion.div
+              animate={{ y: [0, 4, 0] }}
+              transition={{ duration: 1.5, repeat: Infinity }}
+              className="text-lg"
+            >
+              ↕️
+            </motion.div>
           </motion.div>
-        </motion.div>
-      )}
+        )}
 
-      {/* Hint para proyectos */}
-      {currentSection === 'projects' && (
-        <motion.div
-          className="fixed bottom-8 left-1/2 -translate-x-1/2 text-white/40 text-sm flex items-center space-x-2"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5, duration: 0.8 }}
-        >
-          <span>Scroll horizontal para navegar • Click en las flechas</span>
+        {currentSection === 'projects' && !isMouseInSlider && (
           <motion.div
-            animate={{ x: [0, 4, 0] }}
-            transition={{ duration: 1.5, repeat: Infinity }}
-            className="text-lg"
+            className="fixed bottom-8 left-1/2 -translate-x-1/2 text-white/40 text-sm flex items-center space-x-2"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 20 }}
+            transition={{ duration: 0.3 }}
           >
-            ↔️
+            <span>Scroll para cambiar sección • Entra al área para navegar proyectos</span>
+            <motion.div
+              animate={{ y: [0, 4, 0] }}
+              transition={{ duration: 1.5, repeat: Infinity }}
+              className="text-lg"
+            >
+              ⬇️
+            </motion.div>
           </motion.div>
-        </motion.div>
-      )}
+        )}
+
+        {isMouseInSlider && (
+          <motion.div
+            className="fixed bottom-8 left-1/2 -translate-x-1/2 text-white/40 text-sm flex items-center space-x-2"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 20 }}
+            transition={{ duration: 0.3 }}
+          >
+            <span>Scroll horizontal para navegar proyectos</span>
+            <motion.div
+              animate={{ x: [0, 4, 0] }}
+              transition={{ duration: 1.5, repeat: Infinity }}
+              className="text-lg"
+            >
+              ↔️
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   )
 }
