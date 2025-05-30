@@ -112,7 +112,6 @@ export default function Portfolio() {
       demo: "https://demo1.com",
       github: "https://github.com/mrjohanf/ecommerce",
       image: "🛒",
-      gradient: "from-blue-500/20 to-purple-600/20",
       category: "Web App"
     },
     {
@@ -125,7 +124,6 @@ export default function Portfolio() {
       demo: "https://demo2.com",
       github: "https://github.com/mrjohanf/taskmanager",
       image: "📋",
-      gradient: "from-green-500/20 to-teal-600/20",
       category: "Productivity"
     },
     {
@@ -138,7 +136,6 @@ export default function Portfolio() {
       demo: "https://demo3.com",
       github: "https://github.com/mrjohanf/ai-dashboard",
       image: "🤖",
-      gradient: "from-orange-500/20 to-red-600/20",
       category: "AI/ML"
     },
     {
@@ -151,7 +148,6 @@ export default function Portfolio() {
       demo: "https://demo4.com",
       github: "https://github.com/mrjohanf/realestate",
       image: "🏠",
-      gradient: "from-indigo-500/20 to-blue-600/20",
       category: "Mobile App"
     },
     {
@@ -164,7 +160,6 @@ export default function Portfolio() {
       demo: "https://demo5.com",
       github: "https://github.com/mrjohanf/crypto-tracker",
       image: "₿",
-      gradient: "from-yellow-500/20 to-orange-600/20",
       category: "FinTech"
     },
     {
@@ -177,7 +172,6 @@ export default function Portfolio() {
       demo: "https://demo6.com",
       github: "https://github.com/mrjohanf/social-analytics",
       image: "📊",
-      gradient: "from-pink-500/20 to-rose-600/20",
       category: "Analytics"
     }
   ]
@@ -407,7 +401,7 @@ export default function Portfolio() {
               </div>
             )}
 
-            {/* Sección Proyectos - SLIDER HORIZONTAL CON NAVEGACIÓN CONTEXTUAL */}
+            {/* Sección Proyectos - SLIDER HORIZONTAL SIN OVERFLOW HIDDEN */}
             {currentSection === 'projects' && (
               <div className="animate-fade-up h-full flex flex-col">
                 {/* Header minimalista */}
@@ -426,7 +420,7 @@ export default function Portfolio() {
                   {/* Visual indicator cuando el mouse está en el slider */}
                   {isMouseInSlider && (
                     <motion.div
-                      className="absolute inset-0 border-2 border-white/20 rounded-3xl pointer-events-none z-10"
+                      className="absolute inset-0 border border-white/10 rounded-3xl pointer-events-none z-10"
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       exit={{ opacity: 0 }}
@@ -478,21 +472,23 @@ export default function Portfolio() {
                             type: "spring",
                             damping: 20
                           }}
-                          whileHover={{ 
-                            scale: 1.05,
-                            transition: { type: "spring", damping: 15 }
-                          }}
                         >
-                          <div className="w-full h-full rounded-3xl p-8 glass-minimal border border-white/10 relative overflow-hidden hover:border-white/30 organic-transition">
-                            {/* Background gradient */}
-                            <div className={`absolute inset-0 bg-gradient-to-br ${project.gradient} opacity-0 group-hover:opacity-100 transition-opacity duration-500`} />
+                          {/* REMOVIDO overflow-hidden y ajustado el padding */}
+                          <div className="w-full h-full rounded-3xl p-6 glass-minimal border border-white/10 relative group-hover:border-white/30 group-hover:bg-white/10 organic-transition">
+                            {/* Sutil glow effect en hover */}
+                            <div className="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-3xl" />
+                            
+                            {/* Subtle shadow effect */}
+                            <div className="absolute inset-0 shadow-2xl opacity-0 group-hover:opacity-20 transition-opacity duration-500 rounded-3xl" />
                             
                             {/* Status Badge */}
-                            <div className="absolute top-6 right-6 z-10">
-                              <span className={`px-3 py-1 rounded-full text-xs font-medium backdrop-blur-sm ${
-                                project.status === 'Activo' ? 'bg-green-500/20 text-green-400 border border-green-500/30' :
-                                project.status === 'Desarrollo' ? 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30' :
-                                'bg-blue-500/20 text-blue-400 border border-blue-500/30'
+                            <div className="absolute top-4 right-4 z-10">
+                              <span className={`px-3 py-1 rounded-full text-xs font-medium backdrop-blur-sm border transition-all duration-300 ${
+                                project.status === 'Activo' 
+                                  ? 'bg-white/10 text-white/90 border-white/20 group-hover:bg-white/20 group-hover:text-white' :
+                                project.status === 'Desarrollo' 
+                                  ? 'bg-white/10 text-white/70 border-white/15 group-hover:bg-white/20 group-hover:text-white/90' :
+                                  'bg-white/10 text-white/60 border-white/10 group-hover:bg-white/20 group-hover:text-white/80'
                               }`}>
                                 {project.status}
                               </span>
@@ -501,10 +497,14 @@ export default function Portfolio() {
                             {/* Content */}
                             <div className="relative z-10 h-full flex flex-col">
                               {/* Header */}
-                              <div className="text-center mb-6">
-                                <div className="text-5xl mb-4">{project.image}</div>
-                                <h3 className="text-xl font-semibold mb-2">{project.title}</h3>
-                                <div className="flex items-center justify-center space-x-3 text-sm text-white/60">
+                              <div className="text-center mb-4">
+                                <div className="text-5xl mb-3 group-hover:scale-110 transition-transform duration-300">
+                                  {project.image}
+                                </div>
+                                <h3 className="text-xl font-semibold mb-2 group-hover:text-white transition-colors duration-300">
+                                  {project.title}
+                                </h3>
+                                <div className="flex items-center justify-center space-x-3 text-sm text-white/60 group-hover:text-white/80 transition-colors duration-300">
                                   <span>{project.category}</span>
                                   <span>•</span>
                                   <span>{project.year}</span>
@@ -512,40 +512,40 @@ export default function Portfolio() {
                               </div>
                               
                               {/* Description */}
-                              <div className="flex-1 mb-6">
-                                <p className="text-white/70 text-sm leading-relaxed line-clamp-4">
+                              <div className="flex-1 mb-4">
+                                <p className="text-white/70 text-sm leading-relaxed line-clamp-3 group-hover:text-white/90 transition-colors duration-300">
                                   {project.description}
                                 </p>
                               </div>
                               
-                              {/* Tech Stack */}
-                              <div className="space-y-4">
+                              {/* Tech Stack - reducido el espacio */}
+                              <div className="space-y-3">
                                 <div className="flex flex-wrap gap-2 justify-center">
                                   {project.tech.slice(0, 3).map((tech) => (
                                     <span
                                       key={tech}
-                                      className="px-3 py-1 bg-white/10 rounded-full text-xs text-white/80"
+                                      className="px-2 py-1 bg-white/10 rounded-full text-xs text-white/80 group-hover:bg-white/20 group-hover:text-white transition-all duration-300"
                                     >
                                       {tech}
                                     </span>
                                   ))}
                                   {project.tech.length > 3 && (
-                                    <span className="px-3 py-1 bg-white/5 rounded-full text-xs text-white/60">
+                                    <span className="px-2 py-1 bg-white/5 rounded-full text-xs text-white/60 group-hover:bg-white/10 group-hover:text-white/80 transition-all duration-300">
                                       +{project.tech.length - 3}
                                     </span>
                                   )}
                                 </div>
                                 
-                                {/* Action buttons */}
-                                <div className="flex space-x-3 justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                {/* Action buttons - sin transform, solo opacity */}
+                                <div className="flex space-x-2 justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                                   <button 
                                     onClick={(e) => {
                                       e.stopPropagation()
                                       handleProjectClick(project.demo)
                                     }}
-                                    className="flex items-center space-x-2 px-4 py-2 bg-white/20 hover:bg-white/30 rounded-lg text-sm transition-all duration-300"
+                                    className="flex items-center space-x-1 px-3 py-2 bg-white/20 hover:bg-white/30 rounded-lg text-xs transition-all duration-300 backdrop-blur-sm"
                                   >
-                                    <PlayIcon className="w-4 h-4" />
+                                    <PlayIcon className="w-3 h-3" />
                                     <span>Demo</span>
                                   </button>
                                   <button 
@@ -553,10 +553,10 @@ export default function Portfolio() {
                                       e.stopPropagation()
                                       handleProjectClick(project.github)
                                     }}
-                                    className="flex items-center space-x-2 px-4 py-2 bg-white/20 hover:bg-white/30 rounded-lg text-sm transition-all duration-300"
+                                    className="flex items-center space-x-1 px-3 py-2 bg-white/20 hover:bg-white/30 rounded-lg text-xs transition-all duration-300 backdrop-blur-sm"
                                   >
                                     <span>Código</span>
-                                    <ArrowTopRightOnSquareIcon className="w-4 h-4" />
+                                    <ArrowTopRightOnSquareIcon className="w-3 h-3" />
                                   </button>
                                 </div>
                               </div>
