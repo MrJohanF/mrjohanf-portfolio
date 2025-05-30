@@ -95,7 +95,9 @@ export default function Portfolio() {
     if (sliderRef.current && currentSection === 'projects') {
       const containerWidth = sliderRef.current.parentElement.offsetWidth
       const contentWidth = sliderRef.current.scrollWidth
-      setMaxScroll(Math.max(0, contentWidth - containerWidth))
+      // Agregar padding extra para que la última tarjeta se vea completamente
+      const extraPadding = 100 // Espacio adicional para la última tarjeta
+      setMaxScroll(Math.max(0, contentWidth - containerWidth + extraPadding))
     }
   }, [currentSection])
 
@@ -407,7 +409,7 @@ export default function Portfolio() {
               </div>
             )}
 
-            {/* Sección Proyectos - SLIDER HORIZONTAL CON ICONOS UNIFORMES */}
+            {/* Sección Proyectos - SLIDER HORIZONTAL CON PADDING EXTRA */}
             {currentSection === 'projects' && (
               <div className="animate-fade-up h-full flex flex-col">
                 {/* Header minimalista */}
@@ -466,6 +468,7 @@ export default function Portfolio() {
                       className="flex gap-8 h-full items-center"
                       animate={{ x: -scrollX }}
                       transition={{ type: "spring", damping: 25, stiffness: 200 }}
+                      style={{ paddingRight: '100px' }} // PADDING EXTRA PARA LA ÚLTIMA TARJETA
                     >
                       {projects.map((project, index) => {
                         const IconComponent = project.icon
