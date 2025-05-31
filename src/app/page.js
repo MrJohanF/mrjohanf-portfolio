@@ -412,8 +412,22 @@ export default function Portfolio() {
     }
   }
 
+  // Updated handleDownloadCV function with language-based CV selection
   const handleDownloadCV = () => {
-    console.log('Descargando CV...')
+    try {
+      const fileName = language === 'es' ? 'CVes.pdf' : 'CVen.pdf'
+      const link = document.createElement('a')
+      link.href = `/${fileName}`
+      link.download = fileName
+      link.target = '_blank'
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+      
+      console.log(`Downloading ${fileName}...`)
+    } catch (error) {
+      console.error('Error downloading CV:', error)
+    }
   }
 
   // Navegación con botones en slider
