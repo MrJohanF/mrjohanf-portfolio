@@ -18,7 +18,8 @@ import {
   CpuChipIcon as AIIcon,
   BuildingOfficeIcon,
   CurrencyDollarIcon,
-  ChartBarIcon
+  ChartBarIcon,
+  LanguageIcon
 } from '@heroicons/react/24/outline'
 
 export default function Portfolio() {
@@ -27,8 +28,219 @@ export default function Portfolio() {
   const [scrollX, setScrollX] = useState(0)
   const [maxScroll, setMaxScroll] = useState(0)
   const [isMouseInSlider, setIsMouseInSlider] = useState(false)
+  const [language, setLanguage] = useState('es')
   const sliderRef = useRef(null)
   const sliderContainerRef = useRef(null)
+
+  // Translations object
+  const translations = {
+    es: {
+      nav: {
+        home: 'Inicio',
+        about: 'Acerca',
+        projects: 'Trabajo',
+        skills: 'Skills',
+        contact: 'Contacto'
+      },
+      home: {
+        greeting: 'Hola, soy',
+        name: 'Johan Fernández',
+        title: 'Desarrollador Full Stack especializado en crear',
+        titleHighlight: 'experiencias digitales excepcionales',
+        subtitle: 'Combinando diseño elegante con código limpio para crear aplicaciones web modernas que realmente importan.',
+        viewWork: 'Ver mi trabajo',
+        contact: 'Contactar'
+      },
+      about: {
+        title: 'Acerca de mí',
+        p1: 'Con más de 5 años de experiencia en desarrollo web, me especializo en crear aplicaciones modernas que combinan diseño elegante con funcionalidad robusta.',
+        p2: 'Mi filosofía se centra en la simplicidad, la performance y la experiencia del usuario. Creo firmemente que las mejores soluciones son las más elegantes.',
+        p3: 'Trabajo principalmente con React, Next.js y Node.js, pero siempre estoy explorando nuevas tecnologías que puedan aportar valor a mis proyectos.',
+        stats: {
+          projects: 'Proyectos',
+          years: 'Años',
+          clients: 'Clientes',
+          dedication: 'Dedicación'
+        },
+        currently: 'Actualmente',
+        activities: [
+          '🚀 Explorando Web3 y Blockchain',
+          '🎨 Perfeccionando habilidades de UI/UX',
+          '📚 Aprendiendo Machine Learning'
+        ]
+      },
+      projects: {
+        title: 'Portfolio',
+        items: [
+          {
+            title: "E-Commerce Platform",
+            description: "Plataforma completa de comercio electrónico con Next.js y microservicios. Sistema de pagos integrado con Stripe, gestión avanzada de inventario y dashboard de análisis en tiempo real.",
+            category: "Web App",
+            status: "Activo"
+          },
+          {
+            title: "Task Management",
+            description: "Aplicación de gestión de tareas con colaboración en tiempo real. Incluye notificaciones push, asignación inteligente de tareas y reportes de productividad avanzados.",
+            category: "Productividad",
+            status: "Desarrollo"
+          },
+          {
+            title: "AI Dashboard",
+            description: "Dashboard inteligente con integración de IA y análisis predictivo avanzado. Machine learning para detección de patrones, predicciones de negocio y automatización de procesos.",
+            category: "AI/ML",
+            status: "Completado"
+          },
+          {
+            title: "Real Estate Platform",
+            description: "Plataforma completa para búsqueda y gestión de propiedades inmobiliarias. Incluye mapas interactivos, filtros avanzados, tours virtuales y sistema de citas.",
+            category: "App Móvil",
+            status: "Completado"
+          },
+          {
+            title: "Crypto Tracker",
+            description: "Aplicación avanzada para seguimiento de criptomonedas con análisis técnico profesional. Alertas de precio personalizadas, portfolio tracking y noticias en tiempo real.",
+            category: "FinTech",
+            status: "Completado"
+          },
+          {
+            title: "Social Media Analytics",
+            description: "Herramienta de análisis para redes sociales con métricas avanzadas. Seguimiento de engagement, análisis de audiencia y reportes automatizados para múltiples plataformas.",
+            category: "Analytics",
+            status: "Completado"
+          }
+        ],
+        buttons: {
+          demo: 'Demo',
+          code: 'Código'
+        }
+      },
+      skills: {
+        title: 'Habilidades',
+        subtitle: 'Tecnologías y herramientas que domino',
+        additional: 'Herramientas adicionales',
+        categories: {
+          frontend: 'Frontend',
+          backend: 'Backend',
+          database: 'Database',
+          devops: 'DevOps'
+        }
+      },
+      contact: {
+        title: 'Conversemos',
+        subtitle: 'Siempre estoy interesado en nuevos proyectos y oportunidades de colaboración.',
+        downloadCV: 'Descargar CV'
+      },
+      navigation: {
+        scrollSections: 'Scroll para navegar entre secciones',
+        scrollProjects: 'Scroll para cambiar sección • Entra al área para navegar proyectos',
+        scrollHorizontal: 'Scroll horizontal para navegar proyectos'
+      }
+    },
+    en: {
+      nav: {
+        home: 'Home',
+        about: 'About',
+        projects: 'Work',
+        skills: 'Skills',
+        contact: 'Contact'
+      },
+      home: {
+        greeting: 'Hello, Im',
+        name: 'Johan Fernández',
+        title: 'Full Stack Developer specialized in creating',
+        titleHighlight: 'exceptional digital experiences',
+        subtitle: 'Combining elegant design with clean code to create modern web applications that truly matter.',
+        viewWork: 'View my work',
+        contact: 'Contact'
+      },
+      about: {
+        title: 'About me',
+        p1: 'With over 5 years of experience in web development, I specialize in creating modern applications that combine elegant design with robust functionality.',
+        p2: 'My philosophy focuses on simplicity, performance, and user experience. I firmly believe that the best solutions are the most elegant ones.',
+        p3: 'I work primarily with React, Next.js and Node.js, but Im always exploring new technologies that can add value to my projects.',
+        stats: {
+          projects: 'Projects',
+          years: 'Years',
+          clients: 'Clients',
+          dedication: 'Dedication'
+        },
+        currently: 'Currently',
+        activities: [
+          '🚀 Exploring Web3 and Blockchain',
+          '🎨 Perfecting UI/UX skills',
+          '📚 Learning Machine Learning'
+        ]
+      },
+      projects: {
+        title: 'Portfolio',
+        items: [
+          {
+            title: "E-Commerce Platform",
+            description: "Complete e-commerce platform with Next.js and microservices. Integrated payment system with Stripe, advanced inventory management and real-time analytics dashboard.",
+            category: "Web App",
+            status: "Active"
+          },
+          {
+            title: "Task Management",
+            description: "Task management application with real-time collaboration. Includes push notifications, intelligent task assignment and advanced productivity reports.",
+            category: "Productivity",
+            status: "Development"
+          },
+          {
+            title: "AI Dashboard",
+            description: "Intelligent dashboard with AI integration and advanced predictive analytics. Machine learning for pattern detection, business predictions and process automation.",
+            category: "AI/ML",
+            status: "Completed"
+          },
+          {
+            title: "Real Estate Platform",
+            description: "Complete platform for real estate search and management. Includes interactive maps, advanced filters, virtual tours and appointment system.",
+            category: "Mobile App",
+            status: "Completed"
+          },
+          {
+            title: "Crypto Tracker",
+            description: "Advanced cryptocurrency tracking application with professional technical analysis. Custom price alerts, portfolio tracking and real-time news.",
+            category: "FinTech",
+            status: "Completed"
+          },
+          {
+            title: "Social Media Analytics",
+            description: "Social media analysis tool with advanced metrics. Engagement tracking, audience analysis and automated reports for multiple platforms.",
+            category: "Analytics",
+            status: "Completed"
+          }
+        ],
+        buttons: {
+          demo: 'Demo',
+          code: 'Code'
+        }
+      },
+      skills: {
+        title: 'Skills',
+        subtitle: 'Technologies and tools I master',
+        additional: 'Additional tools',
+        categories: {
+          frontend: 'Frontend',
+          backend: 'Backend',
+          database: 'Database',
+          devops: 'DevOps'
+        }
+      },
+      contact: {
+        title: 'Lets talk',
+        subtitle: 'Im always interested in new projects and collaboration opportunities.',
+        downloadCV: 'Download CV'
+      },
+      navigation: {
+        scrollSections: 'Scroll to navigate between sections',
+        scrollProjects: 'Scroll to change section • Enter area to navigate projects',
+        scrollHorizontal: 'Horizontal scroll to navigate projects'
+      }
+    }
+  }
+
+  const t = translations[language]
 
   // Array con el orden de las secciones para navegación
   const sectionOrder = ['home', 'about', 'projects', 'skills', 'contact']
@@ -36,6 +248,11 @@ export default function Portfolio() {
   useEffect(() => {
     setIsLoaded(true)
   }, [])
+
+  // Función para cambiar idioma
+  const toggleLanguage = () => {
+    setLanguage(prev => prev === 'es' ? 'en' : 'es')
+  }
 
   // Función para navegar entre secciones
   const navigateSection = (direction) => {
@@ -112,75 +329,51 @@ export default function Portfolio() {
   const projects = [
     {
       id: 1,
-      title: "E-Commerce Platform",
-      description: "Plataforma completa de comercio electrónico con Next.js y microservicios. Sistema de pagos integrado con Stripe, gestión avanzada de inventario y dashboard de análisis en tiempo real.",
       tech: ["Next.js", "JavaScript", "Stripe", "PostgreSQL", "Redis"],
       year: "2024",
-      status: "Activo",
       demo: "https://demo1.com",
       github: "https://github.com/mrjohanf/ecommerce",
       icon: ShoppingCartIcon,
-      category: "Web App"
     },
     {
       id: 2,
-      title: "Task Management",
-      description: "Aplicación de gestión de tareas con colaboración en tiempo real. Incluye notificaciones push, asignación inteligente de tareas y reportes de productividad avanzados.",
       tech: ["React", "Node.js", "Socket.io", "MongoDB", "Express"],
       year: "2024",
-      status: "Desarrollo",
       demo: "https://demo2.com",
       github: "https://github.com/mrjohanf/taskmanager",
       icon: ClipboardDocumentListIcon,
-      category: "Productivity"
     },
     {
       id: 3,
-      title: "AI Dashboard",
-      description: "Dashboard inteligente con integración de IA y análisis predictivo avanzado. Machine learning para detección de patrones, predicciones de negocio y automatización de procesos.",
       tech: ["Python", "TensorFlow", "React", "FastAPI", "Docker"],
       year: "2023",
-      status: "Completado",
       demo: "https://demo3.com",
       github: "https://github.com/mrjohanf/ai-dashboard",
       icon: AIIcon,
-      category: "AI/ML"
     },
     {
       id: 4,
-      title: "Real Estate Platform",
-      description: "Plataforma completa para búsqueda y gestión de propiedades inmobiliarias. Incluye mapas interactivos, filtros avanzados, tours virtuales y sistema de citas.",
       tech: ["React Native", "Firebase", "Maps API", "Expo", "Node.js"],
       year: "2023",
-      status: "Completado",
       demo: "https://demo4.com",
       github: "https://github.com/mrjohanf/realestate",
       icon: BuildingOfficeIcon,
-      category: "Mobile App"
     },
     {
       id: 5,
-      title: "Crypto Tracker",
-      description: "Aplicación avanzada para seguimiento de criptomonedas con análisis técnico profesional. Alertas de precio personalizadas, portfolio tracking y noticias en tiempo real.",
       tech: ["Vue.js", "Node.js", "WebSocket", "Chart.js", "Redis"],
       year: "2023",
-      status: "Completado",
       demo: "https://demo5.com",
       github: "https://github.com/mrjohanf/crypto-tracker",
       icon: CurrencyDollarIcon,
-      category: "FinTech"
     },
     {
       id: 6,
-      title: "Social Media Analytics",
-      description: "Herramienta de análisis para redes sociales con métricas avanzadas. Seguimiento de engagement, análisis de audiencia y reportes automatizados para múltiples plataformas.",
       tech: ["React", "D3.js", "Python", "PostgreSQL", "AWS"],
       year: "2023",
-      status: "Completado",
       demo: "https://demo6.com",
       github: "https://github.com/mrjohanf/social-analytics",
       icon: ChartBarIcon,
-      category: "Analytics"
     }
   ]
 
@@ -194,11 +387,11 @@ export default function Portfolio() {
   ]
 
   const navigation = [
-    { id: 'home', label: 'Inicio', icon: HomeIcon },
-    { id: 'about', label: 'Acerca', icon: UserIcon },
-    { id: 'projects', label: 'Trabajo', icon: CodeBracketIcon },
-    { id: 'skills', label: 'Skills', icon: CpuChipIcon },
-    { id: 'contact', label: 'Contacto', icon: EnvelopeIcon }
+    { id: 'home', label: t.nav.home, icon: HomeIcon },
+    { id: 'about', label: t.nav.about, icon: UserIcon },
+    { id: 'projects', label: t.nav.projects, icon: CodeBracketIcon },
+    { id: 'skills', label: t.nav.skills, icon: CpuChipIcon },
+    { id: 'contact', label: t.nav.contact, icon: EnvelopeIcon }
   ]
 
   const handleSectionChange = (section) => {
@@ -243,6 +436,25 @@ export default function Portfolio() {
 
   return (
     <div className="h-screen w-full animated-gradient text-white overflow-hidden relative">
+      
+      {/* Language Switcher */}
+      <motion.div 
+        className="fixed top-8 right-8 z-50"
+        initial={{ opacity: 0, scale: 0 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ delay: 0.8, type: "spring", damping: 20 }}
+      >
+        <button
+          onClick={toggleLanguage}
+          className="flex items-center space-x-2 bg-white/5 glass-minimal rounded-full p-3 border border-white/10 hover:bg-white/10 hover:border-white/20 organic-transition group"
+          title={`Switch to ${language === 'es' ? 'English' : 'Español'}`}
+        >
+          <LanguageIcon className="w-4 h-4 text-white/70 group-hover:text-white organic-transition" />
+          <span className="text-sm font-medium text-white/70 group-hover:text-white organic-transition min-w-[24px]">
+            {language === 'es' ? 'EN' : 'ES'}
+          </span>
+        </button>
+      </motion.div>
       
       {/* Partículas flotantes animadas */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -320,21 +532,20 @@ export default function Portfolio() {
                 <div className="space-y-6">
                   <div className="inline-block">
                     <p className="text-white/60 text-lg font-medium mb-4 animate-float-subtle">
-                      Hola, soy
+                      {t.home.greeting}
                     </p>
                     <h1 className="text-6xl md:text-8xl font-light tracking-tight mb-6">
-                      Johan Fernández
+                      {t.home.name}
                     </h1>
                   </div>
                   
                   <p className="text-2xl md:text-3xl text-white/80 font-light leading-relaxed max-w-3xl mx-auto">
-                    Desarrollador Full Stack especializado en crear 
-                    <span className="text-white"> experiencias digitales excepcionales</span>
+                    {t.home.title}
+                    <span className="text-white"> {t.home.titleHighlight}</span>
                   </p>
                   
                   <p className="text-lg text-white/60 max-w-2xl mx-auto">
-                    Combinando diseño elegante con código limpio para crear aplicaciones 
-                    web modernas que realmente importan.
+                    {t.home.subtitle}
                   </p>
                 </div>
 
@@ -343,7 +554,7 @@ export default function Portfolio() {
                     onClick={() => handleSectionChange('projects')}
                     className="group flex items-center space-x-2 bg-white text-black px-8 py-4 rounded-full font-medium hover-lift organic-transition"
                   >
-                    <span>Ver mi trabajo</span>
+                    <span>{t.home.viewWork}</span>
                     <ArrowRightIcon className="w-4 h-4 group-hover:translate-x-1 organic-transition" />
                   </button>
                   
@@ -351,7 +562,7 @@ export default function Portfolio() {
                     onClick={() => handleSectionChange('contact')}
                     className="flex items-center space-x-2 border border-white/20 px-8 py-4 rounded-full font-medium hover:border-white/40 organic-transition"
                   >
-                    <span>Contactar</span>
+                    <span>{t.home.contact}</span>
                   </button>
                 </div>
               </div>
@@ -362,33 +573,24 @@ export default function Portfolio() {
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center animate-slide-up">
                 <div className="space-y-8">
                   <div>
-                    <h2 className="text-5xl md:text-6xl font-light mb-6">Acerca de mí</h2>
+                    <h2 className="text-5xl md:text-6xl font-light mb-6">{t.about.title}</h2>
                     <div className="w-12 h-0.5 bg-white/60 mb-8"></div>
                   </div>
                   
                   <div className="space-y-6 text-lg text-white/80 leading-relaxed">
-                    <p>
-                      Con más de 5 años de experiencia en desarrollo web, me especializo en crear 
-                      aplicaciones modernas que combinan diseño elegante con funcionalidad robusta.
-                    </p>
-                    <p>
-                      Mi filosofía se centra en la simplicidad, la performance y la experiencia 
-                      del usuario. Creo firmemente que las mejores soluciones son las más elegantes.
-                    </p>
-                    <p>
-                      Trabajo principalmente con React, Next.js y Node.js, pero siempre estoy 
-                      explorando nuevas tecnologías que puedan aportar valor a mis proyectos.
-                    </p>
+                    <p>{t.about.p1}</p>
+                    <p>{t.about.p2}</p>
+                    <p>{t.about.p3}</p>
                   </div>
                 </div>
                 
                 <div className="lg:pl-16">
                   <div className="grid grid-cols-2 gap-8">
                     {[
-                      { number: '60+', label: 'Proyectos' },
-                      { number: '5+', label: 'Años' },
-                      { number: '25+', label: 'Clientes' },
-                      { number: '100%', label: 'Dedicación' }
+                      { number: '60+', label: t.about.stats.projects },
+                      { number: '5+', label: t.about.stats.years },
+                      { number: '25+', label: t.about.stats.clients },
+                      { number: '100%', label: t.about.stats.dedication }
                     ].map((stat, index) => (
                       <div key={stat.label} className="text-center">
                         <div className="text-4xl font-light mb-2">{stat.number}</div>
@@ -398,11 +600,11 @@ export default function Portfolio() {
                   </div>
                   
                   <div className="mt-12 pt-8 border-t border-white/10">
-                    <h3 className="text-xl font-medium mb-4">Actualmente</h3>
+                    <h3 className="text-xl font-medium mb-4">{t.about.currently}</h3>
                     <div className="space-y-3 text-white/70">
-                      <p>🚀 Explorando Web3 y Blockchain</p>
-                      <p>🎨 Perfeccionando habilidades de UI/UX</p>
-                      <p>📚 Aprendiendo Machine Learning</p>
+                      {t.about.activities.map((activity, index) => (
+                        <p key={index}>{activity}</p>
+                      ))}
                     </div>
                   </div>
                 </div>
@@ -414,7 +616,7 @@ export default function Portfolio() {
               <div className="animate-fade-up h-full flex flex-col">
                 {/* Header minimalista */}
                 <div className="text-center mb-12">
-                  <h2 className="text-4xl md:text-5xl font-light mb-6">Portfolio</h2>
+                  <h2 className="text-4xl md:text-5xl font-light mb-6">{t.projects.title}</h2>
                   <div className="w-12 h-0.5 bg-white/60 mx-auto"></div>
                 </div>
                 
@@ -468,10 +670,11 @@ export default function Portfolio() {
                       className="flex gap-8 h-full items-center"
                       animate={{ x: -scrollX }}
                       transition={{ type: "spring", damping: 25, stiffness: 200 }}
-                      style={{ paddingRight: '100px' }} // PADDING EXTRA PARA LA ÚLTIMA TARJETA
+                      style={{ paddingRight: '100px' }}
                     >
                       {projects.map((project, index) => {
                         const IconComponent = project.icon
+                        const projectData = t.projects.items[index]
                         return (
                           <motion.div
                             key={project.id}
@@ -494,13 +697,13 @@ export default function Portfolio() {
                               {/* Status Badge */}
                               <div className="absolute top-4 right-4 z-10">
                                 <span className={`px-3 py-1 rounded-full text-xs font-medium backdrop-blur-sm border transition-all duration-300 ${
-                                  project.status === 'Activo' 
+                                  projectData.status === 'Activo' || projectData.status === 'Active'
                                     ? 'bg-white/10 text-white/90 border-white/20 group-hover:bg-white/20 group-hover:text-white' :
-                                  project.status === 'Desarrollo' 
+                                  projectData.status === 'Desarrollo' || projectData.status === 'Development'
                                     ? 'bg-white/10 text-white/70 border-white/15 group-hover:bg-white/20 group-hover:text-white/90' :
                                     'bg-white/10 text-white/60 border-white/10 group-hover:bg-white/20 group-hover:text-white/80'
                                 }`}>
-                                  {project.status}
+                                  {projectData.status}
                                 </span>
                               </div>
                               
@@ -514,10 +717,10 @@ export default function Portfolio() {
                                     </div>
                                   </div>
                                   <h3 className="text-xl font-semibold mb-2 group-hover:text-white transition-colors duration-300">
-                                    {project.title}
+                                    {projectData.title}
                                   </h3>
                                   <div className="flex items-center justify-center space-x-3 text-sm text-white/60 group-hover:text-white/80 transition-colors duration-300">
-                                    <span>{project.category}</span>
+                                    <span>{projectData.category}</span>
                                     <span>•</span>
                                     <span>{project.year}</span>
                                   </div>
@@ -526,7 +729,7 @@ export default function Portfolio() {
                                 {/* Description */}
                                 <div className="flex-1 mb-4">
                                   <p className="text-white/70 text-sm leading-relaxed line-clamp-3 group-hover:text-white/90 transition-colors duration-300">
-                                    {project.description}
+                                    {projectData.description}
                                   </p>
                                 </div>
                                 
@@ -558,7 +761,7 @@ export default function Portfolio() {
                                       className="flex items-center space-x-1 px-3 py-2 bg-white/20 hover:bg-white/30 rounded-lg text-xs transition-all duration-300 backdrop-blur-sm"
                                     >
                                       <PlayIcon className="w-3 h-3" />
-                                      <span>Demo</span>
+                                      <span>{t.projects.buttons.demo}</span>
                                     </button>
                                     <button 
                                       onClick={(e) => {
@@ -567,7 +770,7 @@ export default function Portfolio() {
                                       }}
                                       className="flex items-center space-x-1 px-3 py-2 bg-white/20 hover:bg-white/30 rounded-lg text-xs transition-all duration-300 backdrop-blur-sm"
                                     >
-                                      <span>Código</span>
+                                      <span>{t.projects.buttons.code}</span>
                                       <ArrowTopRightOnSquareIcon className="w-3 h-3" />
                                     </button>
                                   </div>
@@ -601,9 +804,9 @@ export default function Portfolio() {
             {currentSection === 'skills' && (
               <div className="animate-slide-up">
                 <div className="mb-16">
-                  <h2 className="text-5xl md:text-6xl font-light mb-6">Habilidades</h2>
+                  <h2 className="text-5xl md:text-6xl font-light mb-6">{t.skills.title}</h2>
                   <div className="w-12 h-0.5 bg-white/60 mb-4"></div>
-                  <p className="text-white/60 text-lg">Tecnologías y herramientas que domino</p>
+                  <p className="text-white/60 text-lg">{t.skills.subtitle}</p>
                 </div>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-12 max-w-3xl">
@@ -631,13 +834,13 @@ export default function Portfolio() {
                 </div>
                 
                 <div className="mt-16 pt-12 border-t border-white/10">
-                  <h3 className="text-2xl font-light mb-8">Herramientas adicionales</h3>
+                  <h3 className="text-2xl font-light mb-8">{t.skills.additional}</h3>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
                     {[
-                      { category: 'Frontend', tools: ['React', 'Next.js', 'Vue.js', 'Tailwind'] },
-                      { category: 'Backend', tools: ['Node.js', 'Express', 'Python', 'Django'] },
-                      { category: 'Database', tools: ['PostgreSQL', 'MongoDB', 'Redis', 'Firebase'] },
-                      { category: 'DevOps', tools: ['Docker', 'AWS', 'Vercel', 'GitHub Actions'] }
+                      { category: t.skills.categories.frontend, tools: ['React', 'Next.js', 'Vue.js', 'Tailwind'] },
+                      { category: t.skills.categories.backend, tools: ['Node.js', 'Express', 'Python', 'Django'] },
+                      { category: t.skills.categories.database, tools: ['PostgreSQL', 'MongoDB', 'Redis', 'Firebase'] },
+                      { category: t.skills.categories.devops, tools: ['Docker', 'AWS', 'Vercel', 'GitHub Actions'] }
                     ].map((group) => (
                       <div key={group.category} className="space-y-4">
                         <h4 className="font-medium text-white/90">{group.category}</h4>
@@ -657,10 +860,10 @@ export default function Portfolio() {
             {currentSection === 'contact' && (
               <div className="text-center animate-fade-up">
                 <div className="mb-16">
-                  <h2 className="text-5xl md:text-6xl font-light mb-6">Conversemos</h2>
+                  <h2 className="text-5xl md:text-6xl font-light mb-6">{t.contact.title}</h2>
                   <div className="w-12 h-0.5 bg-white/60 mx-auto mb-8"></div>
                   <p className="text-xl text-white/80 max-w-2xl mx-auto leading-relaxed">
-                    Siempre estoy interesado en nuevos proyectos y oportunidades de colaboración.
+                    {t.contact.subtitle}
                   </p>
                 </div>
                 
@@ -686,7 +889,7 @@ export default function Portfolio() {
                   onClick={handleDownloadCV}
                   className="bg-white text-black px-8 py-4 rounded-full font-medium hover-lift organic-transition"
                 >
-                  Descargar CV
+                  {t.contact.downloadCV}
                 </button>
               </div>
             )}
@@ -729,7 +932,7 @@ export default function Portfolio() {
             exit={{ opacity: 0, y: 20 }}
             transition={{ duration: 0.3 }}
           >
-            <span>Scroll para navegar entre secciones</span>
+            <span>{t.navigation.scrollSections}</span>
             <motion.div
               animate={{ y: [0, 4, 0] }}
               transition={{ duration: 1.5, repeat: Infinity }}
@@ -748,7 +951,7 @@ export default function Portfolio() {
             exit={{ opacity: 0, y: 20 }}
             transition={{ duration: 0.3 }}
           >
-            <span>Scroll para cambiar sección • Entra al área para navegar proyectos</span>
+            <span>{t.navigation.scrollProjects}</span>
             <motion.div
               animate={{ y: [0, 4, 0] }}
               transition={{ duration: 1.5, repeat: Infinity }}
@@ -767,7 +970,7 @@ export default function Portfolio() {
             exit={{ opacity: 0, y: 20 }}
             transition={{ duration: 0.3 }}
           >
-            <span>Scroll horizontal para navegar proyectos</span>
+            <span>{t.navigation.scrollHorizontal}</span>
             <motion.div
               animate={{ x: [0, 4, 0] }}
               transition={{ duration: 1.5, repeat: Infinity }}
