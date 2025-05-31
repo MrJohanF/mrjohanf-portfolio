@@ -18,11 +18,7 @@ import {
   FilmIcon,
   SunIcon,
   ClipboardDocumentListIcon,
-  WrenchScrewdriverIcon,
   CpuChipIcon as AIIcon,
-  BuildingOfficeIcon,
-  CurrencyDollarIcon,
-  ChartBarIcon,
   LanguageIcon,
 } from '@heroicons/react/24/outline'
 
