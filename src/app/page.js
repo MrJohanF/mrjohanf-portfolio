@@ -14,13 +14,19 @@ import {
   ChevronRightIcon,
   PlayIcon,
   ShoppingCartIcon,
+  GlobeAmericasIcon,
+  FilmIcon,
+  SunIcon,
   ClipboardDocumentListIcon,
+  WrenchScrewdriverIcon,
   CpuChipIcon as AIIcon,
   BuildingOfficeIcon,
   CurrencyDollarIcon,
   ChartBarIcon,
-  LanguageIcon
+  LanguageIcon,
 } from '@heroicons/react/24/outline'
+
+
 
 export default function Portfolio() {
   const [currentSection, setCurrentSection] = useState('home')
@@ -47,15 +53,15 @@ export default function Portfolio() {
         name: 'Johan Fernández',
         title: 'Desarrollador Full Stack especializado en crear',
         titleHighlight: 'experiencias digitales excepcionales',
-        subtitle: 'Combinando diseño elegante con código limpio para crear aplicaciones web modernas que realmente importan.',
+        subtitle: 'Combinando diseño elegante con código limpio para crear aplicaciones modernas y eficientes.',
         viewWork: 'Ver mi trabajo',
         contact: 'Contactar'
       },
       about: {
         title: 'Acerca de mí',
-        p1: 'Con más de 5 años de experiencia en desarrollo web, me especializo en crear aplicaciones modernas que combinan diseño elegante con funcionalidad robusta.',
-        p2: 'Mi filosofía se centra en la simplicidad, la performance y la experiencia del usuario. Creo firmemente que las mejores soluciones son las más elegantes.',
-        p3: 'Trabajo principalmente con React, Next.js y Node.js, pero siempre estoy explorando nuevas tecnologías que puedan aportar valor a mis proyectos.',
+        p1: 'Con más de 5 años de experiencia en desarrollo, me especializo en crear aplicaciones modernas que combinan diseño elegante con funcionalidad robusta.',
+        p2: 'Mi filosofía se centra en la simplicidad, la performance y la experiencia del usuario. Creo firmemente que las mejores soluciones son las más eficientes.',
+        p3: 'Trabajo principalmente con React, Angular, Java, .Net y Node.js, pero siempre estoy explorando nuevas tecnologías que puedan aportar valor a mis proyectos.',
         stats: {
           projects: 'Proyectos',
           years: 'Años',
@@ -73,39 +79,39 @@ export default function Portfolio() {
         title: 'Portfolio',
         items: [
           {
-            title: "E-Commerce Platform",
-            description: "Plataforma completa de comercio electrónico con Next.js y microservicios. Sistema de pagos integrado con Stripe, gestión avanzada de inventario y dashboard de análisis en tiempo real.",
-            category: "Web App",
+            title: "E-Commerce Compensar",
+            description: "Plataforma completa de comercio electrónico con Java y microservicios. Sistema de pagos integrado con Stripe, gestión avanzada de inventario y dashboard de análisis en tiempo real.",
+            category: "Aplicación Desktop",
             status: "Activo"
           },
           {
-            title: "Task Management",
+            title: "Gestión de Tareas",
             description: "Aplicación de gestión de tareas con colaboración en tiempo real. Incluye notificaciones push, asignación inteligente de tareas y reportes de productividad avanzados.",
             category: "Productividad",
             status: "Desarrollo"
           },
           {
-            title: "AI Dashboard",
-            description: "Dashboard inteligente con integración de IA y análisis predictivo avanzado. Machine learning para detección de patrones, predicciones de negocio y automatización de procesos.",
-            category: "AI/ML",
+            title: "Páramo de Guerrero",
+            description: "El proyecto páramo-de-guerrero es una aplicación web moderna diseñada para monitorear y optimizar la salud de las plantas utilizando inteligencia artificial y datos de sensores.",
+            category: "Aplicación Web",
             status: "Completado"
           },
           {
-            title: "Real Estate Platform",
-            description: "Plataforma completa para búsqueda y gestión de propiedades inmobiliarias. Incluye mapas interactivos, filtros avanzados, tours virtuales y sistema de citas.",
-            category: "App Móvil",
+            title: "MyWhereToGo",
+            description: "MyWhereToGo es una plataforma web integral diseñada para facilitar el descubrimiento, la reseña y la reserva de lugares como restaurantes, atracciones y diversos puntos de interés.",
+            category: "Aplicación Web",
             status: "Completado"
           },
           {
-            title: "Crypto Tracker",
-            description: "Aplicación avanzada para seguimiento de criptomonedas con análisis técnico profesional. Alertas de precio personalizadas, portfolio tracking y noticias en tiempo real.",
-            category: "FinTech",
+            title: "Aplicación de Películas",
+            description: "Una aplicación de películas moderna y responsive construida con Next.js 13, con detalles de películas, trailers, reseñas y más. La aplicación utiliza la API de The Movie Database (TMDB) para obtener datos de películas.",
+            category: "Aplicación Web",
             status: "Completado"
           },
           {
-            title: "Social Media Analytics",
-            description: "Herramienta de análisis para redes sociales con métricas avanzadas. Seguimiento de engagement, análisis de audiencia y reportes automatizados para múltiples plataformas.",
-            category: "Analytics",
+            title: "Plataforma E-Commerce",
+            description: "Una plataforma de comercio electrónico segura con sistema de autenticación",
+            category: "Aplicación Web",
             status: "Completado"
           }
         ],
@@ -149,15 +155,15 @@ export default function Portfolio() {
         name: 'Johan Fernández',
         title: 'Full Stack Developer specialized in creating',
         titleHighlight: 'exceptional digital experiences',
-        subtitle: 'Combining elegant design with clean code to create modern web applications that truly matter.',
+        subtitle: 'Combining elegant design with clean code to create modern and efficient applications.',
         viewWork: 'View my work',
         contact: 'Contact'
       },
       about: {
         title: 'About me',
-        p1: 'With over 5 years of experience in web development, I specialize in creating modern applications that combine elegant design with robust functionality.',
-        p2: 'My philosophy focuses on simplicity, performance, and user experience. I firmly believe that the best solutions are the most elegant ones.',
-        p3: 'I work primarily with React, Next.js and Node.js, but Im always exploring new technologies that can add value to my projects.',
+        p1: 'With over 5 years of experience in development, I specialize in creating modern applications that combine elegant design with robust functionality.',
+        p2: 'My philosophy focuses on simplicity, performance, and user experience. I firmly believe that the best solutions are the most efficient ones.',
+        p3: 'I work primarily with React, Angular, Java, .Net and Node.js, but Im always exploring new technologies that can add value to my projects.',
         stats: {
           projects: 'Projects',
           years: 'Years',
@@ -175,9 +181,9 @@ export default function Portfolio() {
         title: 'Portfolio',
         items: [
           {
-            title: "E-Commerce Platform",
-            description: "Complete e-commerce platform with Next.js and microservices. Integrated payment system with Stripe, advanced inventory management and real-time analytics dashboard.",
-            category: "Web App",
+            title: "E-Commerce Compensar",
+            description: "Complete e-commerce platform built with Java and microservices. Integrated payment system with Stripe, advanced inventory management and real-time analytics dashboard.",
+            category: "Desktop App",
             status: "Active"
           },
           {
@@ -187,27 +193,27 @@ export default function Portfolio() {
             status: "Development"
           },
           {
-            title: "AI Dashboard",
-            description: "Intelligent dashboard with AI integration and advanced predictive analytics. Machine learning for pattern detection, business predictions and process automation.",
-            category: "AI/ML",
+            title: "Paramo de Guerrero",
+            description: "The paramo-de-guerrero project is a modern web application designed to monitor and optimize plant health using artificial intelligence and sensor data.",
+            category: "Web App",
             status: "Completed"
           },
           {
-            title: "Real Estate Platform",
-            description: "Complete platform for real estate search and management. Includes interactive maps, advanced filters, virtual tours and appointment system.",
-            category: "Mobile App",
+            title: "MyWhereToGo",
+            description: "MyWhereToGo is a comprehensive web platform designed to facilitate the discovery, review, and booking of places such as restaurants, attractions, and various points of interest.",
+            category: "Web App",
             status: "Completed"
           },
           {
-            title: "Crypto Tracker",
-            description: "Advanced cryptocurrency tracking application with professional technical analysis. Custom price alerts, portfolio tracking and real-time news.",
-            category: "FinTech",
+            title: "Movie App",
+            description: "A modern and responsive movie application built with Next.js 13, featuring movie details, trailers, reviews, and more. The application uses The Movie Database (TMDB) API to fetch movie data.",
+            category: "Web App",
             status: "Completed"
           },
           {
-            title: "Social Media Analytics",
-            description: "Social media analysis tool with advanced metrics. Engagement tracking, audience analysis and automated reports for multiple platforms.",
-            category: "Analytics",
+            title: "E-Commerce Platform",
+            description: "A secure E-commerce platform with authentication system",
+            category: "Web App",
             status: "Completed"
           }
         ],
@@ -329,10 +335,10 @@ export default function Portfolio() {
   const projects = [
     {
       id: 1,
-      tech: ["Next.js", "JavaScript", "Stripe", "PostgreSQL", "Redis"],
+      tech: ["Java", "Spring Boot", "MySQL", "ChartFX", "AWS"],
       year: "2024",
-      demo: "https://demo1.com",
-      github: "https://github.com/mrjohanf/ecommerce",
+      demo: "https://github.com/MrJohanF/tiendacompensar",
+      github: "https://github.com/MrJohanF/tiendacompensar",
       icon: ShoppingCartIcon,
     },
     {
@@ -345,43 +351,43 @@ export default function Portfolio() {
     },
     {
       id: 3,
-      tech: ["Python", "TensorFlow", "React", "FastAPI", "Docker"],
-      year: "2023",
-      demo: "https://demo3.com",
-      github: "https://github.com/mrjohanf/ai-dashboard",
-      icon: AIIcon,
+      tech: ["Next.js", "React.js", "Tailwind CSS", "Java", "Docker"],
+      year: "2024",
+      demo: "https://paramo-de-guerrero.vercel.app/",
+      github: "https://github.com/MrJohanF/paramo-de-guerrero",
+      icon: SunIcon,
     },
     {
       id: 4,
-      tech: ["React Native", "Firebase", "Maps API", "Expo", "Node.js"],
-      year: "2023",
-      demo: "https://demo4.com",
-      github: "https://github.com/mrjohanf/realestate",
-      icon: BuildingOfficeIcon,
+      tech: ["React.js", "Next.js", "Tailwind CSS", "Framer Motion", "Zustand ", "Cloudinary ", "Mapbox-gl", "Prisma (ORM)", "Redis (Cache)", "PostgreSQL", "JWT", "Heroku/Vercel", "Vercel", "GitHub Actions"],
+      year: "2025",
+      demo: "https://mywheretogo.com/",
+      github: "https://github.com/mrjohanf/mywhereto",
+      icon: GlobeAmericasIcon,
     },
     {
       id: 5,
-      tech: ["Vue.js", "Node.js", "WebSocket", "Chart.js", "Redis"],
-      year: "2023",
-      demo: "https://demo5.com",
-      github: "https://github.com/mrjohanf/crypto-tracker",
-      icon: CurrencyDollarIcon,
+      tech: ["Tailwind CSS", "Next.js", "React", "Framer Motion", "Lucide React", "TMDB API" ],
+      year: "2024",
+      demo: "https://movies-olive-kappa.vercel.app/",
+      github: "https://github.com/MrJohanF/movies",
+      icon: FilmIcon,
     },
     {
       id: 6,
-      tech: ["React", "D3.js", "Python", "PostgreSQL", "AWS"],
-      year: "2023",
-      demo: "https://demo6.com",
-      github: "https://github.com/mrjohanf/social-analytics",
-      icon: ChartBarIcon,
+      tech: ["Next.js", "Prisma ORM", "Tailwind CSS", "JWT", "Bcrypt", "Zod Validator"],
+      year: "2025",
+      demo: "https://ucommerce.live/",
+      github: "https://github.com/MrJohanF/e-commerce",
+      icon: ShoppingCartIcon,
     }
   ]
 
   const skills = [
-    { name: "React & Next.js", level: 95 },
+    { name: "Angular & React", level: 95 },
     { name: "JavaScript ES6+", level: 92 },
     { name: "Node.js & Express", level: 88 },
-    { name: "Python & Django", level: 85 },
+    { name: "Java & .Net", level: 85 },
     { name: "UI/UX Design", level: 80 },
     { name: "Database Design", level: 85 }
   ]
@@ -837,9 +843,9 @@ export default function Portfolio() {
                   <h3 className="text-2xl font-light mb-8">{t.skills.additional}</h3>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
                     {[
-                      { category: t.skills.categories.frontend, tools: ['React', 'Next.js', 'Vue.js', 'Tailwind'] },
-                      { category: t.skills.categories.backend, tools: ['Node.js', 'Express', 'Python', 'Django'] },
-                      { category: t.skills.categories.database, tools: ['PostgreSQL', 'MongoDB', 'Redis', 'Firebase'] },
+                      { category: t.skills.categories.frontend, tools: ['Zustand', 'Next.js', 'Vue.js', 'Tailwind'] },
+                      { category: t.skills.categories.backend, tools: ['Node.js', 'Express', 'Java', '.Net'] },
+                      { category: t.skills.categories.database, tools: ['PostgreSQL', 'MongoDB', 'Redis', 'Mysql'] },
                       { category: t.skills.categories.devops, tools: ['Docker', 'AWS', 'Vercel', 'GitHub Actions'] }
                     ].map((group) => (
                       <div key={group.category} className="space-y-4">
@@ -869,7 +875,7 @@ export default function Portfolio() {
                 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto mb-16">
                   {[
-                    { label: 'Email', value: 'johan@mrjohanf.dev', action: 'mailto:johan@mrjohanf.dev' },
+                    { label: 'Email', value: 'johan_harol@outlook.com', action: 'mailto:johan_harol@outlook.com' },
                     { label: 'LinkedIn', value: 'linkedin.com/in/mrjohanf', action: 'https://linkedin.com/in/mrjohanf' },
                     { label: 'GitHub', value: 'github.com/mrjohanf', action: 'https://github.com/mrjohanf' }
                   ].map((contact, index) => (
