@@ -28,6 +28,8 @@ import Skills from './components/Skills'
 import Contact from './components/Contact'
 import Projects from './components/Projects'
 import About from './components/About'
+import Home from './components/Home'
+import Navigation from './components/Navigation'
 
 export default function Portfolio() {
   const [currentSection, setCurrentSection] = useState('home')
@@ -54,7 +56,6 @@ export default function Portfolio() {
     return () => window.removeEventListener('resize', checkMobile)
   }, [])
 
-  // Translations object (keeping existing translations)
   const translations = {
     es: {
       nav: {
@@ -160,7 +161,6 @@ export default function Portfolio() {
       }
     },
     en: {
-      // ... (keeping existing English translations)
       nav: {
         home: 'Home',
         about: 'About',
@@ -357,66 +357,6 @@ export default function Portfolio() {
     setShowMobileMenu(false)
   }, [currentSection])
 
-  const projects = [
-    {
-      id: 1,
-      tech: ["Java", "Spring Boot", "MySQL", "ChartFX", "AWS"],
-      year: "2024",
-      demo: "https://github.com/MrJohanF/tiendacompensar",
-      github: "https://github.com/MrJohanF/tiendacompensar",
-      icon: ShoppingCartIcon,
-    },
-    {
-      id: 2,
-      tech: ["React", "Node.js", "Socket.io", "MongoDB", "Express"],
-      year: "2024",
-      demo: "https://demo2.com",
-      github: "https://github.com/mrjohanf/taskmanager",
-      icon: ClipboardDocumentListIcon,
-    },
-    {
-      id: 3,
-      tech: ["Next.js", "React.js", "Tailwind CSS", "Java", "Docker"],
-      year: "2024",
-      demo: "https://paramo-de-guerrero.vercel.app/",
-      github: "https://github.com/MrJohanF/paramo-de-guerrero",
-      icon: SunIcon,
-    },
-    {
-      id: 4,
-      tech: ["React.js", "Next.js", "Tailwind CSS", "Framer Motion", "Zustand ", "Cloudinary ", "Mapbox-gl", "Prisma (ORM)", "Redis (Cache)", "PostgreSQL", "JWT", "Heroku/Vercel", "Vercel", "GitHub Actions"],
-      year: "2025",
-      demo: "https://mywheretogo.com/",
-      github: "https://github.com/mrjohanf/mywhereto",
-      icon: GlobeAmericasIcon,
-    },
-    {
-      id: 5,
-      tech: ["Tailwind CSS", "Next.js", "React", "Framer Motion", "Lucide React", "TMDB API" ],
-      year: "2024",
-      demo: "https://movies-olive-kappa.vercel.app/",
-      github: "https://github.com/MrJohanF/movies",
-      icon: FilmIcon,
-    },
-    {
-      id: 6,
-      tech: ["Next.js", "Prisma ORM", "Tailwind CSS", "JWT", "Bcrypt", "Zod Validator"],
-      year: "2025",
-      demo: "https://ucommerce.live/",
-      github: "https://github.com/MrJohanF/e-commerce",
-      icon: ShoppingCartIcon,
-    }
-  ]
-
-  const skills = [
-    { name: "Angular & React", level: 95 },
-    { name: "JavaScript ES6+", level: 92 },
-    { name: "Node.js & Express", level: 88 },
-    { name: "Java & .Net", level: 85 },
-    { name: "UI/UX Design", level: 80 },
-    { name: "Database Design", level: 85 }
-  ]
-
   const navigation = [
     { id: 'home', label: t.nav.home, icon: HomeIcon },
     { id: 'about', label: t.nav.about, icon: UserIcon },
@@ -483,26 +423,17 @@ export default function Portfolio() {
   return (
     <div className="h-screen w-full animated-gradient text-white overflow-hidden relative">
       
-      {/* Language Switcher - Mobile optimized */}
-      <motion.div 
-        className={`fixed ${isMobile ? 'top-4 right-4 z-[60]' : 'top-8 right-8 z-50'}`}
-        initial={{ opacity: 0, scale: 0 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ delay: 0.8, type: "spring", damping: 20 }}
-      >
-        <button
-          onClick={toggleLanguage}
-          className={`flex items-center space-x-2 bg-white/5 glass-minimal rounded-full ${
-            isMobile ? 'p-3' : 'p-3'
-          } border border-white/10 hover:bg-white/10 hover:border-white/20 organic-transition group min-w-[60px] justify-center`}
-          title={`Switch to ${language === 'es' ? 'English' : 'Español'}`}
-        >
-          <LanguageIcon className={`${isMobile ? 'w-4 h-4' : 'w-4 h-4'} text-white/70 group-hover:text-white organic-transition`} />
-          <span className={`${isMobile ? 'text-sm' : 'text-sm'} font-medium text-white/70 group-hover:text-white organic-transition`}>
-            {language === 'es' ? 'EN' : 'ES'}
-          </span>
-        </button>
-      </motion.div>
+      {/* Navigation Component */}
+      <Navigation 
+        isMobile={isMobile}
+        currentSection={currentSection}
+        handleSectionChange={handleSectionChange}
+        showMobileMenu={showMobileMenu}
+        setShowMobileMenu={setShowMobileMenu}
+        language={language}
+        toggleLanguage={toggleLanguage}
+        t={t}
+      />
       
       {/* Partículas flotantes animadas - Reduced on mobile for performance */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -529,110 +460,6 @@ export default function Portfolio() {
         ))}
       </div>
       
-      {/* Mobile Navigation */}
-      {isMobile ? (
-        <>
-          {/* Mobile Menu Button */}
-          <motion.button
-            className="fixed top-4 left-4 z-[60] bg-white/5 glass-minimal rounded-full p-3 border border-white/10"
-            onClick={() => setShowMobileMenu(!showMobileMenu)}
-            initial={{ opacity: 0, scale: 0 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.5, type: "spring", damping: 20 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            {showMobileMenu ? (
-              <XMarkIcon className="w-5 h-5 text-white" />
-            ) : (
-              <Bars3Icon className="w-5 h-5 text-white" />
-            )}
-          </motion.button>
-
-          {/* Mobile Menu Overlay */}
-          <AnimatePresence>
-            {showMobileMenu && (
-              <motion.div
-                className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                onClick={() => setShowMobileMenu(false)}
-              >
-                <motion.div
-                  className="flex flex-col items-center justify-center h-full space-y-8"
-                  initial={{ scale: 0.8, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  exit={{ scale: 0.8, opacity: 0 }}
-                  transition={{ type: "spring", damping: 20 }}
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  {navigation.map((item, index) => {
-                    const Icon = item.icon
-                    return (
-                      <motion.button
-                        key={item.id}
-                        onClick={() => handleSectionChange(item.id)}
-                        className={`flex items-center space-x-4 px-8 py-4 rounded-full text-lg font-medium organic-transition ${
-                          currentSection === item.id 
-                            ? 'bg-white text-black' 
-                            : 'text-white/70 hover:text-white hover:bg-white/10'
-                        } min-w-[200px] justify-start`}
-                        initial={{ opacity: 0, x: -50 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: index * 0.1 }}
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                      >
-                        <Icon className="w-6 h-6" />
-                        <span>{item.label}</span>
-                      </motion.button>
-                    )
-                  })}
-                </motion.div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </>
-      ) : (
-        /* Desktop Navigation */
-        <motion.nav 
-          className="fixed top-8 left-1/2 -translate-x-1/2 z-50"
-          initial={{ opacity: 0, y: -50 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5, duration: 0.8, type: "spring", damping: 20 }}
-        >
-          <div className="flex items-center space-x-1 bg-white/5 glass-minimal rounded-full p-1 border border-white/10">
-            {navigation.map((item, index) => {
-              const Icon = item.icon
-              return (
-                <motion.button
-                  key={item.id}
-                  onClick={() => handleSectionChange(item.id)}
-                  className={`flex items-center space-x-2 px-4 py-2 rounded-full text-sm font-medium organic-transition ${
-                    currentSection === item.id 
-                      ? 'bg-white text-black' 
-                      : 'text-white/70 hover:text-white hover:bg-white/10'
-                  }`}
-                  initial={{ opacity: 0, scale: 0 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ 
-                    delay: 0.7 + index * 0.1, 
-                    type: "spring", 
-                    damping: 15,
-                    stiffness: 200 
-                  }}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  <Icon className="w-4 h-4" />
-                  <span className="hidden sm:block">{item.label}</span>
-                </motion.button>
-              )
-            })}
-          </div>
-        </motion.nav>
-      )}
-
       {/* Contenido principal - Better mobile optimization */}
       <main className={`h-full ${
         isMobile 
@@ -644,94 +471,12 @@ export default function Portfolio() {
             
             {/* Sección Inicio - Better mobile optimization */}
             {currentSection === 'home' && (
-              <motion.div 
-                className={`text-center space-y-8 md:space-y-12 organic-transition ${
-                  isLoaded ? 'animate-fade-up' : 'opacity-0'
-                }`}
-                initial={{ opacity: 0, y: 50 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8 }}
-              >
-                <div className={`space-y-6 ${isMobile ? 'px-2' : ''}`}>
-                  <div className="inline-block">
-                    <motion.p 
-                      className={`text-white/60 ${
-                        isMobile ? 'text-lg' : 'text-lg'
-                      } font-medium mb-4 animate-float-subtle`}
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ delay: 0.3 }}
-                    >
-                      {t.home.greeting}
-                    </motion.p>
-                    <motion.h1 
-                      className={`${
-                        isMobile ? 'text-5xl leading-tight' : 'text-6xl md:text-8xl'
-                      } font-light tracking-tight mb-6`}
-                      initial={{ opacity: 0, y: 30 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.5 }}
-                    >
-                      {t.home.name}
-                    </motion.h1>
-                  </div>
-                  
-                  <motion.p 
-                    className={`${
-                      isMobile ? 'text-xl leading-relaxed px-2' : 'text-2xl md:text-3xl'
-                    } text-white/80 font-light leading-relaxed max-w-4xl mx-auto`}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.7 }}
-                  >
-                    {t.home.title}
-                    <span className="text-white block mt-2"> {t.home.titleHighlight}</span>
-                  </motion.p>
-                  
-                  <motion.p 
-                    className={`${
-                      isMobile ? 'text-base px-4 leading-relaxed' : 'text-lg'
-                    } text-white/60 max-w-2xl mx-auto`}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 0.9 }}
-                  >
-                    {t.home.subtitle}
-                  </motion.p>
-                </div>
-
-                <motion.div 
-                  className={`flex flex-col gap-4 ${
-                    isMobile ? 'pt-8 px-4' : 'sm:flex-row pt-8'
-                  } items-center justify-center`}
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 1.1 }}
-                >
-                  <motion.button
-                    onClick={() => handleSectionChange('projects')}
-                    className={`group flex items-center justify-center space-x-3 bg-white text-black ${
-                      isMobile ? 'px-8 py-4 text-base w-full max-w-sm' : 'px-8 py-4'
-                    } rounded-full font-medium hover-lift organic-transition shadow-lg`}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    <span>{t.home.viewWork}</span>
-                    <ArrowRightIcon className="w-5 h-5 group-hover:translate-x-1 organic-transition" />
-                  </motion.button>
-                  
-                  <motion.button
-                    onClick={() => handleSectionChange('contact')}
-                    className={`flex items-center justify-center space-x-3 border border-white/20 ${
-                      isMobile ? 'px-8 py-4 text-base w-full max-w-sm' : 'px-8 py-4'
-                    } rounded-full font-medium hover:border-white/40 hover:bg-white/5 organic-transition`}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    <span>{t.home.contact}</span>
-                  </motion.button>
-                </motion.div>
-              </motion.div>
+              <Home 
+                t={t}
+                isMobile={isMobile}
+                isLoaded={isLoaded}
+                handleSectionChange={handleSectionChange}
+              />
             )}
 
             {/* Sección Acerca - Mobile optimized */}
