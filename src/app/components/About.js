@@ -100,7 +100,7 @@ export default function About({ t, isMobile }) {
     <motion.div 
       className={`${
         isMobile 
-          ? 'space-y-8' 
+          ? 'space-y-8 pb-16' 
           : 'grid grid-cols-1 lg:grid-cols-2 gap-16 items-center'
       } animate-slide-up`}
       variants={containerVariants}
