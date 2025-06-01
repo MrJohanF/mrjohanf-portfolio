@@ -22,17 +22,27 @@ import {
   LanguageIcon,
 } from '@heroicons/react/24/outline'
 
-
-
 export default function Portfolio() {
   const [currentSection, setCurrentSection] = useState('home')
   const [isLoaded, setIsLoaded] = useState(false)
   const [scrollX, setScrollX] = useState(0)
   const [maxScroll, setMaxScroll] = useState(0)
   const [isMouseInSlider, setIsMouseInSlider] = useState(false)
+  const [isMobile, setIsMobile] = useState(false)
   const [language, setLanguage] = useState('es')
   const sliderRef = useRef(null)
   const sliderContainerRef = useRef(null)
+
+  // Check if device is mobile
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768)
+    }
+    
+    checkMobile()
+    window.addEventListener('resize', checkMobile)
+    return () => window.removeEventListener('resize', checkMobile)
+  }, [])
 
   // Translations object
   const translations = {
@@ -270,8 +280,10 @@ export default function Portfolio() {
     setCurrentSection(sectionOrder[nextIndex])
   }
 
-  // Event listener para navegación con scroll
+  // Event listener para navegación con scroll - Disabled on mobile
   useEffect(() => {
+    if (isMobile) return // Disable scroll navigation on mobile
+    
     let isScrolling = false
     
     const handleWheel = (e) => {
@@ -307,18 +319,17 @@ export default function Portfolio() {
     return () => {
       window.removeEventListener('wheel', handleWheel)
     }
-  }, [currentSection, scrollX, maxScroll, isMouseInSlider])
+  }, [currentSection, scrollX, maxScroll, isMouseInSlider, isMobile])
 
   // Calcular el máximo scroll cuando cambie el contenido
   useEffect(() => {
     if (sliderRef.current && currentSection === 'projects') {
       const containerWidth = sliderRef.current.parentElement.offsetWidth
       const contentWidth = sliderRef.current.scrollWidth
-      // Agregar padding extra para que la última tarjeta se vea completamente
-      const extraPadding = 100 // Espacio adicional para la última tarjeta
+      const extraPadding = isMobile ? 50 : 100
       setMaxScroll(Math.max(0, contentWidth - containerWidth + extraPadding))
     }
-  }, [currentSection])
+  }, [currentSection, isMobile])
 
   // Reset slider state cuando salimos de proyectos
   useEffect(() => {
@@ -412,7 +423,6 @@ export default function Portfolio() {
     }
   }
 
-  // Updated handleDownloadCV function with language-based CV selection
   const handleDownloadCV = () => {
     try {
       const fileName = language === 'es' ? 'CVes.pdf' : 'CVen.pdf'
@@ -432,49 +442,53 @@ export default function Portfolio() {
 
   // Navegación con botones en slider
   const slideLeft = () => {
-    const newScrollX = Math.max(0, scrollX - 400)
+    const slideDistance = isMobile ? 300 : 400
+    const newScrollX = Math.max(0, scrollX - slideDistance)
     setScrollX(newScrollX)
   }
 
   const slideRight = () => {
-    const newScrollX = Math.min(maxScroll, scrollX + 400)
+    const slideDistance = isMobile ? 300 : 400
+    const newScrollX = Math.min(maxScroll, scrollX + slideDistance)
     setScrollX(newScrollX)
   }
 
-  // Handlers para detectar mouse en slider
+  // Handlers para detectar mouse en slider (disabled on mobile)
   const handleSliderMouseEnter = () => {
-    setIsMouseInSlider(true)
+    if (!isMobile) setIsMouseInSlider(true)
   }
 
   const handleSliderMouseLeave = () => {
-    setIsMouseInSlider(false)
+    if (!isMobile) setIsMouseInSlider(false)
   }
 
   return (
     <div className="h-screen w-full animated-gradient text-white overflow-hidden relative">
       
-      {/* Language Switcher */}
+      {/* Language Switcher - Mobile optimized */}
       <motion.div 
-        className="fixed top-8 right-8 z-50"
+        className={`fixed ${isMobile ? 'top-4 right-4' : 'top-8 right-8'} z-50`}
         initial={{ opacity: 0, scale: 0 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ delay: 0.8, type: "spring", damping: 20 }}
       >
         <button
           onClick={toggleLanguage}
-          className="flex items-center space-x-2 bg-white/5 glass-minimal rounded-full p-3 border border-white/10 hover:bg-white/10 hover:border-white/20 organic-transition group"
+          className={`flex items-center space-x-2 bg-white/5 glass-minimal rounded-full ${
+            isMobile ? 'p-2' : 'p-3'
+          } border border-white/10 hover:bg-white/10 hover:border-white/20 organic-transition group`}
           title={`Switch to ${language === 'es' ? 'English' : 'Español'}`}
         >
-          <LanguageIcon className="w-4 h-4 text-white/70 group-hover:text-white organic-transition" />
-          <span className="text-sm font-medium text-white/70 group-hover:text-white organic-transition min-w-[24px]">
+          <LanguageIcon className={`${isMobile ? 'w-3 h-3' : 'w-4 h-4'} text-white/70 group-hover:text-white organic-transition`} />
+          <span className={`${isMobile ? 'text-xs' : 'text-sm'} font-medium text-white/70 group-hover:text-white organic-transition min-w-[24px]`}>
             {language === 'es' ? 'EN' : 'ES'}
           </span>
         </button>
       </motion.div>
       
-      {/* Partículas flotantes animadas */}
+      {/* Partículas flotantes animadas - Reduced on mobile */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {[...Array(25)].map((_, i) => (
+        {[...Array(isMobile ? 15 : 25)].map((_, i) => (
           <motion.div
             key={i}
             className="absolute w-1 h-1 bg-white/20 rounded-full"
@@ -497,21 +511,27 @@ export default function Portfolio() {
         ))}
       </div>
       
-      {/* Navegación minimalista */}
+      {/* Navegación minimalista - Mobile optimized */}
       <motion.nav 
-        className="fixed top-8 left-1/2 -translate-x-1/2 z-50"
+        className={`fixed ${isMobile ? 'top-4 left-1/2' : 'top-8 left-1/2'} -translate-x-1/2 z-50`}
         initial={{ opacity: 0, y: -50 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.5, duration: 0.8, type: "spring", damping: 20 }}
       >
-        <div className="flex items-center space-x-1 bg-white/5 glass-minimal rounded-full p-1 border border-white/10">
+        <div className={`flex items-center space-x-1 bg-white/5 glass-minimal rounded-full ${
+          isMobile ? 'p-0.5' : 'p-1'
+        } border border-white/10`}>
           {navigation.map((item, index) => {
             const Icon = item.icon
             return (
               <motion.button
                 key={item.id}
                 onClick={() => handleSectionChange(item.id)}
-                className={`flex items-center space-x-2 px-4 py-2 rounded-full text-sm font-medium organic-transition ${
+                className={`flex items-center space-x-2 ${
+                  isMobile ? 'px-2 py-1.5' : 'px-4 py-2'
+                } rounded-full ${
+                  isMobile ? 'text-xs' : 'text-sm'
+                } font-medium organic-transition ${
                   currentSection === item.id 
                     ? 'bg-white text-black' 
                     : 'text-white/70 hover:text-white hover:bg-white/10'
@@ -527,48 +547,64 @@ export default function Portfolio() {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
-                <Icon className="w-4 h-4" />
-                <span className="hidden sm:block">{item.label}</span>
+                <Icon className={`${isMobile ? 'w-3 h-3' : 'w-4 h-4'}`} />
+                {!isMobile && <span className="hidden sm:block">{item.label}</span>}
               </motion.button>
             )
           })}
         </div>
       </motion.nav>
 
-      {/* Contenido principal */}
-      <main className="h-full pt-24 pb-8 pl-6 pr-20 overflow-hidden">
+      {/* Contenido principal - Mobile optimized */}
+      <main className={`h-full ${
+        isMobile 
+          ? 'pt-16 pb-4 px-4' 
+          : 'pt-24 pb-8 pl-6 pr-20'
+      } overflow-hidden`}>
         <div className="h-full flex items-center justify-center">
           <div className="w-full max-w-7xl">
             
-            {/* Sección Inicio */}
+            {/* Sección Inicio - Mobile optimized */}
             {currentSection === 'home' && (
-              <div className={`text-center space-y-12 organic-transition ${
+              <div className={`text-center space-y-8 md:space-y-12 organic-transition ${
                 isLoaded ? 'animate-fade-up' : 'opacity-0'
               }`}>
-                <div className="space-y-6">
+                <div className="space-y-4 md:space-y-6">
                   <div className="inline-block">
-                    <p className="text-white/60 text-lg font-medium mb-4 animate-float-subtle">
+                    <p className={`text-white/60 ${
+                      isMobile ? 'text-base' : 'text-lg'
+                    } font-medium mb-2 md:mb-4 animate-float-subtle`}>
                       {t.home.greeting}
                     </p>
-                    <h1 className="text-6xl md:text-8xl font-light tracking-tight mb-6">
+                    <h1 className={`${
+                      isMobile ? 'text-4xl' : 'text-6xl md:text-8xl'
+                    } font-light tracking-tight mb-4 md:mb-6`}>
                       {t.home.name}
                     </h1>
                   </div>
                   
-                  <p className="text-2xl md:text-3xl text-white/80 font-light leading-relaxed max-w-3xl mx-auto">
+                  <p className={`${
+                    isMobile ? 'text-lg' : 'text-2xl md:text-3xl'
+                  } text-white/80 font-light leading-relaxed max-w-3xl mx-auto px-4 md:px-0`}>
                     {t.home.title}
                     <span className="text-white"> {t.home.titleHighlight}</span>
                   </p>
                   
-                  <p className="text-lg text-white/60 max-w-2xl mx-auto">
+                  <p className={`${
+                    isMobile ? 'text-base px-4' : 'text-lg'
+                  } text-white/60 max-w-2xl mx-auto`}>
                     {t.home.subtitle}
                   </p>
                 </div>
 
-                <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-8">
+                <div className={`flex flex-col sm:flex-row items-center justify-center gap-4 ${
+                  isMobile ? 'pt-6 px-4' : 'pt-8'
+                }`}>
                   <button
                     onClick={() => handleSectionChange('projects')}
-                    className="group flex items-center space-x-2 bg-white text-black px-8 py-4 rounded-full font-medium hover-lift organic-transition"
+                    className={`group flex items-center space-x-2 bg-white text-black ${
+                      isMobile ? 'px-6 py-3 text-sm' : 'px-8 py-4'
+                    } rounded-full font-medium hover-lift organic-transition w-full sm:w-auto justify-center`}
                   >
                     <span>{t.home.viewWork}</span>
                     <ArrowRightIcon className="w-4 h-4 group-hover:translate-x-1 organic-transition" />
@@ -576,7 +612,9 @@ export default function Portfolio() {
                   
                   <button
                     onClick={() => handleSectionChange('contact')}
-                    className="flex items-center space-x-2 border border-white/20 px-8 py-4 rounded-full font-medium hover:border-white/40 organic-transition"
+                    className={`flex items-center space-x-2 border border-white/20 ${
+                      isMobile ? 'px-6 py-3 text-sm' : 'px-8 py-4'
+                    } rounded-full font-medium hover:border-white/40 organic-transition w-full sm:w-auto justify-center`}
                   >
                     <span>{t.home.contact}</span>
                   </button>
@@ -584,24 +622,32 @@ export default function Portfolio() {
               </div>
             )}
 
-            {/* Sección Acerca */}
+            {/* Sección Acerca - Mobile optimized */}
             {currentSection === 'about' && (
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center animate-slide-up">
-                <div className="space-y-8">
+              <div className={`${
+                isMobile 
+                  ? 'space-y-8' 
+                  : 'grid grid-cols-1 lg:grid-cols-2 gap-16 items-center'
+              } animate-slide-up`}>
+                <div className="space-y-6 md:space-y-8">
                   <div>
-                    <h2 className="text-5xl md:text-6xl font-light mb-6">{t.about.title}</h2>
-                    <div className="w-12 h-0.5 bg-white/60 mb-8"></div>
+                    <h2 className={`${
+                      isMobile ? 'text-3xl' : 'text-5xl md:text-6xl'
+                    } font-light mb-4 md:mb-6`}>{t.about.title}</h2>
+                    <div className="w-12 h-0.5 bg-white/60 mb-6 md:mb-8"></div>
                   </div>
                   
-                  <div className="space-y-6 text-lg text-white/80 leading-relaxed">
+                  <div className={`space-y-4 md:space-y-6 ${
+                    isMobile ? 'text-base' : 'text-lg'
+                  } text-white/80 leading-relaxed`}>
                     <p>{t.about.p1}</p>
                     <p>{t.about.p2}</p>
                     <p>{t.about.p3}</p>
                   </div>
                 </div>
                 
-                <div className="lg:pl-16">
-                  <div className="grid grid-cols-2 gap-8">
+                <div className={isMobile ? 'mt-8' : 'lg:pl-16'}>
+                  <div className="grid grid-cols-2 gap-6 md:gap-8">
                     {[
                       { number: '60+', label: t.about.stats.projects },
                       { number: '5+', label: t.about.stats.years },
@@ -609,15 +655,25 @@ export default function Portfolio() {
                       { number: '100%', label: t.about.stats.dedication }
                     ].map((stat, index) => (
                       <div key={stat.label} className="text-center">
-                        <div className="text-4xl font-light mb-2">{stat.number}</div>
-                        <div className="text-white/60 text-sm">{stat.label}</div>
+                        <div className={`${
+                          isMobile ? 'text-2xl' : 'text-4xl'
+                        } font-light mb-2`}>{stat.number}</div>
+                        <div className={`text-white/60 ${
+                          isMobile ? 'text-xs' : 'text-sm'
+                        }`}>{stat.label}</div>
                       </div>
                     ))}
                   </div>
                   
-                  <div className="mt-12 pt-8 border-t border-white/10">
-                    <h3 className="text-xl font-medium mb-4">{t.about.currently}</h3>
-                    <div className="space-y-3 text-white/70">
+                  <div className={`${
+                    isMobile ? 'mt-8 pt-6' : 'mt-12 pt-8'
+                  } border-t border-white/10`}>
+                    <h3 className={`${
+                      isMobile ? 'text-lg' : 'text-xl'
+                    } font-medium mb-3 md:mb-4`}>{t.about.currently}</h3>
+                    <div className={`space-y-2 md:space-y-3 text-white/70 ${
+                      isMobile ? 'text-sm' : ''
+                    }`}>
                       {t.about.activities.map((activity, index) => (
                         <p key={index}>{activity}</p>
                       ))}
@@ -627,24 +683,26 @@ export default function Portfolio() {
               </div>
             )}
 
-            {/* Sección Proyectos - SLIDER HORIZONTAL CON PADDING EXTRA */}
+            {/* Sección Proyectos - Mobile optimized */}
             {currentSection === 'projects' && (
               <div className="animate-fade-up h-full flex flex-col">
                 {/* Header minimalista */}
-                <div className="text-center mb-12">
-                  <h2 className="text-4xl md:text-5xl font-light mb-6">{t.projects.title}</h2>
+                <div className={`text-center ${isMobile ? 'mb-8' : 'mb-12'}`}>
+                  <h2 className={`${
+                    isMobile ? 'text-3xl' : 'text-4xl md:text-5xl'
+                  } font-light mb-4 md:mb-6`}>{t.projects.title}</h2>
                   <div className="w-12 h-0.5 bg-white/60 mx-auto"></div>
                 </div>
                 
-                {/* Slider Container CON DETECCIÓN DE MOUSE */}
+                {/* Slider Container - Mobile optimized */}
                 <div 
                   className="flex-1 relative"
                   ref={sliderContainerRef}
                   onMouseEnter={handleSliderMouseEnter}
                   onMouseLeave={handleSliderMouseLeave}
                 >
-                  {/* Visual indicator cuando el mouse está en el slider */}
-                  {isMouseInSlider && (
+                  {/* Visual indicator cuando el mouse está en el slider - Hidden on mobile */}
+                  {isMouseInSlider && !isMobile && (
                     <motion.div
                       className="absolute inset-0 border border-white/10 rounded-3xl pointer-events-none z-10"
                       initial={{ opacity: 0 }}
@@ -654,39 +712,49 @@ export default function Portfolio() {
                     />
                   )}
                   
-                  {/* Navigation Buttons */}
+                  {/* Navigation Buttons - Mobile optimized */}
                   <button
                     onClick={slideLeft}
                     disabled={scrollX === 0}
-                    className={`absolute left-0 top-1/2 -translate-y-1/2 z-20 p-4 rounded-full transition-all duration-300 backdrop-blur-sm ${
+                    className={`absolute ${
+                      isMobile ? 'left-2' : 'left-0'
+                    } top-1/2 -translate-y-1/2 z-20 ${
+                      isMobile ? 'p-2' : 'p-4'
+                    } rounded-full transition-all duration-300 backdrop-blur-sm ${
                       scrollX === 0 
                         ? 'bg-white/5 text-white/30 cursor-not-allowed' 
                         : 'bg-white/10 hover:bg-white/20 text-white'
                     }`}
                   >
-                    <ChevronLeftIcon className="w-6 h-6" />
+                    <ChevronLeftIcon className={`${isMobile ? 'w-4 h-4' : 'w-6 h-6'}`} />
                   </button>
                   
                   <button
                     onClick={slideRight}
                     disabled={scrollX >= maxScroll}
-                    className={`absolute right-0 top-1/2 -translate-y-1/2 z-20 p-4 rounded-full transition-all duration-300 backdrop-blur-sm ${
+                    className={`absolute ${
+                      isMobile ? 'right-2' : 'right-0'
+                    } top-1/2 -translate-y-1/2 z-20 ${
+                      isMobile ? 'p-2' : 'p-4'
+                    } rounded-full transition-all duration-300 backdrop-blur-sm ${
                       scrollX >= maxScroll 
                         ? 'bg-white/5 text-white/30 cursor-not-allowed' 
                         : 'bg-white/10 hover:bg-white/20 text-white'
                     }`}
                   >
-                    <ChevronRightIcon className="w-6 h-6" />
+                    <ChevronRightIcon className={`${isMobile ? 'w-4 h-4' : 'w-6 h-6'}`} />
                   </button>
                   
-                  {/* Scrollable Content */}
-                  <div className="overflow-hidden h-full px-16">
+                  {/* Scrollable Content - Mobile optimized */}
+                  <div className={`overflow-hidden h-full ${
+                    isMobile ? 'px-12' : 'px-16'
+                  }`}>
                     <motion.div
                       ref={sliderRef}
-                      className="flex gap-8 h-full items-center"
+                      className="flex gap-6 md:gap-8 h-full items-center"
                       animate={{ x: -scrollX }}
                       transition={{ type: "spring", damping: 25, stiffness: 200 }}
-                      style={{ paddingRight: '100px' }}
+                      style={{ paddingRight: isMobile ? '50px' : '100px' }}
                     >
                       {projects.map((project, index) => {
                         const IconComponent = project.icon
@@ -694,7 +762,11 @@ export default function Portfolio() {
                         return (
                           <motion.div
                             key={project.id}
-                            className="flex-shrink-0 w-80 h-96 group cursor-pointer"
+                            className={`flex-shrink-0 ${
+                              isMobile 
+                                ? 'w-72 h-80' 
+                                : 'w-80 h-96'
+                            } group cursor-pointer`}
                             initial={{ opacity: 0, y: 50 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ 
@@ -703,16 +775,20 @@ export default function Portfolio() {
                               damping: 20
                             }}
                           >
-                            <div className="w-full h-full rounded-3xl p-6 glass-minimal border border-white/10 relative group-hover:border-white/30 group-hover:bg-white/10 organic-transition">
-                              {/* Sutil glow effect en hover */}
+                            <div className={`w-full h-full rounded-3xl ${
+                              isMobile ? 'p-4' : 'p-6'
+                            } glass-minimal border border-white/10 relative group-hover:border-white/30 group-hover:bg-white/10 organic-transition`}>
+                              {/* Effects */}
                               <div className="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-3xl" />
-                              
-                              {/* Subtle shadow effect */}
                               <div className="absolute inset-0 shadow-2xl opacity-0 group-hover:opacity-20 transition-opacity duration-500 rounded-3xl" />
                               
                               {/* Status Badge */}
-                              <div className="absolute top-4 right-4 z-10">
-                                <span className={`px-3 py-1 rounded-full text-xs font-medium backdrop-blur-sm border transition-all duration-300 ${
+                              <div className={`absolute ${
+                                isMobile ? 'top-3 right-3' : 'top-4 right-4'
+                              } z-10`}>
+                                <span className={`px-2 md:px-3 py-1 rounded-full ${
+                                  isMobile ? 'text-xs' : 'text-xs'
+                                } font-medium backdrop-blur-sm border transition-all duration-300 ${
                                   projectData.status === 'Activo' || projectData.status === 'Active'
                                     ? 'bg-white/10 text-white/90 border-white/20 group-hover:bg-white/20 group-hover:text-white' :
                                   projectData.status === 'Desarrollo' || projectData.status === 'Development'
@@ -726,16 +802,24 @@ export default function Portfolio() {
                               {/* Content */}
                               <div className="relative z-10 h-full flex flex-col">
                                 {/* Header con icono uniforme */}
-                                <div className="text-center mb-4">
-                                  <div className="mb-4 flex justify-center">
-                                    <div className="w-16 h-16 rounded-2xl bg-white/10 flex items-center justify-center group-hover:bg-white/20 group-hover:scale-110 transition-all duration-300">
-                                      <IconComponent className="w-8 h-8 text-white/80 group-hover:text-white transition-colors duration-300" />
+                                <div className={`text-center ${isMobile ? 'mb-3' : 'mb-4'}`}>
+                                  <div className={`${isMobile ? 'mb-3' : 'mb-4'} flex justify-center`}>
+                                    <div className={`${
+                                      isMobile ? 'w-12 h-12' : 'w-16 h-16'
+                                    } rounded-2xl bg-white/10 flex items-center justify-center group-hover:bg-white/20 group-hover:scale-110 transition-all duration-300`}>
+                                      <IconComponent className={`${
+                                        isMobile ? 'w-6 h-6' : 'w-8 h-8'
+                                      } text-white/80 group-hover:text-white transition-colors duration-300`} />
                                     </div>
                                   </div>
-                                  <h3 className="text-xl font-semibold mb-2 group-hover:text-white transition-colors duration-300">
+                                  <h3 className={`${
+                                    isMobile ? 'text-lg' : 'text-xl'
+                                  } font-semibold mb-2 group-hover:text-white transition-colors duration-300`}>
                                     {projectData.title}
                                   </h3>
-                                  <div className="flex items-center justify-center space-x-3 text-sm text-white/60 group-hover:text-white/80 transition-colors duration-300">
+                                  <div className={`flex items-center justify-center space-x-3 ${
+                                    isMobile ? 'text-xs' : 'text-sm'
+                                  } text-white/60 group-hover:text-white/80 transition-colors duration-300`}>
                                     <span>{projectData.category}</span>
                                     <span>•</span>
                                     <span>{project.year}</span>
@@ -743,8 +827,10 @@ export default function Portfolio() {
                                 </div>
                                 
                                 {/* Description */}
-                                <div className="flex-1 mb-4">
-                                  <p className="text-white/70 text-sm leading-relaxed line-clamp-3 group-hover:text-white/90 transition-colors duration-300">
+                                <div className={`flex-1 ${isMobile ? 'mb-3' : 'mb-4'}`}>
+                                  <p className={`text-white/70 ${
+                                    isMobile ? 'text-xs' : 'text-sm'
+                                  } leading-relaxed line-clamp-3 group-hover:text-white/90 transition-colors duration-300`}>
                                     {projectData.description}
                                   </p>
                                 </div>
@@ -755,13 +841,17 @@ export default function Portfolio() {
                                     {project.tech.slice(0, 3).map((tech) => (
                                       <span
                                         key={tech}
-                                        className="px-2 py-1 bg-white/10 rounded-full text-xs text-white/80 group-hover:bg-white/20 group-hover:text-white transition-all duration-300"
+                                        className={`px-2 py-1 bg-white/10 rounded-full ${
+                                          isMobile ? 'text-xs' : 'text-xs'
+                                        } text-white/80 group-hover:bg-white/20 group-hover:text-white transition-all duration-300`}
                                       >
                                         {tech}
                                       </span>
                                     ))}
                                     {project.tech.length > 3 && (
-                                      <span className="px-2 py-1 bg-white/5 rounded-full text-xs text-white/60 group-hover:bg-white/10 group-hover:text-white/80 transition-all duration-300">
+                                      <span className={`px-2 py-1 bg-white/5 rounded-full ${
+                                        isMobile ? 'text-xs' : 'text-xs'
+                                      } text-white/60 group-hover:bg-white/10 group-hover:text-white/80 transition-all duration-300`}>
                                         +{project.tech.length - 3}
                                       </span>
                                     )}
@@ -774,7 +864,9 @@ export default function Portfolio() {
                                         e.stopPropagation()
                                         handleProjectClick(project.demo)
                                       }}
-                                      className="flex items-center space-x-1 px-3 py-2 bg-white/20 hover:bg-white/30 rounded-lg text-xs transition-all duration-300 backdrop-blur-sm"
+                                      className={`flex items-center space-x-1 ${
+                                        isMobile ? 'px-2 py-1' : 'px-3 py-2'
+                                      } bg-white/20 hover:bg-white/30 rounded-lg text-xs transition-all duration-300 backdrop-blur-sm`}
                                     >
                                       <PlayIcon className="w-3 h-3" />
                                       <span>{t.projects.buttons.demo}</span>
@@ -784,7 +876,9 @@ export default function Portfolio() {
                                         e.stopPropagation()
                                         handleProjectClick(project.github)
                                       }}
-                                      className="flex items-center space-x-1 px-3 py-2 bg-white/20 hover:bg-white/30 rounded-lg text-xs transition-all duration-300 backdrop-blur-sm"
+                                      className={`flex items-center space-x-1 ${
+                                        isMobile ? 'px-2 py-1' : 'px-3 py-2'
+                                      } bg-white/20 hover:bg-white/30 rounded-lg text-xs transition-all duration-300 backdrop-blur-sm`}
                                     >
                                       <span>{t.projects.buttons.code}</span>
                                       <ArrowTopRightOnSquareIcon className="w-3 h-3" />
@@ -801,8 +895,12 @@ export default function Portfolio() {
                 </div>
 
                 {/* Progress indicator */}
-                <div className="flex justify-center mt-8 space-x-2">
-                  <div className="h-1 w-32 bg-white/10 rounded-full overflow-hidden">
+                <div className={`flex justify-center ${
+                  isMobile ? 'mt-6' : 'mt-8'
+                } space-x-2`}>
+                  <div className={`h-1 ${
+                    isMobile ? 'w-24' : 'w-32'
+                  } bg-white/10 rounded-full overflow-hidden`}>
                     <motion.div
                       className="h-full bg-white/60 rounded-full"
                       initial={{ width: 0 }}
@@ -816,16 +914,22 @@ export default function Portfolio() {
               </div>
             )}
 
-            {/* Sección Skills */}
+            {/* Sección Skills - Mobile optimized */}
             {currentSection === 'skills' && (
               <div className="animate-slide-up">
-                <div className="mb-16">
-                  <h2 className="text-5xl md:text-6xl font-light mb-6">{t.skills.title}</h2>
+                <div className={isMobile ? 'mb-12' : 'mb-16'}>
+                  <h2 className={`${
+                    isMobile ? 'text-3xl' : 'text-5xl md:text-6xl'
+                  } font-light mb-4 md:mb-6`}>{t.skills.title}</h2>
                   <div className="w-12 h-0.5 bg-white/60 mb-4"></div>
-                  <p className="text-white/60 text-lg">{t.skills.subtitle}</p>
+                  <p className={`text-white/60 ${
+                    isMobile ? 'text-base' : 'text-lg'
+                  }`}>{t.skills.subtitle}</p>
                 </div>
                 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-12 max-w-3xl">
+                <div className={`grid grid-cols-1 ${
+                  isMobile ? 'gap-8 max-w-full' : 'md:grid-cols-2 gap-12 max-w-3xl'
+                }`}>
                   {skills.map((skill, index) => (
                     <div
                       key={skill.name}
@@ -833,8 +937,12 @@ export default function Portfolio() {
                       style={{ animationDelay: `${index * 0.1}s` }}
                     >
                       <div className="flex justify-between items-center">
-                        <span className="text-lg font-medium">{skill.name}</span>
-                        <span className="text-white/60">{skill.level}%</span>
+                        <span className={`${
+                          isMobile ? 'text-base' : 'text-lg'
+                        } font-medium`}>{skill.name}</span>
+                        <span className={`text-white/60 ${
+                          isMobile ? 'text-sm' : ''
+                        }`}>{skill.level}%</span>
                       </div>
                       <div className="h-1 bg-white/10 rounded-full overflow-hidden">
                         <div
@@ -849,9 +957,17 @@ export default function Portfolio() {
                   ))}
                 </div>
                 
-                <div className="mt-16 pt-12 border-t border-white/10">
-                  <h3 className="text-2xl font-light mb-8">{t.skills.additional}</h3>
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+                <div className={`${
+                  isMobile ? 'mt-12 pt-8' : 'mt-16 pt-12'
+                } border-t border-white/10`}>
+                  <h3 className={`${
+                    isMobile ? 'text-xl' : 'text-2xl'
+                  } font-light mb-6 md:mb-8`}>{t.skills.additional}</h3>
+                  <div className={`grid ${
+                    isMobile 
+                      ? 'grid-cols-1 gap-6' 
+                      : 'grid-cols-2 md:grid-cols-4 gap-8'
+                  }`}>
                     {[
                       { category: t.skills.categories.frontend, tools: ['Zustand', 'Next.js', 'Vue.js', 'Tailwind'] },
                       { category: t.skills.categories.backend, tools: ['Node.js', 'Express', 'Java', '.Net'] },
@@ -859,10 +975,14 @@ export default function Portfolio() {
                       { category: t.skills.categories.devops, tools: ['Docker', 'AWS', 'Vercel', 'GitHub Actions'] }
                     ].map((group) => (
                       <div key={group.category} className="space-y-4">
-                        <h4 className="font-medium text-white/90">{group.category}</h4>
+                        <h4 className={`font-medium text-white/90 ${
+                          isMobile ? 'text-base' : ''
+                        }`}>{group.category}</h4>
                         <div className="space-y-2">
                           {group.tools.map((tool) => (
-                            <div key={tool} className="text-sm text-white/60">{tool}</div>
+                            <div key={tool} className={`${
+                              isMobile ? 'text-xs' : 'text-sm'
+                            } text-white/60`}>{tool}</div>
                           ))}
                         </div>
                       </div>
@@ -872,18 +992,26 @@ export default function Portfolio() {
               </div>
             )}
 
-            {/* Sección Contacto */}
+            {/* Sección Contacto - Mobile optimized */}
             {currentSection === 'contact' && (
               <div className="text-center animate-fade-up">
-                <div className="mb-16">
-                  <h2 className="text-5xl md:text-6xl font-light mb-6">{t.contact.title}</h2>
-                  <div className="w-12 h-0.5 bg-white/60 mx-auto mb-8"></div>
-                  <p className="text-xl text-white/80 max-w-2xl mx-auto leading-relaxed">
+                <div className={isMobile ? 'mb-12' : 'mb-16'}>
+                  <h2 className={`${
+                    isMobile ? 'text-3xl' : 'text-5xl md:text-6xl'
+                  } font-light mb-4 md:mb-6`}>{t.contact.title}</h2>
+                  <div className="w-12 h-0.5 bg-white/60 mx-auto mb-6 md:mb-8"></div>
+                  <p className={`${
+                    isMobile ? 'text-base px-4' : 'text-xl'
+                  } text-white/80 max-w-2xl mx-auto leading-relaxed`}>
                     {t.contact.subtitle}
                   </p>
                 </div>
                 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto mb-16">
+                <div className={`grid ${
+                  isMobile 
+                    ? 'grid-cols-1 gap-4 max-w-sm mx-auto mb-12' 
+                    : 'grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto mb-16'
+                }`}>
                   {[
                     { label: 'Email', value: 'johan_harol@outlook.com', action: 'mailto:johan_harol@outlook.com' },
                     { label: 'LinkedIn', value: 'linkedin.com/in/mrjohanf', action: 'https://linkedin.com/in/mrjohanf' },
@@ -892,18 +1020,26 @@ export default function Portfolio() {
                     <button
                       key={contact.label}
                       onClick={() => handleContactClick(contact.action)}
-                      className="block w-full p-8 border border-white/10 rounded-2xl hover:border-white/30 hover-lift organic-transition text-left"
+                      className={`block w-full ${
+                        isMobile ? 'p-4' : 'p-8'
+                      } border border-white/10 rounded-2xl hover:border-white/30 hover-lift organic-transition text-left`}
                       style={{ animationDelay: `${index * 0.1}s` }}
                     >
-                      <div className="text-white/60 text-sm mb-2">{contact.label}</div>
-                      <div className="font-medium">{contact.value}</div>
+                      <div className={`text-white/60 ${
+                        isMobile ? 'text-xs' : 'text-sm'
+                      } mb-2`}>{contact.label}</div>
+                      <div className={`font-medium ${
+                        isMobile ? 'text-sm' : ''
+                      }`}>{contact.value}</div>
                     </button>
                   ))}
                 </div>
                 
                 <button 
                   onClick={handleDownloadCV}
-                  className="bg-white text-black px-8 py-4 rounded-full font-medium hover-lift organic-transition"
+                  className={`bg-white text-black ${
+                    isMobile ? 'px-6 py-3 text-sm' : 'px-8 py-4'
+                  } rounded-full font-medium hover-lift organic-transition`}
                 >
                   {t.contact.downloadCV}
                 </button>
@@ -913,34 +1049,36 @@ export default function Portfolio() {
         </div>
       </main>
 
-      {/* Indicador de sección animado */}
-      <motion.div 
-        className="fixed right-6 top-1/2 -translate-y-1/2 z-50"
-        initial={{ opacity: 0, x: 50 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ delay: 1, duration: 0.8 }}
-      >
-        <div className="space-y-3">
-          {navigation.map((item, index) => (
-            <motion.button
-              key={item.id}
-              onClick={() => handleSectionChange(item.id)}
-              className={`block w-2 h-8 rounded-full organic-transition ${
-                currentSection === item.id ? 'bg-white' : 'bg-white/20 hover:bg-white/40'
-              }`}
-              title={item.label}
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{ delay: 1.2 + index * 0.1, type: "spring", damping: 15 }}
-              whileHover={{ scale: 1.2 }}
-            />
-          ))}
-        </div>
-      </motion.div>
+      {/* Indicador de sección animado - Hidden on mobile for better UX */}
+      {!isMobile && (
+        <motion.div 
+          className="fixed right-6 top-1/2 -translate-y-1/2 z-50"
+          initial={{ opacity: 0, x: 50 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 1, duration: 0.8 }}
+        >
+          <div className="space-y-3">
+            {navigation.map((item, index) => (
+              <motion.button
+                key={item.id}
+                onClick={() => handleSectionChange(item.id)}
+                className={`block w-2 h-8 rounded-full organic-transition ${
+                  currentSection === item.id ? 'bg-white' : 'bg-white/20 hover:bg-white/40'
+                }`}
+                title={item.label}
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ delay: 1.2 + index * 0.1, type: "spring", damping: 15 }}
+                whileHover={{ scale: 1.2 }}
+              />
+            ))}
+          </div>
+        </motion.div>
+      )}
 
-      {/* Indicadores de navegación dinámicos */}
+      {/* Indicadores de navegación dinámicos - Adjusted for mobile */}
       <AnimatePresence>
-        {currentSection !== 'projects' && !isMouseInSlider && (
+        {!isMobile && currentSection !== 'projects' && !isMouseInSlider && (
           <motion.div
             className="fixed bottom-8 left-1/2 -translate-x-1/2 text-white/40 text-sm flex items-center space-x-2"
             initial={{ opacity: 0, y: 20 }}
@@ -959,7 +1097,7 @@ export default function Portfolio() {
           </motion.div>
         )}
 
-        {currentSection === 'projects' && !isMouseInSlider && (
+        {!isMobile && currentSection === 'projects' && !isMouseInSlider && (
           <motion.div
             className="fixed bottom-8 left-1/2 -translate-x-1/2 text-white/40 text-sm flex items-center space-x-2"
             initial={{ opacity: 0, y: 20 }}
@@ -978,7 +1116,7 @@ export default function Portfolio() {
           </motion.div>
         )}
 
-        {isMouseInSlider && (
+        {!isMobile && isMouseInSlider && (
           <motion.div
             className="fixed bottom-8 left-1/2 -translate-x-1/2 text-white/40 text-sm flex items-center space-x-2"
             initial={{ opacity: 0, y: 20 }}
@@ -994,6 +1132,19 @@ export default function Portfolio() {
             >
               ↔️
             </motion.div>
+          </motion.div>
+        )}
+
+        {/* Mobile swipe hint */}
+        {isMobile && (
+          <motion.div
+            className="fixed bottom-4 left-1/2 -translate-x-1/2 text-white/40 text-xs flex items-center space-x-2"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 20 }}
+            transition={{ duration: 0.3 }}
+          >
+            <span>Toca la navegación para cambiar secciones</span>
           </motion.div>
         )}
       </AnimatePresence>
