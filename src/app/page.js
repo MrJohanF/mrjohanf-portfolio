@@ -1,3 +1,4 @@
+/* src/app/page.js */
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
@@ -20,7 +21,13 @@ import {
   ClipboardDocumentListIcon,
   CpuChipIcon as AIIcon,
   LanguageIcon,
+  Bars3Icon,
+  XMarkIcon,
 } from '@heroicons/react/24/outline'
+import Skills from './components/Skills'
+import Contact from './components/Contact'
+import Projects from './components/Projects'
+import About from './components/About'
 
 export default function Portfolio() {
   const [currentSection, setCurrentSection] = useState('home')
@@ -30,13 +37,16 @@ export default function Portfolio() {
   const [isMouseInSlider, setIsMouseInSlider] = useState(false)
   const [isMobile, setIsMobile] = useState(false)
   const [language, setLanguage] = useState('es')
+  const [showMobileMenu, setShowMobileMenu] = useState(false)
   const sliderRef = useRef(null)
   const sliderContainerRef = useRef(null)
 
-  // Check if device is mobile
+  // Check if device is mobile with better detection
   useEffect(() => {
     const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768)
+      const width = window.innerWidth
+      const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0
+      setIsMobile(width < 768 || isTouchDevice)
     }
     
     checkMobile()
@@ -44,7 +54,7 @@ export default function Portfolio() {
     return () => window.removeEventListener('resize', checkMobile)
   }, [])
 
-  // Translations object
+  // Translations object (keeping existing translations)
   const translations = {
     es: {
       nav: {
@@ -145,10 +155,12 @@ export default function Portfolio() {
       navigation: {
         scrollSections: 'Scroll para navegar entre secciones',
         scrollProjects: 'Scroll para cambiar sección • Entra al área para navegar proyectos',
-        scrollHorizontal: 'Scroll horizontal para navegar proyectos'
+        scrollHorizontal: 'Scroll horizontal para navegar proyectos',
+        tapNavigation: 'Toca la navegación para cambiar de sección'
       }
     },
     en: {
+      // ... (keeping existing English translations)
       nav: {
         home: 'Home',
         about: 'About',
@@ -247,7 +259,8 @@ export default function Portfolio() {
       navigation: {
         scrollSections: 'Scroll to navigate between sections',
         scrollProjects: 'Scroll to change section • Enter area to navigate projects',
-        scrollHorizontal: 'Horizontal scroll to navigate projects'
+        scrollHorizontal: 'Horizontal scroll to navigate projects',
+        tapNavigation: 'Tap navigation to change sections'
       }
     }
   }
@@ -337,6 +350,11 @@ export default function Portfolio() {
       setScrollX(0)
       setIsMouseInSlider(false)
     }
+  }, [currentSection])
+
+  // Close mobile menu when section changes
+  useEffect(() => {
+    setShowMobileMenu(false)
   }, [currentSection])
 
   const projects = [
@@ -467,7 +485,7 @@ export default function Portfolio() {
       
       {/* Language Switcher - Mobile optimized */}
       <motion.div 
-        className={`fixed ${isMobile ? 'top-4 right-4' : 'top-8 right-8'} z-50`}
+        className={`fixed ${isMobile ? 'top-4 right-4 z-[60]' : 'top-8 right-8 z-50'}`}
         initial={{ opacity: 0, scale: 0 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ delay: 0.8, type: "spring", damping: 20 }}
@@ -475,20 +493,20 @@ export default function Portfolio() {
         <button
           onClick={toggleLanguage}
           className={`flex items-center space-x-2 bg-white/5 glass-minimal rounded-full ${
-            isMobile ? 'p-2' : 'p-3'
-          } border border-white/10 hover:bg-white/10 hover:border-white/20 organic-transition group`}
+            isMobile ? 'p-3' : 'p-3'
+          } border border-white/10 hover:bg-white/10 hover:border-white/20 organic-transition group min-w-[60px] justify-center`}
           title={`Switch to ${language === 'es' ? 'English' : 'Español'}`}
         >
-          <LanguageIcon className={`${isMobile ? 'w-3 h-3' : 'w-4 h-4'} text-white/70 group-hover:text-white organic-transition`} />
-          <span className={`${isMobile ? 'text-xs' : 'text-sm'} font-medium text-white/70 group-hover:text-white organic-transition min-w-[24px]`}>
+          <LanguageIcon className={`${isMobile ? 'w-4 h-4' : 'w-4 h-4'} text-white/70 group-hover:text-white organic-transition`} />
+          <span className={`${isMobile ? 'text-sm' : 'text-sm'} font-medium text-white/70 group-hover:text-white organic-transition`}>
             {language === 'es' ? 'EN' : 'ES'}
           </span>
         </button>
       </motion.div>
       
-      {/* Partículas flotantes animadas - Reduced on mobile */}
+      {/* Partículas flotantes animadas - Reduced on mobile for performance */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {[...Array(isMobile ? 15 : 25)].map((_, i) => (
+        {[...Array(isMobile ? 8 : 25)].map((_, i) => (
           <motion.div
             key={i}
             className="absolute w-1 h-1 bg-white/20 rounded-full"
@@ -503,7 +521,7 @@ export default function Portfolio() {
               scale: [0, 1, 0]
             }}
             transition={{
-              duration: Math.random() * 6 + 4,
+              duration: Math.random() * 8 + 6,
               repeat: Infinity,
               delay: Math.random() * 3
             }}
@@ -511,545 +529,252 @@ export default function Portfolio() {
         ))}
       </div>
       
-      {/* Navegación minimalista - Mobile optimized */}
-      <motion.nav 
-        className={`fixed ${isMobile ? 'top-4 left-1/2' : 'top-8 left-1/2'} -translate-x-1/2 z-50`}
-        initial={{ opacity: 0, y: -50 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.5, duration: 0.8, type: "spring", damping: 20 }}
-      >
-        <div className={`flex items-center space-x-1 bg-white/5 glass-minimal rounded-full ${
-          isMobile ? 'p-0.5' : 'p-1'
-        } border border-white/10`}>
-          {navigation.map((item, index) => {
-            const Icon = item.icon
-            return (
-              <motion.button
-                key={item.id}
-                onClick={() => handleSectionChange(item.id)}
-                className={`flex items-center space-x-2 ${
-                  isMobile ? 'px-2 py-1.5' : 'px-4 py-2'
-                } rounded-full ${
-                  isMobile ? 'text-xs' : 'text-sm'
-                } font-medium organic-transition ${
-                  currentSection === item.id 
-                    ? 'bg-white text-black' 
-                    : 'text-white/70 hover:text-white hover:bg-white/10'
-                }`}
-                initial={{ opacity: 0, scale: 0 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ 
-                  delay: 0.7 + index * 0.1, 
-                  type: "spring", 
-                  damping: 15,
-                  stiffness: 200 
-                }}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <Icon className={`${isMobile ? 'w-3 h-3' : 'w-4 h-4'}`} />
-                {!isMobile && <span className="hidden sm:block">{item.label}</span>}
-              </motion.button>
-            )
-          })}
-        </div>
-      </motion.nav>
+      {/* Mobile Navigation */}
+      {isMobile ? (
+        <>
+          {/* Mobile Menu Button */}
+          <motion.button
+            className="fixed top-4 left-4 z-[60] bg-white/5 glass-minimal rounded-full p-3 border border-white/10"
+            onClick={() => setShowMobileMenu(!showMobileMenu)}
+            initial={{ opacity: 0, scale: 0 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.5, type: "spring", damping: 20 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            {showMobileMenu ? (
+              <XMarkIcon className="w-5 h-5 text-white" />
+            ) : (
+              <Bars3Icon className="w-5 h-5 text-white" />
+            )}
+          </motion.button>
 
-      {/* Contenido principal - Mobile optimized */}
+          {/* Mobile Menu Overlay */}
+          <AnimatePresence>
+            {showMobileMenu && (
+              <motion.div
+                className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                onClick={() => setShowMobileMenu(false)}
+              >
+                <motion.div
+                  className="flex flex-col items-center justify-center h-full space-y-8"
+                  initial={{ scale: 0.8, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  exit={{ scale: 0.8, opacity: 0 }}
+                  transition={{ type: "spring", damping: 20 }}
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  {navigation.map((item, index) => {
+                    const Icon = item.icon
+                    return (
+                      <motion.button
+                        key={item.id}
+                        onClick={() => handleSectionChange(item.id)}
+                        className={`flex items-center space-x-4 px-8 py-4 rounded-full text-lg font-medium organic-transition ${
+                          currentSection === item.id 
+                            ? 'bg-white text-black' 
+                            : 'text-white/70 hover:text-white hover:bg-white/10'
+                        } min-w-[200px] justify-start`}
+                        initial={{ opacity: 0, x: -50 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: index * 0.1 }}
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                      >
+                        <Icon className="w-6 h-6" />
+                        <span>{item.label}</span>
+                      </motion.button>
+                    )
+                  })}
+                </motion.div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </>
+      ) : (
+        /* Desktop Navigation */
+        <motion.nav 
+          className="fixed top-8 left-1/2 -translate-x-1/2 z-50"
+          initial={{ opacity: 0, y: -50 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5, duration: 0.8, type: "spring", damping: 20 }}
+        >
+          <div className="flex items-center space-x-1 bg-white/5 glass-minimal rounded-full p-1 border border-white/10">
+            {navigation.map((item, index) => {
+              const Icon = item.icon
+              return (
+                <motion.button
+                  key={item.id}
+                  onClick={() => handleSectionChange(item.id)}
+                  className={`flex items-center space-x-2 px-4 py-2 rounded-full text-sm font-medium organic-transition ${
+                    currentSection === item.id 
+                      ? 'bg-white text-black' 
+                      : 'text-white/70 hover:text-white hover:bg-white/10'
+                  }`}
+                  initial={{ opacity: 0, scale: 0 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ 
+                    delay: 0.7 + index * 0.1, 
+                    type: "spring", 
+                    damping: 15,
+                    stiffness: 200 
+                  }}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <Icon className="w-4 h-4" />
+                  <span className="hidden sm:block">{item.label}</span>
+                </motion.button>
+              )
+            })}
+          </div>
+        </motion.nav>
+      )}
+
+      {/* Contenido principal - Better mobile optimization */}
       <main className={`h-full ${
         isMobile 
-          ? 'pt-16 pb-4 px-4' 
-          : 'pt-24 pb-8 pl-6 pr-20'
-      } overflow-hidden`}>
-        <div className="h-full flex items-center justify-center">
+          ? 'pt-20 pb-6 px-4 overflow-y-auto' 
+          : 'pt-24 pb-8 pl-6 pr-20 overflow-hidden'
+      }`}>
+        <div className={`${isMobile ? 'min-h-full' : 'h-full'} flex items-center justify-center`}>
           <div className="w-full max-w-7xl">
             
-            {/* Sección Inicio - Mobile optimized */}
+            {/* Sección Inicio - Better mobile optimization */}
             {currentSection === 'home' && (
-              <div className={`text-center space-y-8 md:space-y-12 organic-transition ${
-                isLoaded ? 'animate-fade-up' : 'opacity-0'
-              }`}>
-                <div className="space-y-4 md:space-y-6">
+              <motion.div 
+                className={`text-center space-y-8 md:space-y-12 organic-transition ${
+                  isLoaded ? 'animate-fade-up' : 'opacity-0'
+                }`}
+                initial={{ opacity: 0, y: 50 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8 }}
+              >
+                <div className={`space-y-6 ${isMobile ? 'px-2' : ''}`}>
                   <div className="inline-block">
-                    <p className={`text-white/60 ${
-                      isMobile ? 'text-base' : 'text-lg'
-                    } font-medium mb-2 md:mb-4 animate-float-subtle`}>
+                    <motion.p 
+                      className={`text-white/60 ${
+                        isMobile ? 'text-lg' : 'text-lg'
+                      } font-medium mb-4 animate-float-subtle`}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ delay: 0.3 }}
+                    >
                       {t.home.greeting}
-                    </p>
-                    <h1 className={`${
-                      isMobile ? 'text-4xl' : 'text-6xl md:text-8xl'
-                    } font-light tracking-tight mb-4 md:mb-6`}>
+                    </motion.p>
+                    <motion.h1 
+                      className={`${
+                        isMobile ? 'text-5xl leading-tight' : 'text-6xl md:text-8xl'
+                      } font-light tracking-tight mb-6`}
+                      initial={{ opacity: 0, y: 30 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.5 }}
+                    >
                       {t.home.name}
-                    </h1>
+                    </motion.h1>
                   </div>
                   
-                  <p className={`${
-                    isMobile ? 'text-lg' : 'text-2xl md:text-3xl'
-                  } text-white/80 font-light leading-relaxed max-w-3xl mx-auto px-4 md:px-0`}>
+                  <motion.p 
+                    className={`${
+                      isMobile ? 'text-xl leading-relaxed px-2' : 'text-2xl md:text-3xl'
+                    } text-white/80 font-light leading-relaxed max-w-4xl mx-auto`}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.7 }}
+                  >
                     {t.home.title}
-                    <span className="text-white"> {t.home.titleHighlight}</span>
-                  </p>
+                    <span className="text-white block mt-2"> {t.home.titleHighlight}</span>
+                  </motion.p>
                   
-                  <p className={`${
-                    isMobile ? 'text-base px-4' : 'text-lg'
-                  } text-white/60 max-w-2xl mx-auto`}>
+                  <motion.p 
+                    className={`${
+                      isMobile ? 'text-base px-4 leading-relaxed' : 'text-lg'
+                    } text-white/60 max-w-2xl mx-auto`}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.9 }}
+                  >
                     {t.home.subtitle}
-                  </p>
+                  </motion.p>
                 </div>
 
-                <div className={`flex flex-col sm:flex-row items-center justify-center gap-4 ${
-                  isMobile ? 'pt-6 px-4' : 'pt-8'
-                }`}>
-                  <button
+                <motion.div 
+                  className={`flex flex-col gap-4 ${
+                    isMobile ? 'pt-8 px-4' : 'sm:flex-row pt-8'
+                  } items-center justify-center`}
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 1.1 }}
+                >
+                  <motion.button
                     onClick={() => handleSectionChange('projects')}
-                    className={`group flex items-center space-x-2 bg-white text-black ${
-                      isMobile ? 'px-6 py-3 text-sm' : 'px-8 py-4'
-                    } rounded-full font-medium hover-lift organic-transition w-full sm:w-auto justify-center`}
+                    className={`group flex items-center justify-center space-x-3 bg-white text-black ${
+                      isMobile ? 'px-8 py-4 text-base w-full max-w-sm' : 'px-8 py-4'
+                    } rounded-full font-medium hover-lift organic-transition shadow-lg`}
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
                   >
                     <span>{t.home.viewWork}</span>
-                    <ArrowRightIcon className="w-4 h-4 group-hover:translate-x-1 organic-transition" />
-                  </button>
+                    <ArrowRightIcon className="w-5 h-5 group-hover:translate-x-1 organic-transition" />
+                  </motion.button>
                   
-                  <button
+                  <motion.button
                     onClick={() => handleSectionChange('contact')}
-                    className={`flex items-center space-x-2 border border-white/20 ${
-                      isMobile ? 'px-6 py-3 text-sm' : 'px-8 py-4'
-                    } rounded-full font-medium hover:border-white/40 organic-transition w-full sm:w-auto justify-center`}
+                    className={`flex items-center justify-center space-x-3 border border-white/20 ${
+                      isMobile ? 'px-8 py-4 text-base w-full max-w-sm' : 'px-8 py-4'
+                    } rounded-full font-medium hover:border-white/40 hover:bg-white/5 organic-transition`}
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
                   >
                     <span>{t.home.contact}</span>
-                  </button>
-                </div>
-              </div>
+                  </motion.button>
+                </motion.div>
+              </motion.div>
             )}
 
             {/* Sección Acerca - Mobile optimized */}
             {currentSection === 'about' && (
-              <div className={`${
-                isMobile 
-                  ? 'space-y-8' 
-                  : 'grid grid-cols-1 lg:grid-cols-2 gap-16 items-center'
-              } animate-slide-up`}>
-                <div className="space-y-6 md:space-y-8">
-                  <div>
-                    <h2 className={`${
-                      isMobile ? 'text-3xl' : 'text-5xl md:text-6xl'
-                    } font-light mb-4 md:mb-6`}>{t.about.title}</h2>
-                    <div className="w-12 h-0.5 bg-white/60 mb-6 md:mb-8"></div>
-                  </div>
-                  
-                  <div className={`space-y-4 md:space-y-6 ${
-                    isMobile ? 'text-base' : 'text-lg'
-                  } text-white/80 leading-relaxed`}>
-                    <p>{t.about.p1}</p>
-                    <p>{t.about.p2}</p>
-                    <p>{t.about.p3}</p>
-                  </div>
-                </div>
-                
-                <div className={isMobile ? 'mt-8' : 'lg:pl-16'}>
-                  <div className="grid grid-cols-2 gap-6 md:gap-8">
-                    {[
-                      { number: '60+', label: t.about.stats.projects },
-                      { number: '5+', label: t.about.stats.years },
-                      { number: '25+', label: t.about.stats.clients },
-                      { number: '100%', label: t.about.stats.dedication }
-                    ].map((stat, index) => (
-                      <div key={stat.label} className="text-center">
-                        <div className={`${
-                          isMobile ? 'text-2xl' : 'text-4xl'
-                        } font-light mb-2`}>{stat.number}</div>
-                        <div className={`text-white/60 ${
-                          isMobile ? 'text-xs' : 'text-sm'
-                        }`}>{stat.label}</div>
-                      </div>
-                    ))}
-                  </div>
-                  
-                  <div className={`${
-                    isMobile ? 'mt-8 pt-6' : 'mt-12 pt-8'
-                  } border-t border-white/10`}>
-                    <h3 className={`${
-                      isMobile ? 'text-lg' : 'text-xl'
-                    } font-medium mb-3 md:mb-4`}>{t.about.currently}</h3>
-                    <div className={`space-y-2 md:space-y-3 text-white/70 ${
-                      isMobile ? 'text-sm' : ''
-                    }`}>
-                      {t.about.activities.map((activity, index) => (
-                        <p key={index}>{activity}</p>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </div>
+              <About t={t} isMobile={isMobile} />
             )}
 
             {/* Sección Proyectos - Mobile optimized */}
             {currentSection === 'projects' && (
-              <div className="animate-fade-up h-full flex flex-col">
-                {/* Header minimalista */}
-                <div className={`text-center ${isMobile ? 'mb-8' : 'mb-12'}`}>
-                  <h2 className={`${
-                    isMobile ? 'text-3xl' : 'text-4xl md:text-5xl'
-                  } font-light mb-4 md:mb-6`}>{t.projects.title}</h2>
-                  <div className="w-12 h-0.5 bg-white/60 mx-auto"></div>
-                </div>
-                
-                {/* Slider Container - Mobile optimized */}
-                <div 
-                  className="flex-1 relative"
-                  ref={sliderContainerRef}
-                  onMouseEnter={handleSliderMouseEnter}
-                  onMouseLeave={handleSliderMouseLeave}
-                >
-                  {/* Visual indicator cuando el mouse está en el slider - Hidden on mobile */}
-                  {isMouseInSlider && !isMobile && (
-                    <motion.div
-                      className="absolute inset-0 border border-white/10 rounded-3xl pointer-events-none z-10"
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      transition={{ duration: 0.3 }}
-                    />
-                  )}
-                  
-                  {/* Navigation Buttons - Mobile optimized */}
-                  <button
-                    onClick={slideLeft}
-                    disabled={scrollX === 0}
-                    className={`absolute ${
-                      isMobile ? 'left-2' : 'left-0'
-                    } top-1/2 -translate-y-1/2 z-20 ${
-                      isMobile ? 'p-2' : 'p-4'
-                    } rounded-full transition-all duration-300 backdrop-blur-sm ${
-                      scrollX === 0 
-                        ? 'bg-white/5 text-white/30 cursor-not-allowed' 
-                        : 'bg-white/10 hover:bg-white/20 text-white'
-                    }`}
-                  >
-                    <ChevronLeftIcon className={`${isMobile ? 'w-4 h-4' : 'w-6 h-6'}`} />
-                  </button>
-                  
-                  <button
-                    onClick={slideRight}
-                    disabled={scrollX >= maxScroll}
-                    className={`absolute ${
-                      isMobile ? 'right-2' : 'right-0'
-                    } top-1/2 -translate-y-1/2 z-20 ${
-                      isMobile ? 'p-2' : 'p-4'
-                    } rounded-full transition-all duration-300 backdrop-blur-sm ${
-                      scrollX >= maxScroll 
-                        ? 'bg-white/5 text-white/30 cursor-not-allowed' 
-                        : 'bg-white/10 hover:bg-white/20 text-white'
-                    }`}
-                  >
-                    <ChevronRightIcon className={`${isMobile ? 'w-4 h-4' : 'w-6 h-6'}`} />
-                  </button>
-                  
-                  {/* Scrollable Content - Mobile optimized */}
-                  <div className={`overflow-hidden h-full ${
-                    isMobile ? 'px-12' : 'px-16'
-                  }`}>
-                    <motion.div
-                      ref={sliderRef}
-                      className="flex gap-6 md:gap-8 h-full items-center"
-                      animate={{ x: -scrollX }}
-                      transition={{ type: "spring", damping: 25, stiffness: 200 }}
-                      style={{ paddingRight: isMobile ? '50px' : '100px' }}
-                    >
-                      {projects.map((project, index) => {
-                        const IconComponent = project.icon
-                        const projectData = t.projects.items[index]
-                        return (
-                          <motion.div
-                            key={project.id}
-                            className={`flex-shrink-0 ${
-                              isMobile 
-                                ? 'w-72 h-80' 
-                                : 'w-80 h-96'
-                            } group cursor-pointer`}
-                            initial={{ opacity: 0, y: 50 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ 
-                              delay: index * 0.1,
-                              type: "spring",
-                              damping: 20
-                            }}
-                          >
-                            <div className={`w-full h-full rounded-3xl ${
-                              isMobile ? 'p-4' : 'p-6'
-                            } glass-minimal border border-white/10 relative group-hover:border-white/30 group-hover:bg-white/10 organic-transition`}>
-                              {/* Effects */}
-                              <div className="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-3xl" />
-                              <div className="absolute inset-0 shadow-2xl opacity-0 group-hover:opacity-20 transition-opacity duration-500 rounded-3xl" />
-                              
-                              {/* Status Badge */}
-                              <div className={`absolute ${
-                                isMobile ? 'top-3 right-3' : 'top-4 right-4'
-                              } z-10`}>
-                                <span className={`px-2 md:px-3 py-1 rounded-full ${
-                                  isMobile ? 'text-xs' : 'text-xs'
-                                } font-medium backdrop-blur-sm border transition-all duration-300 ${
-                                  projectData.status === 'Activo' || projectData.status === 'Active'
-                                    ? 'bg-white/10 text-white/90 border-white/20 group-hover:bg-white/20 group-hover:text-white' :
-                                  projectData.status === 'Desarrollo' || projectData.status === 'Development'
-                                    ? 'bg-white/10 text-white/70 border-white/15 group-hover:bg-white/20 group-hover:text-white/90' :
-                                    'bg-white/10 text-white/60 border-white/10 group-hover:bg-white/20 group-hover:text-white/80'
-                                }`}>
-                                  {projectData.status}
-                                </span>
-                              </div>
-                              
-                              {/* Content */}
-                              <div className="relative z-10 h-full flex flex-col">
-                                {/* Header con icono uniforme */}
-                                <div className={`text-center ${isMobile ? 'mb-3' : 'mb-4'}`}>
-                                  <div className={`${isMobile ? 'mb-3' : 'mb-4'} flex justify-center`}>
-                                    <div className={`${
-                                      isMobile ? 'w-12 h-12' : 'w-16 h-16'
-                                    } rounded-2xl bg-white/10 flex items-center justify-center group-hover:bg-white/20 group-hover:scale-110 transition-all duration-300`}>
-                                      <IconComponent className={`${
-                                        isMobile ? 'w-6 h-6' : 'w-8 h-8'
-                                      } text-white/80 group-hover:text-white transition-colors duration-300`} />
-                                    </div>
-                                  </div>
-                                  <h3 className={`${
-                                    isMobile ? 'text-lg' : 'text-xl'
-                                  } font-semibold mb-2 group-hover:text-white transition-colors duration-300`}>
-                                    {projectData.title}
-                                  </h3>
-                                  <div className={`flex items-center justify-center space-x-3 ${
-                                    isMobile ? 'text-xs' : 'text-sm'
-                                  } text-white/60 group-hover:text-white/80 transition-colors duration-300`}>
-                                    <span>{projectData.category}</span>
-                                    <span>•</span>
-                                    <span>{project.year}</span>
-                                  </div>
-                                </div>
-                                
-                                {/* Description */}
-                                <div className={`flex-1 ${isMobile ? 'mb-3' : 'mb-4'}`}>
-                                  <p className={`text-white/70 ${
-                                    isMobile ? 'text-xs' : 'text-sm'
-                                  } leading-relaxed line-clamp-3 group-hover:text-white/90 transition-colors duration-300`}>
-                                    {projectData.description}
-                                  </p>
-                                </div>
-                                
-                                {/* Tech Stack */}
-                                <div className="space-y-3">
-                                  <div className="flex flex-wrap gap-2 justify-center">
-                                    {project.tech.slice(0, 3).map((tech) => (
-                                      <span
-                                        key={tech}
-                                        className={`px-2 py-1 bg-white/10 rounded-full ${
-                                          isMobile ? 'text-xs' : 'text-xs'
-                                        } text-white/80 group-hover:bg-white/20 group-hover:text-white transition-all duration-300`}
-                                      >
-                                        {tech}
-                                      </span>
-                                    ))}
-                                    {project.tech.length > 3 && (
-                                      <span className={`px-2 py-1 bg-white/5 rounded-full ${
-                                        isMobile ? 'text-xs' : 'text-xs'
-                                      } text-white/60 group-hover:bg-white/10 group-hover:text-white/80 transition-all duration-300`}>
-                                        +{project.tech.length - 3}
-                                      </span>
-                                    )}
-                                  </div>
-                                  
-                                  {/* Action buttons */}
-                                  <div className="flex space-x-2 justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                                    <button 
-                                      onClick={(e) => {
-                                        e.stopPropagation()
-                                        handleProjectClick(project.demo)
-                                      }}
-                                      className={`flex items-center space-x-1 ${
-                                        isMobile ? 'px-2 py-1' : 'px-3 py-2'
-                                      } bg-white/20 hover:bg-white/30 rounded-lg text-xs transition-all duration-300 backdrop-blur-sm`}
-                                    >
-                                      <PlayIcon className="w-3 h-3" />
-                                      <span>{t.projects.buttons.demo}</span>
-                                    </button>
-                                    <button 
-                                      onClick={(e) => {
-                                        e.stopPropagation()
-                                        handleProjectClick(project.github)
-                                      }}
-                                      className={`flex items-center space-x-1 ${
-                                        isMobile ? 'px-2 py-1' : 'px-3 py-2'
-                                      } bg-white/20 hover:bg-white/30 rounded-lg text-xs transition-all duration-300 backdrop-blur-sm`}
-                                    >
-                                      <span>{t.projects.buttons.code}</span>
-                                      <ArrowTopRightOnSquareIcon className="w-3 h-3" />
-                                    </button>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          </motion.div>
-                        )
-                      })}
-                    </motion.div>
-                  </div>
-                </div>
-
-                {/* Progress indicator */}
-                <div className={`flex justify-center ${
-                  isMobile ? 'mt-6' : 'mt-8'
-                } space-x-2`}>
-                  <div className={`h-1 ${
-                    isMobile ? 'w-24' : 'w-32'
-                  } bg-white/10 rounded-full overflow-hidden`}>
-                    <motion.div
-                      className="h-full bg-white/60 rounded-full"
-                      initial={{ width: 0 }}
-                      animate={{ 
-                        width: `${maxScroll > 0 ? ((scrollX / maxScroll) * 100) : 0}%` 
-                      }}
-                      transition={{ type: "spring", damping: 20 }}
-                    />
-                  </div>
-                </div>
-              </div>
+              <Projects 
+                t={t}
+                isMobile={isMobile}
+                scrollX={scrollX}
+                maxScroll={maxScroll}
+                isMouseInSlider={isMouseInSlider}
+                handleSliderMouseEnter={handleSliderMouseEnter}
+                handleSliderMouseLeave={handleSliderMouseLeave}
+                slideLeft={slideLeft}
+                slideRight={slideRight}
+                handleProjectClick={handleProjectClick}
+                sliderRef={sliderRef}
+              />
             )}
 
             {/* Sección Skills - Mobile optimized */}
             {currentSection === 'skills' && (
-              <div className="animate-slide-up">
-                <div className={isMobile ? 'mb-12' : 'mb-16'}>
-                  <h2 className={`${
-                    isMobile ? 'text-3xl' : 'text-5xl md:text-6xl'
-                  } font-light mb-4 md:mb-6`}>{t.skills.title}</h2>
-                  <div className="w-12 h-0.5 bg-white/60 mb-4"></div>
-                  <p className={`text-white/60 ${
-                    isMobile ? 'text-base' : 'text-lg'
-                  }`}>{t.skills.subtitle}</p>
-                </div>
-                
-                <div className={`grid grid-cols-1 ${
-                  isMobile ? 'gap-8 max-w-full' : 'md:grid-cols-2 gap-12 max-w-3xl'
-                }`}>
-                  {skills.map((skill, index) => (
-                    <div
-                      key={skill.name}
-                      className="space-y-4"
-                      style={{ animationDelay: `${index * 0.1}s` }}
-                    >
-                      <div className="flex justify-between items-center">
-                        <span className={`${
-                          isMobile ? 'text-base' : 'text-lg'
-                        } font-medium`}>{skill.name}</span>
-                        <span className={`text-white/60 ${
-                          isMobile ? 'text-sm' : ''
-                        }`}>{skill.level}%</span>
-                      </div>
-                      <div className="h-1 bg-white/10 rounded-full overflow-hidden">
-                        <div
-                          className="h-full bg-white rounded-full organic-transition"
-                          style={{ 
-                            width: `${skill.level}%`,
-                            transitionDelay: `${index * 0.1}s`
-                          }}
-                        />
-                      </div>
-                    </div>
-                  ))}
-                </div>
-                
-                <div className={`${
-                  isMobile ? 'mt-12 pt-8' : 'mt-16 pt-12'
-                } border-t border-white/10`}>
-                  <h3 className={`${
-                    isMobile ? 'text-xl' : 'text-2xl'
-                  } font-light mb-6 md:mb-8`}>{t.skills.additional}</h3>
-                  <div className={`grid ${
-                    isMobile 
-                      ? 'grid-cols-1 gap-6' 
-                      : 'grid-cols-2 md:grid-cols-4 gap-8'
-                  }`}>
-                    {[
-                      { category: t.skills.categories.frontend, tools: ['Zustand', 'Next.js', 'Vue.js', 'Tailwind'] },
-                      { category: t.skills.categories.backend, tools: ['Node.js', 'Express', 'Java', '.Net'] },
-                      { category: t.skills.categories.database, tools: ['PostgreSQL', 'MongoDB', 'Redis', 'Mysql'] },
-                      { category: t.skills.categories.devops, tools: ['Docker', 'AWS', 'Vercel', 'GitHub Actions'] }
-                    ].map((group) => (
-                      <div key={group.category} className="space-y-4">
-                        <h4 className={`font-medium text-white/90 ${
-                          isMobile ? 'text-base' : ''
-                        }`}>{group.category}</h4>
-                        <div className="space-y-2">
-                          {group.tools.map((tool) => (
-                            <div key={tool} className={`${
-                              isMobile ? 'text-xs' : 'text-sm'
-                            } text-white/60`}>{tool}</div>
-                          ))}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
+              <Skills t={t} isMobile={isMobile} />
             )}
 
             {/* Sección Contacto - Mobile optimized */}
             {currentSection === 'contact' && (
-              <div className="text-center animate-fade-up">
-                <div className={isMobile ? 'mb-12' : 'mb-16'}>
-                  <h2 className={`${
-                    isMobile ? 'text-3xl' : 'text-5xl md:text-6xl'
-                  } font-light mb-4 md:mb-6`}>{t.contact.title}</h2>
-                  <div className="w-12 h-0.5 bg-white/60 mx-auto mb-6 md:mb-8"></div>
-                  <p className={`${
-                    isMobile ? 'text-base px-4' : 'text-xl'
-                  } text-white/80 max-w-2xl mx-auto leading-relaxed`}>
-                    {t.contact.subtitle}
-                  </p>
-                </div>
-                
-                <div className={`grid ${
-                  isMobile 
-                    ? 'grid-cols-1 gap-4 max-w-sm mx-auto mb-12' 
-                    : 'grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto mb-16'
-                }`}>
-                  {[
-                    { label: 'Email', value: 'johan_harol@outlook.com', action: 'mailto:johan_harol@outlook.com' },
-                    { label: 'LinkedIn', value: 'linkedin.com/in/mrjohanf', action: 'https://linkedin.com/in/mrjohanf' },
-                    { label: 'GitHub', value: 'github.com/mrjohanf', action: 'https://github.com/mrjohanf' }
-                  ].map((contact, index) => (
-                    <button
-                      key={contact.label}
-                      onClick={() => handleContactClick(contact.action)}
-                      className={`block w-full ${
-                        isMobile ? 'p-4' : 'p-8'
-                      } border border-white/10 rounded-2xl hover:border-white/30 hover-lift organic-transition text-left`}
-                      style={{ animationDelay: `${index * 0.1}s` }}
-                    >
-                      <div className={`text-white/60 ${
-                        isMobile ? 'text-xs' : 'text-sm'
-                      } mb-2`}>{contact.label}</div>
-                      <div className={`font-medium ${
-                        isMobile ? 'text-sm' : ''
-                      }`}>{contact.value}</div>
-                    </button>
-                  ))}
-                </div>
-                
-                <button 
-                  onClick={handleDownloadCV}
-                  className={`bg-white text-black ${
-                    isMobile ? 'px-6 py-3 text-sm' : 'px-8 py-4'
-                  } rounded-full font-medium hover-lift organic-transition`}
-                >
-                  {t.contact.downloadCV}
-                </button>
-              </div>
+              <Contact 
+                t={t} 
+                isMobile={isMobile} 
+                handleContactClick={handleContactClick}
+                handleDownloadCV={handleDownloadCV}
+              />
             )}
           </div>
         </div>
       </main>
 
-      {/* Indicador de sección animado - Hidden on mobile for better UX */}
+      {/* Indicador de sección animado - Desktop only */}
       {!isMobile && (
         <motion.div 
           className="fixed right-6 top-1/2 -translate-y-1/2 z-50"
@@ -1076,7 +801,7 @@ export default function Portfolio() {
         </motion.div>
       )}
 
-      {/* Indicadores de navegación dinámicos - Adjusted for mobile */}
+      {/* Indicadores de navegación dinámicos - Desktop only */}
       <AnimatePresence>
         {!isMobile && currentSection !== 'projects' && !isMouseInSlider && (
           <motion.div
@@ -1135,16 +860,16 @@ export default function Portfolio() {
           </motion.div>
         )}
 
-        {/* Mobile swipe hint */}
+        {/* Mobile navigation hint */}
         {isMobile && (
           <motion.div
-            className="fixed bottom-4 left-1/2 -translate-x-1/2 text-white/40 text-xs flex items-center space-x-2"
+            className="fixed bottom-4 left-1/2 -translate-x-1/2 text-white/40 text-xs text-center px-4"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 20 }}
             transition={{ duration: 0.3 }}
           >
-            <span>Toca la navegación para cambiar secciones</span>
+            <span>{t.navigation.tapNavigation}</span>
           </motion.div>
         )}
       </AnimatePresence>
