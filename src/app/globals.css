@@ -125,3 +125,17 @@ html, body, #__next, [data-nextjs-scroll-focus-boundary] {
   background-size: 400% 400%;
   animation: gradientMove 20s ease infinite;
 }
+
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
