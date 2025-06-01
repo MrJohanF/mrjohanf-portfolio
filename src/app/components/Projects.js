@@ -81,15 +81,15 @@ export default function Projects({
       {/* Header minimalista */}
       <div className={`text-center ${isMobile ? 'mb-6' : 'mb-12'}`}>
         <h2 className={`${
-          isMobile ? 'text-3xl' : 'text-4xl md:text-5xl'
-        } font-light mb-4 md:mb-6`}>{t.projects.title}</h2>
+         isMobile ? 'text-4xl mb-4' : 'text-5xl md:text-6xl mb-6'
+        } font-light`}>{t.projects.title}</h2>
         <div className="w-12 h-0.5 bg-white/60 mx-auto"></div>
       </div>
       
       {/* Conditional View: Mobile List vs Desktop Slider */}
       {isMobile ? (
         // Mobile List View
-        <div className="flex-1 space-y-4 max-h-[70vh] overflow-y-auto pr-2">
+        <div className="flex-1 space-y-4 max-h-[70vh] overflow-y-auto pr-2 pb-16">
           {projects.map((project, index) => {
             const IconComponent = project.icon
             const projectData = t.projects.items[index]
@@ -105,12 +105,25 @@ export default function Projects({
                   damping: 20
                 }}
               >
-                <div className="p-4 rounded-2xl glass-minimal border border-white/10 relative group-hover:border-white/30 group-hover:bg-white/10 organic-transition">
+                <div className="p-4 rounded-2xl glass-minimal border border-white/10 relative group-hover:border-white/30 group-hover:bg-white/10 organic-transition overflow-hidden">
                   {/* Effects */}
                   <div className="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-2xl" />
                   <div className="absolute inset-0 shadow-2xl opacity-0 group-hover:opacity-20 transition-opacity duration-500 rounded-2xl" />
                   
-                  <div className="flex items-start space-x-4">
+                  {/* Status Badge - Fixed positioning */}
+                  <div className="absolute top-3 right-3 z-10">
+                    <span className={`px-2 py-1 rounded-full text-xs font-medium backdrop-blur-sm border transition-all duration-300 whitespace-nowrap ${
+                      projectData.status === 'Activo' || projectData.status === 'Active'
+                        ? 'bg-white/10 text-white/90 border-white/20 group-hover:bg-white/20 group-hover:text-white' :
+                      projectData.status === 'Desarrollo' || projectData.status === 'Development'
+                        ? 'bg-white/10 text-white/70 border-white/15 group-hover:bg-white/20 group-hover:text-white/90' :
+                        'bg-white/10 text-white/60 border-white/10 group-hover:bg-white/20 group-hover:text-white/80'
+                    }`}>
+                      {projectData.status}
+                    </span>
+                  </div>
+                  
+                  <div className="flex items-start space-x-4 pr-20"> {/* Added pr-20 for badge space */}
                     {/* Icon */}
                     <div className="flex-shrink-0">
                       <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center group-hover:bg-white/20 group-hover:scale-110 transition-all duration-300">
@@ -121,27 +134,15 @@ export default function Projects({
                     {/* Content */}
                     <div className="flex-1 min-w-0">
                       {/* Header */}
-                      <div className="flex items-start justify-between mb-2">
-                        <div className="flex-1">
-                          <h3 className="text-lg font-semibold group-hover:text-white transition-colors duration-300 truncate">
-                            {projectData.title}
-                          </h3>
-                          <div className="flex items-center space-x-2 text-xs text-white/60 group-hover:text-white/80 transition-colors duration-300">
-                            <span>{projectData.category}</span>
-                            <span>•</span>
-                            <span>{project.year}</span>
-                          </div>
+                      <div className="mb-2">
+                        <h3 className="text-lg font-semibold group-hover:text-white transition-colors duration-300 truncate pr-2">
+                          {projectData.title}
+                        </h3>
+                        <div className="flex items-center space-x-2 text-xs text-white/60 group-hover:text-white/80 transition-colors duration-300">
+                          <span>{projectData.category}</span>
+                          <span>•</span>
+                          <span>{project.year}</span>
                         </div>
-                        {/* Status Badge */}
-                        <span className={`ml-2 px-2 py-1 rounded-full text-xs font-medium backdrop-blur-sm border transition-all duration-300 flex-shrink-0 ${
-                          projectData.status === 'Activo' || projectData.status === 'Active'
-                            ? 'bg-white/10 text-white/90 border-white/20 group-hover:bg-white/20 group-hover:text-white' :
-                          projectData.status === 'Desarrollo' || projectData.status === 'Development'
-                            ? 'bg-white/10 text-white/70 border-white/15 group-hover:bg-white/20 group-hover:text-white/90' :
-                            'bg-white/10 text-white/60 border-white/10 group-hover:bg-white/20 group-hover:text-white/80'
-                        }`}>
-                          {projectData.status}
-                        </span>
                       </div>
                       
                       {/* Description */}
@@ -151,7 +152,7 @@ export default function Projects({
                       
                       {/* Tech Stack */}
                       <div className="flex flex-wrap gap-1.5 mb-3">
-                        {project.tech.slice(0, 4).map((tech) => (
+                        {project.tech.slice(0, 3).map((tech) => (
                           <span
                             key={tech}
                             className="px-2 py-1 bg-white/10 rounded-md text-xs text-white/80 group-hover:bg-white/20 group-hover:text-white transition-all duration-300"
@@ -159,21 +160,21 @@ export default function Projects({
                             {tech}
                           </span>
                         ))}
-                        {project.tech.length > 4 && (
+                        {project.tech.length > 3 && (
                           <span className="px-2 py-1 bg-white/5 rounded-md text-xs text-white/60 group-hover:bg-white/10 group-hover:text-white/80 transition-all duration-300">
-                            +{project.tech.length - 4}
+                            +{project.tech.length - 3}
                           </span>
                         )}
                       </div>
                       
-                      {/* Action buttons */}
-                      <div className="flex space-x-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                      {/* Action buttons - Always visible on mobile */}
+                      <div className="flex space-x-2 mt-3">
                         <button 
                           onClick={(e) => {
                             e.stopPropagation()
                             handleProjectClick(project.demo)
                           }}
-                          className="flex items-center space-x-1 px-3 py-1.5 bg-white/20 hover:bg-white/30 rounded-lg text-xs transition-all duration-300 backdrop-blur-sm"
+                          className="flex items-center space-x-1 px-3 py-1.5 bg-white/15 hover:bg-white/25 active:bg-white/30 rounded-lg text-xs transition-all duration-300 backdrop-blur-sm"
                         >
                           <PlayIcon className="w-3 h-3" />
                           <span>{t.projects.buttons.demo}</span>
@@ -183,7 +184,7 @@ export default function Projects({
                             e.stopPropagation()
                             handleProjectClick(project.github)
                           }}
-                          className="flex items-center space-x-1 px-3 py-1.5 bg-white/20 hover:bg-white/30 rounded-lg text-xs transition-all duration-300 backdrop-blur-sm"
+                          className="flex items-center space-x-1 px-3 py-1.5 bg-white/15 hover:bg-white/25 active:bg-white/30 rounded-lg text-xs transition-all duration-300 backdrop-blur-sm"
                         >
                           <span>{t.projects.buttons.code}</span>
                           <ArrowTopRightOnSquareIcon className="w-3 h-3" />
@@ -263,14 +264,14 @@ export default function Projects({
                       damping: 20
                     }}
                   >
-                    <div className="w-full h-full rounded-3xl p-6 glass-minimal border border-white/10 relative group-hover:border-white/30 group-hover:bg-white/10 organic-transition">
+                    <div className="w-full h-full rounded-3xl p-6 glass-minimal border border-white/10 relative group-hover:border-white/30 group-hover:bg-white/10 organic-transition overflow-hidden">
                       {/* Effects */}
                       <div className="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-3xl" />
                       <div className="absolute inset-0 shadow-2xl opacity-0 group-hover:opacity-20 transition-opacity duration-500 rounded-3xl" />
                       
                       {/* Status Badge */}
                       <div className="absolute top-4 right-4 z-10">
-                        <span className={`px-3 py-1 rounded-full text-xs font-medium backdrop-blur-sm border transition-all duration-300 ${
+                        <span className={`px-3 py-1 rounded-full text-xs font-medium backdrop-blur-sm border transition-all duration-300 whitespace-nowrap ${
                           projectData.status === 'Activo' || projectData.status === 'Active'
                             ? 'bg-white/10 text-white/90 border-white/20 group-hover:bg-white/20 group-hover:text-white' :
                           projectData.status === 'Desarrollo' || projectData.status === 'Development'
@@ -290,7 +291,7 @@ export default function Projects({
                               <IconComponent className="w-8 h-8 text-white/80 group-hover:text-white transition-colors duration-300" />
                             </div>
                           </div>
-                          <h3 className="text-xl font-semibold mb-2 group-hover:text-white transition-colors duration-300">
+                          <h3 className="text-xl font-semibold mb-2 group-hover:text-white transition-colors duration-300 px-8">
                             {projectData.title}
                           </h3>
                           <div className="flex items-center justify-center space-x-3 text-sm text-white/60 group-hover:text-white/80 transition-colors duration-300">
