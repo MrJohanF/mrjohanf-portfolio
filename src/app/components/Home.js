@@ -123,7 +123,7 @@ export default function Home({ t, isMobile, isLoaded, handleSectionChange }) {
 
       <motion.div 
         className={`flex flex-col gap-4 ${
-          isMobile ? 'pt-8 px-4' : 'sm:flex-row pt-8'
+          isMobile ? 'pt-8 px-4 pb-16' : 'sm:flex-row pt-8'
         } items-center justify-center`}
         variants={{
           hidden: { opacity: 0 },
