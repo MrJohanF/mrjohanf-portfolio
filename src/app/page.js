@@ -115,9 +115,18 @@ export default function Portfolio() {
       if (currentSection === 'projects' && isMouseInSlider) {
         e.preventDefault()
         
-        // Ajustar sensibilidad según el dispositivo
-        let scrollMultiplier = isTrackpad ? 0.3 : 1
-        let scrollAmount = e.deltaY * scrollMultiplier
+        // CORREGIDO: Usar deltaX para scroll horizontal y deltaY como fallback
+        let scrollAmount = 0
+        
+        // Priorizar deltaX para gestos horizontales en trackpads
+        if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) {
+          // Gesto horizontal detectado
+          scrollAmount = e.deltaX * (isTrackpad ? 0.8 : 1)
+        } else {
+          // Gesto vertical (scroll wheel o gesto vertical en trackpad)
+          // Para mouse wheel tradicional, convertir vertical a horizontal
+          scrollAmount = e.deltaY * (isTrackpad ? 0.3 : 1)
+        }
         
         const newScrollX = scrollX + scrollAmount
         const clampedScrollX = Math.max(0, Math.min(newScrollX, maxScroll))
@@ -125,10 +134,13 @@ export default function Portfolio() {
         return
       }
       
-      // Para navegación vertical entre secciones
+      // Para navegación vertical entre secciones - solo usar deltaY
       e.preventDefault()
       
       if (isScrolling) return
+      
+      // Ignorar si hay más movimiento horizontal que vertical
+      if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) return
       
       // Configuración diferente para trackpad vs mouse wheel
       const threshold = isTrackpad ? 30 : 15 // Threshold mínimo para activar navegación
