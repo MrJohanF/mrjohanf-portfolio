@@ -59,39 +59,43 @@ export default function Home({ t, isMobile, isLoaded, handleSectionChange }) {
       className={`text-center organic-transition ${
         isLoaded ? 'animate-fade-up' : 'opacity-0'
       } ${
-        // Espaciado general mejorado
+        // Espaciado específico para cada breakpoint
         isMobile 
           ? 'px-4 py-8' 
-          : 'px-6 py-12'
+          : 'px-6 py-8 md:py-10 lg:py-14 xl:py-16'
       }`}
       variants={containerVariants}
       initial="hidden"
       animate="visible"
     >
-      {/* Contenedor principal con mejor control de espacios */}
+      {/* Contenedor principal */}
       <div className="max-w-5xl mx-auto">
         
         {/* Sección de saludo y nombre */}
-        <div className={`${isMobile ? 'space-y-6' : 'space-y-8 lg:space-y-10'}`}>
+        <div className={`${
+          isMobile 
+            ? 'space-y-5' 
+            : 'space-y-6 md:space-y-8 lg:space-y-12 xl:space-y-14'
+        }`}>
           
-          {/* Saludo - Tamaño aumentado */}
+          {/* Saludo - Tamaños específicos para portátil */}
           <motion.p 
             className={`text-white/70 font-medium animate-float-subtle ${
               isMobile 
                 ? 'text-lg' 
-                : 'text-lg md:text-xl lg:text-2xl'
+                : 'text-base md:text-lg lg:text-xl xl:text-2xl'
             }`}
             variants={itemVariants}
           >
             {t.home.greeting}
           </motion.p>
           
-          {/* Nombre - Con mejor espaciado inferior */}
+          {/* Nombre - Escalado específico para portátil */}
           <motion.h1 
-            className={`font-light tracking-tight text-white ${
+            className={`font-light tracking-tight text-white leading-tight ${
               isMobile 
-                ? 'text-4xl leading-tight' 
-                : 'text-4xl md:text-5xl lg:text-6xl xl:text-7xl leading-tight'
+                ? 'text-4xl' 
+                : 'text-3xl md:text-4xl lg:text-5xl xl:text-6xl 2xl:text-7xl'
             }`}
             variants={{
               hidden: { 
@@ -116,13 +120,17 @@ export default function Home({ t, isMobile, isLoaded, handleSectionChange }) {
           </motion.h1>
         </div>
         
-        {/* Sección de título principal - Espaciado mejorado */}
-        <div className={`${isMobile ? 'mt-8 mb-6' : 'mt-12 lg:mt-16 mb-8 lg:mb-10'}`}>
+        {/* Sección de título principal - Espaciado específico para portátil */}
+        <div className={`${
+          isMobile 
+            ? 'mt-8 mb-6' 
+            : 'mt-8 mb-6 md:mt-10 md:mb-8 lg:mt-16 lg:mb-12 xl:mt-20 xl:mb-14'
+        }`}>
           <motion.div 
             className={`text-white/90 font-light mx-auto ${
               isMobile 
                 ? 'text-lg px-2 max-w-sm' 
-                : 'text-lg md:text-xl lg:text-2xl xl:text-3xl max-w-4xl'
+                : 'text-base md:text-lg lg:text-xl xl:text-2xl 2xl:text-3xl max-w-4xl'
             }`}
             variants={itemVariants}
           >
@@ -130,23 +138,27 @@ export default function Home({ t, isMobile, isLoaded, handleSectionChange }) {
             <div className="leading-relaxed">
               {t.home.title}
             </div>
-            {/* Segunda línea con espaciado reducido */}
-            <div className={`text-white leading-relaxed ${isMobile ? 'mt-1' : 'mt-2'}`}>
+            {/* Segunda línea con espaciado mínimo */}
+            <div className="text-white leading-relaxed mt-1">
               {t.home.titleHighlight}
             </div>
           </motion.div>
         </div>
         
-        {/* Subtítulo - Tamaño y contraste mejorados */}
+        {/* Subtítulo - Mejor contraste y tamaño para portátil */}
         <motion.div 
-          className={`${isMobile ? 'mb-10' : 'mb-12 lg:mb-16'}`}
+          className={`${
+            isMobile 
+              ? 'mb-10' 
+              : 'mb-8 md:mb-10 lg:mb-14 xl:mb-16'
+          }`}
           variants={itemVariants}
         >
           <p 
-            className={`text-white/75 mx-auto leading-relaxed ${
+            className={`text-white/80 mx-auto leading-relaxed ${
               isMobile 
                 ? 'text-base px-4 max-w-sm' 
-                : 'text-base md:text-lg lg:text-xl max-w-3xl'
+                : 'text-sm md:text-base lg:text-lg xl:text-xl max-w-3xl'
             }`}
           >
             {t.home.subtitle}
@@ -154,12 +166,12 @@ export default function Home({ t, isMobile, isLoaded, handleSectionChange }) {
         </motion.div>
       </div>
 
-      {/* Botones - Espaciado significativamente mejorado */}
+      {/* Botones - Espaciado mejorado específicamente para portátil */}
       <motion.div 
         className={`flex items-center justify-center ${
           isMobile 
             ? 'flex-col gap-4 pt-2 px-4 pb-12' 
-            : 'flex-col sm:flex-row gap-6 lg:gap-8 pt-4'
+            : 'flex-col sm:flex-row gap-4 md:gap-5 lg:gap-8 xl:gap-10 pt-2 md:pt-4'
         }`}
         variants={{
           hidden: { opacity: 0 },
@@ -177,7 +189,7 @@ export default function Home({ t, isMobile, isLoaded, handleSectionChange }) {
           className={`group flex items-center justify-center space-x-3 bg-white text-black rounded-full font-medium hover-lift organic-transition shadow-lg ${
             isMobile 
               ? 'px-7 py-4 text-base w-full max-w-xs' 
-              : 'px-7 py-4 md:px-9 md:py-5 text-base md:text-lg'
+              : 'px-6 py-3 md:px-7 md:py-4 lg:px-8 lg:py-4 xl:px-9 xl:py-5 text-sm md:text-base lg:text-base xl:text-lg'
           }`}
           variants={buttonVariants}
           whileHover={{ 
@@ -190,7 +202,9 @@ export default function Home({ t, isMobile, isLoaded, handleSectionChange }) {
           }}
         >
           <span>{t.home.viewWork}</span>
-          <ArrowRightIcon className="w-5 h-5 md:w-6 md:h-6 group-hover:translate-x-1 organic-transition" />
+          <ArrowRightIcon className={`group-hover:translate-x-1 organic-transition ${
+            isMobile ? 'w-5 h-5' : 'w-4 h-4 md:w-5 md:h-5 lg:w-5 lg:h-5 xl:w-6 xl:h-6'
+          }`} />
         </motion.button>
         
         <motion.button
@@ -198,7 +212,7 @@ export default function Home({ t, isMobile, isLoaded, handleSectionChange }) {
           className={`flex items-center justify-center space-x-3 border border-white/30 text-white rounded-full font-medium hover:border-white/50 hover:bg-white/10 organic-transition ${
             isMobile 
               ? 'px-7 py-4 text-base w-full max-w-xs' 
-              : 'px-7 py-4 md:px-9 md:py-5 text-base md:text-lg'
+              : 'px-6 py-3 md:px-7 md:py-4 lg:px-8 lg:py-4 xl:px-9 xl:py-5 text-sm md:text-base lg:text-base xl:text-lg'
           }`}
           variants={buttonVariants}
           whileHover={{ 
@@ -214,8 +228,12 @@ export default function Home({ t, isMobile, isLoaded, handleSectionChange }) {
         </motion.button>
       </motion.div>
       
-      {/* Espaciado inferior adicional */}
-      <div className={`${isMobile ? 'h-8' : 'h-16'}`}></div>
+      {/* Espaciado inferior progresivo */}
+      <div className={`${
+        isMobile 
+          ? 'h-8' 
+          : 'h-8 md:h-12 lg:h-16 xl:h-20'
+      }`}></div>
     </motion.div>
   )
 }
