@@ -35,8 +35,9 @@ export default function Portfolio() {
   const [language, setLanguage] = useState('es')
   const [showMobileMenu, setShowMobileMenu] = useState(false)
   
-  // Nuevos estados para el control mejorado del scroll
+  // Estados mejorados para control de scroll más preciso
   const [scrollBuffer, setScrollBuffer] = useState(0)
+  const [horizontalScrollBuffer, setHorizontalScrollBuffer] = useState(0)
   const [lastScrollTime, setLastScrollTime] = useState(0)
   const [isTrackpad, setIsTrackpad] = useState(false)
   
@@ -70,16 +71,19 @@ export default function Portfolio() {
     setLanguage(prev => prev === 'es' ? 'en' : 'es')
   }
 
-  // Función para detectar si es trackpad
+  // Función mejorada para detectar trackpad
   const detectTrackpad = (e) => {
     const now = Date.now()
     const timeDiff = now - lastScrollTime
     
-    // Los trackpads suelen tener valores deltaY más pequeños y más frecuentes
-    // También suelen tener valores decimales y múltiples eventos rápidos
-    if (timeDiff < 100 && Math.abs(e.deltaY) < 50) {
+    // Detección más precisa de trackpad
+    const hasDecimalValues = e.deltaY % 1 !== 0 || e.deltaX % 1 !== 0
+    const isSmallDelta = Math.abs(e.deltaY) < 40 && Math.abs(e.deltaX) < 40
+    const isFrequentEvent = timeDiff < 50
+    
+    if ((hasDecimalValues || isSmallDelta || isFrequentEvent) && timeDiff < 100) {
       setIsTrackpad(true)
-    } else if (timeDiff > 150 && Math.abs(e.deltaY) > 100) {
+    } else if (timeDiff > 200 && Math.abs(e.deltaY) > 80) {
       setIsTrackpad(false)
     }
     
@@ -100,12 +104,13 @@ export default function Portfolio() {
     setCurrentSection(sectionOrder[nextIndex])
   }
 
-  // Event listener mejorado para navegación con scroll
+  // Event listener con sensibilidad muy reducida
   useEffect(() => {
     if (isMobile) return // Disable scroll navigation on mobile
     
     let isScrolling = false
     let scrollTimeout = null
+    let horizontalScrollTimeout = null
     
     const handleWheel = (e) => {
       // Detectar tipo de dispositivo
@@ -115,26 +120,45 @@ export default function Portfolio() {
       if (currentSection === 'projects' && isMouseInSlider) {
         e.preventDefault()
         
-        // CORREGIDO: Usar deltaX para scroll horizontal y deltaY como fallback
         let scrollAmount = 0
+        const isHorizontalGesture = Math.abs(e.deltaX) > Math.abs(e.deltaY)
         
-        // Priorizar deltaX para gestos horizontales en trackpads
-        if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) {
-          // Gesto horizontal detectado
-          scrollAmount = e.deltaX * (isTrackpad ? 0.8 : 1)
+        if (isHorizontalGesture) {
+          // Gesto horizontal - MUY reducido para trackpads
+          scrollAmount = e.deltaX * (isTrackpad ? 0.15 : 0.8)
         } else {
-          // Gesto vertical (scroll wheel o gesto vertical en trackpad)
-          // Para mouse wheel tradicional, convertir vertical a horizontal
-          scrollAmount = e.deltaY * (isTrackpad ? 0.3 : 1)
+          // Gesto vertical convertido a horizontal - AÚN MÁS reducido
+          scrollAmount = e.deltaY * (isTrackpad ? 0.08 : 0.6)
         }
         
-        const newScrollX = scrollX + scrollAmount
-        const clampedScrollX = Math.max(0, Math.min(newScrollX, maxScroll))
-        setScrollX(clampedScrollX)
+        // Sistema de buffer para scroll horizontal más suave
+        const newHorizontalBuffer = horizontalScrollBuffer + scrollAmount
+        setHorizontalScrollBuffer(newHorizontalBuffer)
+        
+        // Clear timeout anterior si existe
+        if (horizontalScrollTimeout) {
+          clearTimeout(horizontalScrollTimeout)
+        }
+        
+        // Solo aplicar scroll si supera un threshold mínimo
+        const horizontalThreshold = isTrackpad ? 8 : 3
+        
+        if (Math.abs(newHorizontalBuffer) >= horizontalThreshold) {
+          const newScrollX = scrollX + newHorizontalBuffer
+          const clampedScrollX = Math.max(0, Math.min(newScrollX, maxScroll))
+          setScrollX(clampedScrollX)
+          setHorizontalScrollBuffer(0) // Reset buffer
+        } else {
+          // Reset buffer después de un tiempo si no se alcanza el threshold
+          horizontalScrollTimeout = setTimeout(() => {
+            setHorizontalScrollBuffer(0)
+          }, 100)
+        }
+        
         return
       }
       
-      // Para navegación vertical entre secciones - solo usar deltaY
+      // Para navegación vertical entre secciones
       e.preventDefault()
       
       if (isScrolling) return
@@ -142,12 +166,13 @@ export default function Portfolio() {
       // Ignorar si hay más movimiento horizontal que vertical
       if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) return
       
-      // Configuración diferente para trackpad vs mouse wheel
-      const threshold = isTrackpad ? 30 : 15 // Threshold mínimo para activar navegación
-      const debounceTime = isTrackpad ? 1200 : 800 // Más tiempo para trackpad
+      // Thresholds MUY aumentados para trackpads
+      const threshold = isTrackpad ? 60 : 20 // Mucho más alto para trackpads
+      const debounceTime = isTrackpad ? 1500 : 900 // Más tiempo de espera
       
-      // Acumular scroll para trackpads
-      const newBuffer = scrollBuffer + e.deltaY
+      // Acumular scroll para trackpads con factor de reducción
+      const scrollFactor = isTrackpad ? 0.6 : 1 // Reducir aún más la acumulación
+      const newBuffer = scrollBuffer + (e.deltaY * scrollFactor)
       setScrollBuffer(newBuffer)
       
       // Clear timeout anterior si existe
@@ -175,7 +200,7 @@ export default function Portfolio() {
         // Si no superamos el threshold, resetear buffer después de un tiempo
         scrollTimeout = setTimeout(() => {
           setScrollBuffer(0)
-        }, 200)
+        }, 300)
       }
     }
     
@@ -186,8 +211,11 @@ export default function Portfolio() {
       if (scrollTimeout) {
         clearTimeout(scrollTimeout)
       }
+      if (horizontalScrollTimeout) {
+        clearTimeout(horizontalScrollTimeout)
+      }
     }
-  }, [currentSection, scrollX, maxScroll, isMouseInSlider, isMobile, scrollBuffer, lastScrollTime, isTrackpad])
+  }, [currentSection, scrollX, maxScroll, isMouseInSlider, isMobile, scrollBuffer, horizontalScrollBuffer, lastScrollTime, isTrackpad])
 
   // Calcular el máximo scroll cuando cambie el contenido
   useEffect(() => {
@@ -204,7 +232,8 @@ export default function Portfolio() {
     if (currentSection !== 'projects') {
       setScrollX(0)
       setIsMouseInSlider(false)
-      setScrollBuffer(0) // Reset buffer también
+      setScrollBuffer(0)
+      setHorizontalScrollBuffer(0)
     }
   }, [currentSection])
 
@@ -223,7 +252,8 @@ export default function Portfolio() {
 
   const handleSectionChange = (section) => {
     setCurrentSection(section)
-    setScrollBuffer(0) // Reset buffer cuando cambiamos sección manualmente
+    setScrollBuffer(0)
+    setHorizontalScrollBuffer(0)
   }
 
   const handleProjectClick = (url) => {
