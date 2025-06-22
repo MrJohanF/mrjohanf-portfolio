@@ -59,10 +59,10 @@ export default function Home({ t, isMobile, isLoaded, handleSectionChange }) {
       className={`text-center organic-transition ${
         isLoaded ? 'animate-fade-up' : 'opacity-0'
       } ${
-        // Espaciado más controlado y responsivo
+        // Espaciado general mejorado
         isMobile 
-          ? 'space-y-6 px-4' 
-          : 'space-y-6 lg:space-y-8 xl:space-y-10 px-6'
+          ? 'px-4 py-8' 
+          : 'px-6 py-12'
       }`}
       variants={containerVariants}
       initial="hidden"
@@ -70,29 +70,28 @@ export default function Home({ t, isMobile, isLoaded, handleSectionChange }) {
     >
       {/* Contenedor principal con mejor control de espacios */}
       <div className="max-w-5xl mx-auto">
-        <div className={`space-y-4 ${isMobile ? '' : 'lg:space-y-6'}`}>
+        
+        {/* Sección de saludo y nombre */}
+        <div className={`${isMobile ? 'space-y-6' : 'space-y-8 lg:space-y-10'}`}>
           
-          {/* Saludo */}
+          {/* Saludo - Tamaño aumentado */}
           <motion.p 
-            className={`text-white/60 font-medium animate-float-subtle ${
+            className={`text-white/70 font-medium animate-float-subtle ${
               isMobile 
-                ? 'text-base' 
-                : 'text-sm md:text-base lg:text-lg'
+                ? 'text-lg' 
+                : 'text-lg md:text-xl lg:text-2xl'
             }`}
             variants={itemVariants}
           >
             {t.home.greeting}
           </motion.p>
           
-          {/* Nombre - Tamaños más moderados */}
+          {/* Nombre - Con mejor espaciado inferior */}
           <motion.h1 
-            className={`font-light tracking-tight ${
+            className={`font-light tracking-tight text-white ${
               isMobile 
                 ? 'text-4xl leading-tight' 
-                : 'text-4xl md:text-5xl lg:text-6xl xl:text-7xl'
-            } ${
-              // Espaciado inferior más controlado
-              isMobile ? 'mb-4' : 'mb-4 lg:mb-6'
+                : 'text-4xl md:text-5xl lg:text-6xl xl:text-7xl leading-tight'
             }`}
             variants={{
               hidden: { 
@@ -117,40 +116,50 @@ export default function Home({ t, isMobile, isLoaded, handleSectionChange }) {
           </motion.h1>
         </div>
         
-        {/* Título principal - Mejor escalado */}
-        <motion.p 
-          className={`text-white/90 font-light leading-relaxed mx-auto ${
-            isMobile 
-              ? 'text-lg px-2 max-w-sm' 
-              : 'text-lg md:text-xl lg:text-2xl xl:text-3xl max-w-4xl'
-          }`}
-          variants={itemVariants}
-        >
-          {t.home.title}
-          <span className="text-white block mt-2"> 
-            {t.home.titleHighlight}
-          </span>
-        </motion.p>
+        {/* Sección de título principal - Espaciado mejorado */}
+        <div className={`${isMobile ? 'mt-8 mb-6' : 'mt-12 lg:mt-16 mb-8 lg:mb-10'}`}>
+          <motion.div 
+            className={`text-white/90 font-light mx-auto ${
+              isMobile 
+                ? 'text-lg px-2 max-w-sm' 
+                : 'text-lg md:text-xl lg:text-2xl xl:text-3xl max-w-4xl'
+            }`}
+            variants={itemVariants}
+          >
+            {/* Primera línea del título */}
+            <div className="leading-relaxed">
+              {t.home.title}
+            </div>
+            {/* Segunda línea con espaciado reducido */}
+            <div className={`text-white leading-relaxed ${isMobile ? 'mt-1' : 'mt-2'}`}>
+              {t.home.titleHighlight}
+            </div>
+          </motion.div>
+        </div>
         
-        {/* Subtítulo - Más compacto */}
-        <motion.p 
-          className={`text-white/60 mx-auto ${
-            isMobile 
-              ? 'text-sm px-4 leading-relaxed max-w-xs' 
-              : 'text-sm md:text-base lg:text-lg max-w-2xl'
-          }`}
+        {/* Subtítulo - Tamaño y contraste mejorados */}
+        <motion.div 
+          className={`${isMobile ? 'mb-10' : 'mb-12 lg:mb-16'}`}
           variants={itemVariants}
         >
-          {t.home.subtitle}
-        </motion.p>
+          <p 
+            className={`text-white/75 mx-auto leading-relaxed ${
+              isMobile 
+                ? 'text-base px-4 max-w-sm' 
+                : 'text-base md:text-lg lg:text-xl max-w-3xl'
+            }`}
+          >
+            {t.home.subtitle}
+          </p>
+        </motion.div>
       </div>
 
-      {/* Botones - Espaciado mejorado */}
+      {/* Botones - Espaciado significativamente mejorado */}
       <motion.div 
         className={`flex items-center justify-center ${
           isMobile 
-            ? 'flex-col gap-3 pt-6 px-4 pb-8' 
-            : 'flex-col sm:flex-row gap-4 pt-6 lg:pt-8'
+            ? 'flex-col gap-4 pt-2 px-4 pb-12' 
+            : 'flex-col sm:flex-row gap-6 lg:gap-8 pt-4'
         }`}
         variants={{
           hidden: { opacity: 0 },
@@ -167,8 +176,8 @@ export default function Home({ t, isMobile, isLoaded, handleSectionChange }) {
           onClick={() => handleSectionChange('projects')}
           className={`group flex items-center justify-center space-x-3 bg-white text-black rounded-full font-medium hover-lift organic-transition shadow-lg ${
             isMobile 
-              ? 'px-6 py-3 text-sm w-full max-w-xs' 
-              : 'px-6 py-3 md:px-8 md:py-4 text-sm md:text-base'
+              ? 'px-7 py-4 text-base w-full max-w-xs' 
+              : 'px-7 py-4 md:px-9 md:py-5 text-base md:text-lg'
           }`}
           variants={buttonVariants}
           whileHover={{ 
@@ -181,15 +190,15 @@ export default function Home({ t, isMobile, isLoaded, handleSectionChange }) {
           }}
         >
           <span>{t.home.viewWork}</span>
-          <ArrowRightIcon className="w-4 h-4 md:w-5 md:h-5 group-hover:translate-x-1 organic-transition" />
+          <ArrowRightIcon className="w-5 h-5 md:w-6 md:h-6 group-hover:translate-x-1 organic-transition" />
         </motion.button>
         
         <motion.button
           onClick={() => handleSectionChange('contact')}
-          className={`flex items-center justify-center space-x-3 border border-white/20 rounded-full font-medium hover:border-white/40 hover:bg-white/5 organic-transition ${
+          className={`flex items-center justify-center space-x-3 border border-white/30 text-white rounded-full font-medium hover:border-white/50 hover:bg-white/10 organic-transition ${
             isMobile 
-              ? 'px-6 py-3 text-sm w-full max-w-xs' 
-              : 'px-6 py-3 md:px-8 md:py-4 text-sm md:text-base'
+              ? 'px-7 py-4 text-base w-full max-w-xs' 
+              : 'px-7 py-4 md:px-9 md:py-5 text-base md:text-lg'
           }`}
           variants={buttonVariants}
           whileHover={{ 
@@ -204,6 +213,9 @@ export default function Home({ t, isMobile, isLoaded, handleSectionChange }) {
           <span>{t.home.contact}</span>
         </motion.button>
       </motion.div>
+      
+      {/* Espaciado inferior adicional */}
+      <div className={`${isMobile ? 'h-8' : 'h-16'}`}></div>
     </motion.div>
   )
 }
