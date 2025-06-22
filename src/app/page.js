@@ -34,6 +34,12 @@ export default function Portfolio() {
   const [isMobile, setIsMobile] = useState(false)
   const [language, setLanguage] = useState('es')
   const [showMobileMenu, setShowMobileMenu] = useState(false)
+  
+  // Nuevos estados para el control mejorado del scroll
+  const [scrollBuffer, setScrollBuffer] = useState(0)
+  const [lastScrollTime, setLastScrollTime] = useState(0)
+  const [isTrackpad, setIsTrackpad] = useState(false)
+  
   const sliderRef = useRef(null)
   const sliderContainerRef = useRef(null)
 
@@ -64,6 +70,22 @@ export default function Portfolio() {
     setLanguage(prev => prev === 'es' ? 'en' : 'es')
   }
 
+  // Función para detectar si es trackpad
+  const detectTrackpad = (e) => {
+    const now = Date.now()
+    const timeDiff = now - lastScrollTime
+    
+    // Los trackpads suelen tener valores deltaY más pequeños y más frecuentes
+    // También suelen tener valores decimales y múltiples eventos rápidos
+    if (timeDiff < 100 && Math.abs(e.deltaY) < 50) {
+      setIsTrackpad(true)
+    } else if (timeDiff > 150 && Math.abs(e.deltaY) > 100) {
+      setIsTrackpad(false)
+    }
+    
+    setLastScrollTime(now)
+  }
+
   // Función para navegar entre secciones
   const navigateSection = (direction) => {
     const currentIndex = sectionOrder.indexOf(currentSection)
@@ -78,46 +100,82 @@ export default function Portfolio() {
     setCurrentSection(sectionOrder[nextIndex])
   }
 
-  // Event listener para navegación con scroll - Disabled on mobile
+  // Event listener mejorado para navegación con scroll
   useEffect(() => {
     if (isMobile) return // Disable scroll navigation on mobile
     
     let isScrolling = false
+    let scrollTimeout = null
     
     const handleWheel = (e) => {
+      // Detectar tipo de dispositivo
+      detectTrackpad(e)
+      
       // Si estamos en proyectos Y el mouse está dentro del slider, scroll horizontal
       if (currentSection === 'projects' && isMouseInSlider) {
         e.preventDefault()
-        const newScrollX = scrollX + e.deltaY
+        
+        // Ajustar sensibilidad según el dispositivo
+        let scrollMultiplier = isTrackpad ? 0.3 : 1
+        let scrollAmount = e.deltaY * scrollMultiplier
+        
+        const newScrollX = scrollX + scrollAmount
         const clampedScrollX = Math.max(0, Math.min(newScrollX, maxScroll))
         setScrollX(clampedScrollX)
         return
       }
       
-      // Para otras secciones O cuando el mouse está fuera del slider, navegación vertical
+      // Para navegación vertical entre secciones
       e.preventDefault()
       
       if (isScrolling) return
       
-      isScrolling = true
+      // Configuración diferente para trackpad vs mouse wheel
+      const threshold = isTrackpad ? 30 : 15 // Threshold mínimo para activar navegación
+      const debounceTime = isTrackpad ? 1200 : 800 // Más tiempo para trackpad
       
-      if (e.deltaY > 0) {
-        navigateSection('down')
-      } else {
-        navigateSection('up')
+      // Acumular scroll para trackpads
+      const newBuffer = scrollBuffer + e.deltaY
+      setScrollBuffer(newBuffer)
+      
+      // Clear timeout anterior si existe
+      if (scrollTimeout) {
+        clearTimeout(scrollTimeout)
       }
       
-      setTimeout(() => {
-        isScrolling = false
-      }, 800)
+      // Solo navegar si superamos el threshold
+      if (Math.abs(newBuffer) >= threshold) {
+        isScrolling = true
+        
+        if (newBuffer > 0) {
+          navigateSection('down')
+        } else {
+          navigateSection('up')
+        }
+        
+        // Reset buffer
+        setScrollBuffer(0)
+        
+        setTimeout(() => {
+          isScrolling = false
+        }, debounceTime)
+      } else {
+        // Si no superamos el threshold, resetear buffer después de un tiempo
+        scrollTimeout = setTimeout(() => {
+          setScrollBuffer(0)
+        }, 200)
+      }
     }
     
     window.addEventListener('wheel', handleWheel, { passive: false })
     
     return () => {
       window.removeEventListener('wheel', handleWheel)
+      if (scrollTimeout) {
+        clearTimeout(scrollTimeout)
+      }
     }
-  }, [currentSection, scrollX, maxScroll, isMouseInSlider, isMobile])
+  }, [currentSection, scrollX, maxScroll, isMouseInSlider, isMobile, scrollBuffer, lastScrollTime, isTrackpad])
 
   // Calcular el máximo scroll cuando cambie el contenido
   useEffect(() => {
@@ -134,6 +192,7 @@ export default function Portfolio() {
     if (currentSection !== 'projects') {
       setScrollX(0)
       setIsMouseInSlider(false)
+      setScrollBuffer(0) // Reset buffer también
     }
   }, [currentSection])
 
@@ -152,6 +211,7 @@ export default function Portfolio() {
 
   const handleSectionChange = (section) => {
     setCurrentSection(section)
+    setScrollBuffer(0) // Reset buffer cuando cambiamos sección manualmente
   }
 
   const handleProjectClick = (url) => {
