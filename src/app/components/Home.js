@@ -120,9 +120,9 @@ export default function Home({ t, isMobile, isLoaded, handleSectionChange }) {
 
         {/* Nombre — split-text reveal con mezcla de Inter y Fraunces italic */}
         <motion.h1
-          className={`font-light tracking-[-0.04em] text-white leading-[0.95] text-balance ${
+          className={`font-light tracking-[-0.04em] text-white leading-[1] text-balance ${
             isMobile
-              ? 'text-[3.5rem] mb-6'
+              ? 'text-[clamp(2.5rem,13vw,3.5rem)] mb-6'
               : 'text-6xl md:text-7xl lg:text-[7.5rem] mb-7 md:mb-9'
           }`}
           variants={{
@@ -138,7 +138,7 @@ export default function Home({ t, isMobile, isLoaded, handleSectionChange }) {
             return (
               <span
                 key={`${word}-${i}`}
-                className={`inline-block overflow-hidden align-bottom ${
+                className={`inline-block overflow-hidden align-bottom pb-[0.15em] ${
                   i < lastWordIndex ? 'mr-[0.22em]' : ''
                 }`}
                 aria-hidden="true"

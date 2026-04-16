@@ -87,10 +87,10 @@ export default function Projects({
         </div>
         <h2
           className={`${
-            isMobile ? 'text-4xl mb-3' : 'text-5xl md:text-6xl mb-4'
+            isMobile ? 'text-[2rem] mb-3 leading-tight' : 'text-5xl md:text-6xl mb-4'
           } font-light tracking-tight`}
         >
-          {projectData.title}
+          <span>{projectData.title}</span>
           <span className="font-serif italic font-normal text-white/70"> — </span>
           <span className="font-serif italic font-normal text-white/80">
             {t.projects.items[0].category.split(' · ')[0]}

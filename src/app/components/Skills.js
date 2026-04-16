@@ -124,7 +124,7 @@ export default function Skills({ t, isMobile }) {
 
         <motion.h2
           className={`${
-            isMobile ? 'text-4xl mb-4' : 'text-5xl md:text-6xl mb-5'
+            isMobile ? 'text-[1.75rem] leading-tight mb-4' : 'text-5xl md:text-6xl mb-5'
           } font-light tracking-tight`}
           variants={headerItemVariants}
         >

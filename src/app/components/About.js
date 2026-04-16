@@ -136,7 +136,7 @@ export default function About({ t, isMobile }) {
         <motion.div
           className={`grid ${
             isMobile
-              ? 'grid-cols-2 gap-3'
+              ? 'grid-cols-3 gap-2.5'
               : 'grid-cols-3 gap-3 auto-rows-[minmax(110px,auto)]'
           }`}
           variants={bentoContainerVariants}
@@ -149,10 +149,14 @@ export default function About({ t, isMobile }) {
                 scale: 1.02,
                 transition: { type: 'spring', damping: 20, stiffness: 300 },
               }}
-              className={`${
-                // El featured ocupa 2 columnas en desktop
-                !isMobile && stat.featured ? 'col-span-2 row-span-1' : ''
-              }`}
+              className={
+                // El featured ocupa las 3 columnas en mobile y 2 en desktop
+                stat.featured
+                  ? isMobile
+                    ? 'col-span-3'
+                    : 'col-span-2 row-span-1'
+                  : ''
+              }
             >
               <SpotlightCard
                 size={260}
@@ -163,26 +167,28 @@ export default function About({ t, isMobile }) {
                 }
                 className={`relative h-full rounded-2xl border organic-transition ${
                   stat.featured
-                    ? 'border-white/15 bg-gradient-to-br from-white/[0.06] via-white/[0.03] to-transparent p-6 flex flex-col justify-between'
-                    : 'border-white/10 bg-white/[0.02] hover:border-white/20 p-5 flex flex-col justify-between'
+                    ? 'border-white/15 bg-gradient-to-br from-white/[0.06] via-white/[0.03] to-transparent p-5 md:p-6 flex flex-col justify-between'
+                    : 'border-white/10 bg-white/[0.02] hover:border-white/20 p-3.5 md:p-5 flex flex-col justify-between min-h-[100px]'
                 }`}
               >
                 <div
-                  className={`font-mono text-[10px] tracking-[0.18em] uppercase ${
+                  className={`font-mono text-[9px] md:text-[10px] tracking-[0.18em] uppercase truncate ${
                     stat.featured ? 'text-[var(--color-accent)]/80' : 'text-white/45'
                   }`}
                 >
-                  {String(i + 1).padStart(2, '0')} · {stat.label}
+                  {stat.featured
+                    ? `${String(i + 1).padStart(2, '0')} · ${stat.label}`
+                    : stat.label}
                 </div>
 
                 <div
-                  className={`font-light text-white tabular-nums leading-none mt-6 ${
+                  className={`font-light text-white tabular-nums leading-none mt-4 md:mt-6 ${
                     stat.featured
                       ? isMobile
-                        ? 'text-5xl'
+                        ? 'text-6xl'
                         : 'text-6xl md:text-7xl'
                       : isMobile
-                        ? 'text-3xl'
+                        ? 'text-2xl'
                         : 'text-4xl md:text-5xl'
                   }`}
                 >
@@ -194,7 +200,7 @@ export default function About({ t, isMobile }) {
 
           {/* "Actualmente" — tarjeta que ocupa el ancho completo */}
           <motion.div
-            className={!isMobile ? 'col-span-3 mt-2' : 'col-span-2 mt-1'}
+            className="col-span-3 mt-1 md:mt-2"
             variants={bentoItemVariants}
           >
             <SpotlightCard
