@@ -61,6 +61,11 @@ export const translations = {
         backend: 'Backend',
         database: 'Database',
         devops: 'DevOps'
+      },
+      levels: {
+        core: 'Core',
+        proficient: 'Avanzado',
+        familiar: 'Familiar'
       }
     },
     contact: {
@@ -141,6 +146,11 @@ export const translations = {
         backend: 'Backend',
         database: 'Database',
         devops: 'DevOps'
+      },
+      levels: {
+        core: 'Core',
+        proficient: 'Proficient',
+        familiar: 'Familiar'
       }
     },
     contact: {

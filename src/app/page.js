@@ -2,6 +2,7 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
+import { AnimatePresence, motion } from 'framer-motion'
 import {
   HomeIcon,
   UserIcon,
@@ -25,6 +26,34 @@ import { translations } from './data/translations'
 
 const SECTION_ORDER = ['home', 'about', 'projects', 'skills', 'contact']
 
+// Transición entre secciones: fade + slide vertical sutil en la dirección del navegado.
+// `custom` recibe 1 (hacia adelante/down) o -1 (hacia atrás/up).
+const sectionTransitionVariants = {
+  enter: (direction) => ({
+    opacity: 0,
+    y: direction > 0 ? 24 : -24,
+    filter: 'blur(6px)',
+  }),
+  center: {
+    opacity: 1,
+    y: 0,
+    filter: 'blur(0px)',
+    transition: {
+      duration: 0.45,
+      ease: [0.16, 1, 0.3, 1],
+    },
+  },
+  exit: (direction) => ({
+    opacity: 0,
+    y: direction > 0 ? -24 : 24,
+    filter: 'blur(6px)',
+    transition: {
+      duration: 0.3,
+      ease: [0.7, 0, 0.84, 0],
+    },
+  }),
+}
+
 // Wheel/scroll tuning
 const WHEEL_COOLDOWN_MS = 600      // tiempo mínimo entre cambios de sección
 const INERTIA_RESET_MS = 180       // si no llegan eventos en este tiempo, se reinicia el acumulador
@@ -34,6 +63,7 @@ const TRACKPAD_DELTA_HINT = 50     // deltas pequeños suelen ser trackpad
 
 export default function Portfolio() {
   const [currentSection, setCurrentSection] = useState('home')
+  const [sectionDirection, setSectionDirection] = useState(1) // 1 = hacia adelante, -1 = hacia atrás
   const [isLoaded, setIsLoaded] = useState(false)
   const [isMobile, setIsMobile] = useState(false)
   const [language, setLanguage] = useState('es')
@@ -107,6 +137,7 @@ export default function Portfolio() {
     const idx = SECTION_ORDER.indexOf(currentSectionRef.current)
     const nextIdx = direction === 'down' ? idx + 1 : idx - 1
     if (nextIdx < 0 || nextIdx >= SECTION_ORDER.length) return false
+    setSectionDirection(direction === 'down' ? 1 : -1)
     setCurrentSection(SECTION_ORDER[nextIdx])
     return true
   }
@@ -192,9 +223,11 @@ export default function Portfolio() {
         navigateSection('up')
       } else if (e.key === 'Home') {
         e.preventDefault()
+        setSectionDirection(-1)
         setCurrentSection(SECTION_ORDER[0])
       } else if (e.key === 'End') {
         e.preventDefault()
+        setSectionDirection(1)
         setCurrentSection(SECTION_ORDER[SECTION_ORDER.length - 1])
       }
     }
@@ -276,6 +309,11 @@ export default function Portfolio() {
   ]
 
   const handleSectionChange = (section) => {
+    const currentIdx = SECTION_ORDER.indexOf(currentSectionRef.current)
+    const nextIdx = SECTION_ORDER.indexOf(section)
+    if (nextIdx !== -1 && nextIdx !== currentIdx) {
+      setSectionDirection(nextIdx > currentIdx ? 1 : -1)
+    }
     setCurrentSection(section)
   }
 
@@ -319,6 +357,10 @@ export default function Portfolio() {
         t={t}
       />
 
+      <div className="aurora-blobs" aria-hidden="true">
+        <span />
+      </div>
+
       <FloatingParticles isMobile={isMobile} />
 
       <div className="grain-overlay" aria-hidden="true" />
@@ -335,41 +377,53 @@ export default function Portfolio() {
             isMobile ? 'min-h-full' : 'h-full'
           } flex items-center justify-center`}
         >
-          <div className="w-full max-w-7xl">
-            {currentSection === 'home' && (
-              <Home
-                t={t}
-                isMobile={isMobile}
-                isLoaded={isLoaded}
-                handleSectionChange={handleSectionChange}
-              />
-            )}
+          <div className="w-full max-w-7xl relative">
+            <AnimatePresence mode="wait" custom={sectionDirection}>
+              <motion.div
+                key={currentSection}
+                custom={sectionDirection}
+                variants={sectionTransitionVariants}
+                initial="enter"
+                animate="center"
+                exit="exit"
+                className="w-full"
+              >
+                {currentSection === 'home' && (
+                  <Home
+                    t={t}
+                    isMobile={isMobile}
+                    isLoaded={isLoaded}
+                    handleSectionChange={handleSectionChange}
+                  />
+                )}
 
-            {currentSection === 'about' && (
-              <About t={t} isMobile={isMobile} />
-            )}
+                {currentSection === 'about' && (
+                  <About t={t} isMobile={isMobile} />
+                )}
 
-            {currentSection === 'projects' && (
-              <Projects
-                t={t}
-                isMobile={isMobile}
-                handleProjectClick={handleProjectClick}
-                projects={projects}
-              />
-            )}
+                {currentSection === 'projects' && (
+                  <Projects
+                    t={t}
+                    isMobile={isMobile}
+                    handleProjectClick={handleProjectClick}
+                    projects={projects}
+                  />
+                )}
 
-            {currentSection === 'skills' && (
-              <Skills t={t} isMobile={isMobile} skills={skills} />
-            )}
+                {currentSection === 'skills' && (
+                  <Skills t={t} isMobile={isMobile} skills={skills} />
+                )}
 
-            {currentSection === 'contact' && (
-              <Contact
-                t={t}
-                isMobile={isMobile}
-                handleContactClick={handleContactClick}
-                handleDownloadCV={handleDownloadCV}
-              />
-            )}
+                {currentSection === 'contact' && (
+                  <Contact
+                    t={t}
+                    isMobile={isMobile}
+                    handleContactClick={handleContactClick}
+                    handleDownloadCV={handleDownloadCV}
+                  />
+                )}
+              </motion.div>
+            </AnimatePresence>
           </div>
         </div>
       </main>
