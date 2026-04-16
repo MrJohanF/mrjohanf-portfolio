@@ -1,4 +1,15 @@
 import { motion } from 'framer-motion'
+import {
+  RocketLaunchIcon,
+  PaintBrushIcon,
+  BookOpenIcon,
+} from '@heroicons/react/24/outline'
+
+const ACTIVITY_ICONS = {
+  rocket: RocketLaunchIcon,
+  design: PaintBrushIcon,
+  learning: BookOpenIcon,
+}
 
 export default function About({ t, isMobile }) {
   // Container animation with stagger
@@ -229,25 +240,34 @@ export default function About({ t, isMobile }) {
             {t.about.currently}
           </motion.h3>
           
-          <motion.div 
+          <motion.ul
             className={`space-y-2 md:space-y-3 text-white/70 ${
               isMobile ? 'text-sm' : ''
             }`}
             variants={activitiesVariants}
           >
-            {t.about.activities.map((activity, index) => (
-              <motion.p 
-                key={index}
-                variants={activityVariants}
-                whileHover={{ 
-                  x: 5,
-                  transition: { type: "spring", damping: 15, stiffness: 300 }
-                }}
-              >
-                {activity}
-              </motion.p>
-            ))}
-          </motion.div>
+            {t.about.activities.map((activity, index) => {
+              const Icon = ACTIVITY_ICONS[activity.icon]
+              return (
+                <motion.li
+                  key={index}
+                  className="flex items-center gap-3"
+                  variants={activityVariants}
+                  whileHover={{
+                    x: 5,
+                    transition: { type: 'spring', damping: 15, stiffness: 300 }
+                  }}
+                >
+                  {Icon && (
+                    <span className="flex-shrink-0 w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center">
+                      <Icon className={`${isMobile ? 'w-4 h-4' : 'w-[18px] h-[18px]'} text-white/80`} />
+                    </span>
+                  )}
+                  <span>{activity.text}</span>
+                </motion.li>
+              )
+            })}
+          </motion.ul>
         </motion.div>
       </motion.div>
     </motion.div>

@@ -2,15 +2,12 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
-import { 
-  HomeIcon, 
-  UserIcon, 
-  CodeBracketIcon, 
-  CpuChipIcon, 
+import {
+  HomeIcon,
+  UserIcon,
+  CodeBracketIcon,
+  CpuChipIcon,
   EnvelopeIcon,
-  CpuChipIcon as AIIcon,
-  LanguageIcon,
 } from '@heroicons/react/24/outline'
 import Skills from './components/Skills'
 import Contact from './components/Contact'
@@ -25,221 +22,221 @@ import { projects } from './data/projects'
 import { skills } from './data/skills'
 import { translations } from './data/translations'
 
+const SECTION_ORDER = ['home', 'about', 'projects', 'skills', 'contact']
+
+// Wheel/scroll tuning
+const WHEEL_COOLDOWN_MS = 600      // tiempo mínimo entre cambios de sección
+const INERTIA_RESET_MS = 180       // si no llegan eventos en este tiempo, se reinicia el acumulador
+const TRACKPAD_THRESHOLD = 90      // delta acumulado para disparar con trackpad
+const MOUSE_THRESHOLD = 40         // delta acumulado para disparar con rueda mecánica
+const TRACKPAD_DELTA_HINT = 50     // deltas pequeños suelen ser trackpad
+
 export default function Portfolio() {
   const [currentSection, setCurrentSection] = useState('home')
   const [isLoaded, setIsLoaded] = useState(false)
-  const [scrollX, setScrollX] = useState(0)
-  const [maxScroll, setMaxScroll] = useState(0)
-  const [isMouseInSlider, setIsMouseInSlider] = useState(false)
   const [isMobile, setIsMobile] = useState(false)
   const [language, setLanguage] = useState('es')
   const [showMobileMenu, setShowMobileMenu] = useState(false)
-  
-  // Estados mejorados para control de scroll más preciso
-  const [scrollBuffer, setScrollBuffer] = useState(0)
-  const [horizontalScrollBuffer, setHorizontalScrollBuffer] = useState(0)
-  const [lastScrollTime, setLastScrollTime] = useState(0)
-  const [isTrackpad, setIsTrackpad] = useState(false)
-  
-  const sliderRef = useRef(null)
-  const sliderContainerRef = useRef(null)
 
-  // Check if device is mobile with better detection
+  // Refs para manejo de scroll sin re-renders
+  const isNavigatingRef = useRef(false)
+  const deltaAccumulatorRef = useRef(0)
+  const lastWheelTimeRef = useRef(0)
+  const currentSectionRef = useRef(currentSection)
+  const cooldownTimerRef = useRef(null)
+
+  // Mantener ref sincronizado con el estado
+  useEffect(() => {
+    currentSectionRef.current = currentSection
+  }, [currentSection])
+
+  // Detección responsive / touch
   useEffect(() => {
     const checkMobile = () => {
       const width = window.innerWidth
-      const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0
+      const isTouchDevice =
+        'ontouchstart' in window || navigator.maxTouchPoints > 0
       setIsMobile(width < 768 || isTouchDevice)
     }
-    
+
     checkMobile()
     window.addEventListener('resize', checkMobile)
     return () => window.removeEventListener('resize', checkMobile)
   }, [])
 
-  const t = translations[language]
-
-  // Array con el orden de las secciones para navegación
-  const sectionOrder = ['home', 'about', 'projects', 'skills', 'contact']
-
   useEffect(() => {
     setIsLoaded(true)
   }, [])
 
-  // Función para cambiar idioma
+  const t = translations[language]
+
   const toggleLanguage = () => {
-    setLanguage(prev => prev === 'es' ? 'en' : 'es')
+    setLanguage((prev) => (prev === 'es' ? 'en' : 'es'))
   }
 
-  // Función mejorada para detectar trackpad
-  const detectTrackpad = (e) => {
-    const now = Date.now()
-    const timeDiff = now - lastScrollTime
-    
-    // Detección más precisa de trackpad
-    const hasDecimalValues = e.deltaY % 1 !== 0 || e.deltaX % 1 !== 0
-    const isSmallDelta = Math.abs(e.deltaY) < 40 && Math.abs(e.deltaX) < 40
-    const isFrequentEvent = timeDiff < 50
-    
-    if ((hasDecimalValues || isSmallDelta || isFrequentEvent) && timeDiff < 100) {
-      setIsTrackpad(true)
-    } else if (timeDiff > 200 && Math.abs(e.deltaY) > 80) {
-      setIsTrackpad(false)
-    }
-    
-    setLastScrollTime(now)
-  }
-
-  // Función para navegar entre secciones
+  // Navegación entre secciones con clamp en los extremos (sin wrap)
   const navigateSection = (direction) => {
-    const currentIndex = sectionOrder.indexOf(currentSection)
-    let nextIndex
-    
-    if (direction === 'down') {
-      nextIndex = (currentIndex + 1) % sectionOrder.length
-    } else {
-      nextIndex = (currentIndex - 1 + sectionOrder.length) % sectionOrder.length
-    }
-    
-    setCurrentSection(sectionOrder[nextIndex])
+    const idx = SECTION_ORDER.indexOf(currentSectionRef.current)
+    const nextIdx = direction === 'down' ? idx + 1 : idx - 1
+    if (nextIdx < 0 || nextIdx >= SECTION_ORDER.length) return false
+    setCurrentSection(SECTION_ORDER[nextIdx])
+    return true
   }
 
-  // Event listener con sensibilidad muy reducida
+  // Wheel: solo desktop
   useEffect(() => {
-    if (isMobile) return // Disable scroll navigation on mobile
-    
-    let isScrolling = false
-    let scrollTimeout = null
-    let horizontalScrollTimeout = null
-    
+    if (isMobile) return
+
     const handleWheel = (e) => {
-      // Detectar tipo de dispositivo
-      detectTrackpad(e)
-      
-      // Si estamos en proyectos Y el mouse está dentro del slider, scroll horizontal
-      if (currentSection === 'projects' && isMouseInSlider) {
-        e.preventDefault()
-        
-        let scrollAmount = 0
-        const isHorizontalGesture = Math.abs(e.deltaX) > Math.abs(e.deltaY)
-        
-        if (isHorizontalGesture) {
-          // Gesto horizontal - MUY reducido para trackpads
-          scrollAmount = e.deltaX * (isTrackpad ? 0.15 : 0.8)
-        } else {
-          // Gesto vertical convertido a horizontal - AÚN MÁS reducido
-          scrollAmount = e.deltaY * (isTrackpad ? 0.08 : 0.6)
-        }
-        
-        // Sistema de buffer para scroll horizontal más suave
-        const newHorizontalBuffer = horizontalScrollBuffer + scrollAmount
-        setHorizontalScrollBuffer(newHorizontalBuffer)
-        
-        // Clear timeout anterior si existe
-        if (horizontalScrollTimeout) {
-          clearTimeout(horizontalScrollTimeout)
-        }
-        
-        // Solo aplicar scroll si supera un threshold mínimo
-        const horizontalThreshold = isTrackpad ? 8 : 3
-        
-        if (Math.abs(newHorizontalBuffer) >= horizontalThreshold) {
-          const newScrollX = scrollX + newHorizontalBuffer
-          const clampedScrollX = Math.max(0, Math.min(newScrollX, maxScroll))
-          setScrollX(clampedScrollX)
-          setHorizontalScrollBuffer(0) // Reset buffer
-        } else {
-          // Reset buffer después de un tiempo si no se alcanza el threshold
-          horizontalScrollTimeout = setTimeout(() => {
-            setHorizontalScrollBuffer(0)
-          }, 100)
-        }
-        
+      e.preventDefault()
+
+      const now = performance.now()
+      const dt = now - lastWheelTimeRef.current
+      lastWheelTimeRef.current = now
+
+      // Durante el cooldown drenamos toda la inercia restante del trackpad
+      if (isNavigatingRef.current) {
+        deltaAccumulatorRef.current = 0
         return
       }
-      
-      // Para navegación vertical entre secciones
-      e.preventDefault()
-      
-      if (isScrolling) return
-      
-      // Ignorar si hay más movimiento horizontal que vertical
-      if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) return
-      
-      // Thresholds MUY aumentados para trackpads
-      const threshold = isTrackpad ? 60 : 20 // Mucho más alto para trackpads
-      const debounceTime = isTrackpad ? 1500 : 900 // Más tiempo de espera
-      
-      // Acumular scroll para trackpads con factor de reducción
-      const scrollFactor = isTrackpad ? 0.6 : 1 // Reducir aún más la acumulación
-      const newBuffer = scrollBuffer + (e.deltaY * scrollFactor)
-      setScrollBuffer(newBuffer)
-      
-      // Clear timeout anterior si existe
-      if (scrollTimeout) {
-        clearTimeout(scrollTimeout)
+
+      // Pausa larga → nuevo gesto, reiniciamos acumulador
+      if (dt > INERTIA_RESET_MS) {
+        deltaAccumulatorRef.current = 0
       }
-      
-      // Solo navegar si superamos el threshold
-      if (Math.abs(newBuffer) >= threshold) {
-        isScrolling = true
-        
-        if (newBuffer > 0) {
-          navigateSection('down')
-        } else {
-          navigateSection('up')
+
+      // Gesto dominante horizontal → no cambiamos sección
+      if (Math.abs(e.deltaX) > Math.abs(e.deltaY) * 1.5) return
+
+      // Heurística trackpad: deltas pequeños o fraccionales
+      const isTrackpadGesture =
+        Math.abs(e.deltaY) < TRACKPAD_DELTA_HINT || e.deltaY % 1 !== 0
+
+      deltaAccumulatorRef.current += e.deltaY
+
+      const threshold = isTrackpadGesture
+        ? TRACKPAD_THRESHOLD
+        : MOUSE_THRESHOLD
+
+      if (Math.abs(deltaAccumulatorRef.current) >= threshold) {
+        const direction = deltaAccumulatorRef.current > 0 ? 'down' : 'up'
+        const didNavigate = navigateSection(direction)
+        deltaAccumulatorRef.current = 0
+
+        if (didNavigate) {
+          isNavigatingRef.current = true
+          if (cooldownTimerRef.current) clearTimeout(cooldownTimerRef.current)
+          cooldownTimerRef.current = setTimeout(() => {
+            isNavigatingRef.current = false
+            deltaAccumulatorRef.current = 0
+          }, WHEEL_COOLDOWN_MS)
         }
-        
-        // Reset buffer
-        setScrollBuffer(0)
-        
-        setTimeout(() => {
-          isScrolling = false
-        }, debounceTime)
-      } else {
-        // Si no superamos el threshold, resetear buffer después de un tiempo
-        scrollTimeout = setTimeout(() => {
-          setScrollBuffer(0)
-        }, 300)
       }
     }
-    
+
     window.addEventListener('wheel', handleWheel, { passive: false })
-    
     return () => {
       window.removeEventListener('wheel', handleWheel)
-      if (scrollTimeout) {
-        clearTimeout(scrollTimeout)
-      }
-      if (horizontalScrollTimeout) {
-        clearTimeout(horizontalScrollTimeout)
-      }
+      if (cooldownTimerRef.current) clearTimeout(cooldownTimerRef.current)
     }
-  }, [currentSection, scrollX, maxScroll, isMouseInSlider, isMobile, scrollBuffer, horizontalScrollBuffer, lastScrollTime, isTrackpad])
+  }, [isMobile])
 
-  // Calcular el máximo scroll cuando cambie el contenido
+  // Navegación por teclado (desktop)
   useEffect(() => {
-    if (sliderRef.current && currentSection === 'projects') {
-      const containerWidth = sliderRef.current.parentElement.offsetWidth
-      const contentWidth = sliderRef.current.scrollWidth
-      const extraPadding = isMobile ? 50 : 100
-      setMaxScroll(Math.max(0, contentWidth - containerWidth + extraPadding))
-    }
-  }, [currentSection, isMobile])
+    if (isMobile) return
 
-  // Reset slider state cuando salimos de proyectos
+    const handleKey = (e) => {
+      // No interceptar cuando el usuario escribe
+      const tag = e.target?.tagName
+      if (tag === 'INPUT' || tag === 'TEXTAREA' || e.target?.isContentEditable) {
+        return
+      }
+
+      if (
+        e.key === 'ArrowDown' ||
+        e.key === 'PageDown' ||
+        e.key === ' '
+      ) {
+        e.preventDefault()
+        navigateSection('down')
+      } else if (e.key === 'ArrowUp' || e.key === 'PageUp') {
+        e.preventDefault()
+        navigateSection('up')
+      } else if (e.key === 'Home') {
+        e.preventDefault()
+        setCurrentSection(SECTION_ORDER[0])
+      } else if (e.key === 'End') {
+        e.preventDefault()
+        setCurrentSection(SECTION_ORDER[SECTION_ORDER.length - 1])
+      }
+    }
+
+    window.addEventListener('keydown', handleKey)
+    return () => window.removeEventListener('keydown', handleKey)
+  }, [isMobile])
+
+  // Swipe vertical en mobile entre secciones
   useEffect(() => {
-    if (currentSection !== 'projects') {
-      setScrollX(0)
-      setIsMouseInSlider(false)
-      setScrollBuffer(0)
-      setHorizontalScrollBuffer(0)
-    }
-  }, [currentSection])
+    if (!isMobile) return
 
-  // Close mobile menu when section changes
+    let startY = 0
+    let startX = 0
+    let startTime = 0
+    let startScrollTop = 0
+
+    const MIN_SWIPE_DISTANCE = 70
+    const MAX_SWIPE_TIME = 500
+    const MAX_HORIZONTAL_DEVIATION = 60
+
+    const getScroller = () => document.querySelector('main')
+
+    const handleTouchStart = (e) => {
+      const touch = e.touches[0]
+      startY = touch.clientY
+      startX = touch.clientX
+      startTime = performance.now()
+      const scroller = getScroller()
+      startScrollTop = scroller ? scroller.scrollTop : 0
+    }
+
+    const handleTouchEnd = (e) => {
+      const touch = e.changedTouches[0]
+      const dy = touch.clientY - startY
+      const dx = touch.clientX - startX
+      const dt = performance.now() - startTime
+      const scroller = getScroller()
+
+      if (!scroller) return
+      if (dt > MAX_SWIPE_TIME) return
+      if (Math.abs(dx) > MAX_HORIZONTAL_DEVIATION) return
+      if (Math.abs(dy) < MIN_SWIPE_DISTANCE) return
+
+      // Solo cambiar de sección si estamos en el borde del scroll interno
+      const atTop = startScrollTop <= 2
+      const atBottom =
+        startScrollTop + scroller.clientHeight >= scroller.scrollHeight - 2
+
+      if (dy < 0 && atBottom) {
+        // swipe hacia arriba en el fondo → siguiente sección
+        navigateSection('down')
+      } else if (dy > 0 && atTop) {
+        // swipe hacia abajo desde el tope → sección anterior
+        navigateSection('up')
+      }
+    }
+
+    window.addEventListener('touchstart', handleTouchStart, { passive: true })
+    window.addEventListener('touchend', handleTouchEnd, { passive: true })
+    return () => {
+      window.removeEventListener('touchstart', handleTouchStart)
+      window.removeEventListener('touchend', handleTouchEnd)
+    }
+  }, [isMobile])
+
+  // Cerrar menú móvil al cambiar de sección + reset de acumulador
   useEffect(() => {
     setShowMobileMenu(false)
+    deltaAccumulatorRef.current = 0
   }, [currentSection])
 
   const navigation = [
@@ -247,13 +244,11 @@ export default function Portfolio() {
     { id: 'about', label: t.nav.about, icon: UserIcon },
     { id: 'projects', label: t.nav.projects, icon: CodeBracketIcon },
     { id: 'skills', label: t.nav.skills, icon: CpuChipIcon },
-    { id: 'contact', label: t.nav.contact, icon: EnvelopeIcon }
+    { id: 'contact', label: t.nav.contact, icon: EnvelopeIcon },
   ]
 
   const handleSectionChange = (section) => {
     setCurrentSection(section)
-    setScrollBuffer(0)
-    setHorizontalScrollBuffer(0)
   }
 
   const handleProjectClick = (url) => {
@@ -278,40 +273,14 @@ export default function Portfolio() {
       document.body.appendChild(link)
       link.click()
       document.body.removeChild(link)
-      
-      console.log(`Downloading ${fileName}...`)
     } catch (error) {
       console.error('Error downloading CV:', error)
     }
   }
 
-  // Navegación con botones en slider
-  const slideLeft = () => {
-    const slideDistance = isMobile ? 300 : 400
-    const newScrollX = Math.max(0, scrollX - slideDistance)
-    setScrollX(newScrollX)
-  }
-
-  const slideRight = () => {
-    const slideDistance = isMobile ? 300 : 400
-    const newScrollX = Math.min(maxScroll, scrollX + slideDistance)
-    setScrollX(newScrollX)
-  }
-
-  // Handlers para detectar mouse en slider (disabled on mobile)
-  const handleSliderMouseEnter = () => {
-    if (!isMobile) setIsMouseInSlider(true)
-  }
-
-  const handleSliderMouseLeave = () => {
-    if (!isMobile) setIsMouseInSlider(false)
-  }
-
   return (
     <div className="h-screen w-full animated-gradient text-white overflow-hidden relative">
-      
-      {/* Navigation Component */}
-      <Navigation 
+      <Navigation
         isMobile={isMobile}
         currentSection={currentSection}
         handleSectionChange={handleSectionChange}
@@ -321,22 +290,24 @@ export default function Portfolio() {
         toggleLanguage={toggleLanguage}
         t={t}
       />
-      
-      {/* Floating Particles */}
+
       <FloatingParticles isMobile={isMobile} />
-      
-      {/* Contenido principal - Better mobile optimization */}
-      <main className={`h-full ${
-        isMobile 
-          ? 'pt-20 pb-20 px-4 overflow-y-auto' 
-          : 'pt-24 pb-24 pl-6 pr-20 overflow-hidden'
-      }`}>
-        <div className={`${isMobile ? 'min-h-full' : 'h-full'} flex items-center justify-center`}>
+
+      <main
+        className={`h-full ${
+          isMobile
+            ? 'pt-20 pb-20 px-4 overflow-y-auto'
+            : 'pt-24 pb-24 pl-6 pr-20 overflow-hidden'
+        }`}
+      >
+        <div
+          className={`${
+            isMobile ? 'min-h-full' : 'h-full'
+          } flex items-center justify-center`}
+        >
           <div className="w-full max-w-7xl">
-            
-            {/* Sección Inicio - Better mobile optimization */}
             {currentSection === 'home' && (
-              <Home 
+              <Home
                 t={t}
                 isMobile={isMobile}
                 isLoaded={isLoaded}
@@ -344,14 +315,12 @@ export default function Portfolio() {
               />
             )}
 
-            {/* Sección Acerca - Mobile optimized */}
             {currentSection === 'about' && (
               <About t={t} isMobile={isMobile} />
             )}
 
-            {/* Sección Proyectos - Mobile optimized */}
             {currentSection === 'projects' && (
-              <Projects 
+              <Projects
                 t={t}
                 isMobile={isMobile}
                 handleProjectClick={handleProjectClick}
@@ -359,16 +328,14 @@ export default function Portfolio() {
               />
             )}
 
-            {/* Sección Skills - Mobile optimized */}
             {currentSection === 'skills' && (
               <Skills t={t} isMobile={isMobile} skills={skills} />
             )}
 
-            {/* Sección Contacto - Mobile optimized */}
             {currentSection === 'contact' && (
-              <Contact 
-                t={t} 
-                isMobile={isMobile} 
+              <Contact
+                t={t}
+                isMobile={isMobile}
                 handleContactClick={handleContactClick}
                 handleDownloadCV={handleDownloadCV}
               />
@@ -377,22 +344,15 @@ export default function Portfolio() {
         </div>
       </main>
 
-      {/* Section Indicator - Desktop only */}
       {!isMobile && (
-        <SectionIndicator 
+        <SectionIndicator
           navigation={navigation}
           currentSection={currentSection}
           handleSectionChange={handleSectionChange}
         />
       )}
 
-      {/* Navigation Hints */}
-      <NavigationHints 
-        isMobile={isMobile}
-        currentSection={currentSection}
-        isMouseInSlider={isMouseInSlider}
-        t={t}
-      />
+      <NavigationHints isMobile={isMobile} t={t} />
     </div>
   )
 }

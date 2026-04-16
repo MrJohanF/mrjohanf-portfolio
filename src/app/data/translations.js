@@ -29,9 +29,9 @@ export const translations = {
       },
       currently: 'Actualmente',
       activities: [
-        '🚀 Explorando Web3 y Blockchain',
-        '🎨 Perfeccionando habilidades de UI/UX',
-        '📚 Aprendiendo Machine Learning'
+        { icon: 'rocket', text: 'Explorando Web3 y Blockchain' },
+        { icon: 'design', text: 'Perfeccionando habilidades de UI/UX' },
+        { icon: 'learning', text: 'Aprendiendo Machine Learning' }
       ]
     },
     projects: {
@@ -105,9 +105,9 @@ export const translations = {
       },
       currently: 'Currently',
       activities: [
-        '🚀 Exploring Web3 and Blockchain',
-        '🎨 Perfecting UI/UX skills',
-        '📚 Learning Machine Learning'
+        { icon: 'rocket', text: 'Exploring Web3 and Blockchain' },
+        { icon: 'design', text: 'Perfecting UI/UX skills' },
+        { icon: 'learning', text: 'Learning Machine Learning' }
       ]
     },
     projects: {
