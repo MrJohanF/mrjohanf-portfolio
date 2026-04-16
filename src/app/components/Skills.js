@@ -130,7 +130,7 @@ export default function Skills({ t, isMobile }) {
       initial="hidden"
       animate="visible"
     >
-      <div className={isMobile ? 'mb-8 text-center' : 'mb-16'}>
+      <div className={isMobile ? 'mb-8 text-center' : 'mb-10'}>
         <motion.h2 
           className={`${
             isMobile ? 'text-4xl mb-4' : 'text-5xl md:text-6xl mb-6'
@@ -171,7 +171,7 @@ export default function Skills({ t, isMobile }) {
         className={`grid grid-cols-1 ${
           isMobile 
             ? 'gap-6 px-2' 
-            : 'md:grid-cols-2 gap-12 max-w-4xl'
+            : 'md:grid-cols-2 gap-x-12 gap-y-6 max-w-4xl'
         }`}
         variants={skillsContainerVariants}
       >
@@ -213,7 +213,7 @@ export default function Skills({ t, isMobile }) {
       
       <motion.div 
         className={`${
-          isMobile ? 'mt-10 pt-8' : 'mt-16 pt-12'
+          isMobile ? 'mt-10 pt-8' : 'mt-10 pt-8'
         } border-t border-white/10`}
         variants={{
           hidden: { opacity: 0, y: 20 },
@@ -232,7 +232,7 @@ export default function Skills({ t, isMobile }) {
       >
         <motion.h3 
           className={`${
-            isMobile ? 'text-2xl mb-6 text-center' : 'text-2xl mb-8'
+            isMobile ? 'text-2xl mb-6 text-center' : 'text-2xl mb-6'
           } font-light`}
           variants={headerItemVariants}
         >

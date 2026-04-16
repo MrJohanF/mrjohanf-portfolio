@@ -328,8 +328,8 @@ export default function Portfolio() {
       {/* Contenido principal - Better mobile optimization */}
       <main className={`h-full ${
         isMobile 
-          ? 'pt-20 pb-6 px-4 overflow-y-auto' 
-          : 'pt-24 pb-8 pl-6 pr-20 overflow-hidden'
+          ? 'pt-20 pb-20 px-4 overflow-y-auto' 
+          : 'pt-24 pb-24 pl-6 pr-20 overflow-hidden'
       }`}>
         <div className={`${isMobile ? 'min-h-full' : 'h-full'} flex items-center justify-center`}>
           <div className="w-full max-w-7xl">
@@ -354,15 +354,7 @@ export default function Portfolio() {
               <Projects 
                 t={t}
                 isMobile={isMobile}
-                scrollX={scrollX}
-                maxScroll={maxScroll}
-                isMouseInSlider={isMouseInSlider}
-                handleSliderMouseEnter={handleSliderMouseEnter}
-                handleSliderMouseLeave={handleSliderMouseLeave}
-                slideLeft={slideLeft}
-                slideRight={slideRight}
                 handleProjectClick={handleProjectClick}
-                sliderRef={sliderRef}
                 projects={projects}
               />
             )}

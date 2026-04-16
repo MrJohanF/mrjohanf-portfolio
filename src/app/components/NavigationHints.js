@@ -1,74 +1,61 @@
 import { motion, AnimatePresence } from 'framer-motion'
 
-export default function NavigationHints({ 
-  isMobile, 
-  currentSection, 
-  isMouseInSlider, 
-  t 
+const pillBase =
+  'fixed bottom-6 left-1/2 -translate-x-1/2 z-30 text-white/60 text-xs flex items-center gap-2 px-4 py-2 rounded-full bg-black/40 backdrop-blur-md border border-white/10 shadow-lg shadow-black/20'
+
+export default function NavigationHints({
+  isMobile,
+  currentSection,
+  isMouseInSlider,
+  t
 }) {
   return (
     <AnimatePresence>
-      {!isMobile && currentSection !== 'projects' && !isMouseInSlider && (
+      {!isMobile && !isMouseInSlider && (
         <motion.div
-          className="fixed bottom-8 left-1/2 -translate-x-1/2 text-white/40 text-sm flex items-center space-x-2"
+          key="desktop-hint"
+          className={pillBase}
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 20 }}
           transition={{ duration: 0.3 }}
         >
           <span>{t.navigation.scrollSections}</span>
-          <motion.div
-            animate={{ y: [0, 4, 0] }}
+          <motion.span
+            animate={{ y: [0, 3, 0] }}
             transition={{ duration: 1.5, repeat: Infinity }}
-            className="text-lg"
+            className="text-sm leading-none"
           >
-            ↕️
-          </motion.div>
-        </motion.div>
-      )}
-
-      {!isMobile && currentSection === 'projects' && !isMouseInSlider && (
-        <motion.div
-          className="fixed bottom-8 left-1/2 -translate-x-1/2 text-white/40 text-sm flex items-center space-x-2"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: 20 }}
-          transition={{ duration: 0.3 }}
-        >
-          <span>{t.navigation.scrollProjects}</span>
-          <motion.div
-            animate={{ y: [0, 4, 0] }}
-            transition={{ duration: 1.5, repeat: Infinity }}
-            className="text-lg"
-          >
-            ⬇️
-          </motion.div>
+            ↕
+          </motion.span>
         </motion.div>
       )}
 
       {!isMobile && isMouseInSlider && (
         <motion.div
-          className="fixed bottom-8 left-1/2 -translate-x-1/2 text-white/40 text-sm flex items-center space-x-2"
+          key="slider-hint"
+          className={pillBase}
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 20 }}
           transition={{ duration: 0.3 }}
         >
           <span>{t.navigation.scrollHorizontal}</span>
-          <motion.div
-            animate={{ x: [0, 4, 0] }}
+          <motion.span
+            animate={{ x: [0, 3, 0] }}
             transition={{ duration: 1.5, repeat: Infinity }}
-            className="text-lg"
+            className="text-sm leading-none"
           >
-            ↔️
-          </motion.div>
+            ↔
+          </motion.span>
         </motion.div>
       )}
 
       {/* Mobile navigation hint */}
       {isMobile && (
         <motion.div
-          className="fixed bottom-4 left-1/2 -translate-x-1/2 text-white/40 text-xs text-center px-4"
+          key="mobile-hint"
+          className="fixed bottom-4 left-1/2 -translate-x-1/2 z-30 text-white/60 text-[11px] text-center px-3 py-1.5 rounded-full bg-black/40 backdrop-blur-md border border-white/10"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 20 }}
@@ -79,4 +66,4 @@ export default function NavigationHints({
       )}
     </AnimatePresence>
   )
-} 
+}

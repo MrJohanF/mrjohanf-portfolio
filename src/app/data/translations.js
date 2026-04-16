@@ -38,45 +38,18 @@ export const translations = {
       title: 'Portfolio',
       items: [
         {
-          title: "E-Commerce Compensar",
-          description: "Plataforma completa de comercio electrónico con Java y microservicios. Sistema de pagos integrado con Stripe, gestión avanzada de inventario y dashboard de análisis en tiempo real.",
-          category: "Aplicación Desktop",
+          title: "ConjuntoFácil",
+          description: "SaaS integral para la gestión de propiedad horizontal en Colombia. Plataforma 100% en la nube que centraliza pagos, comunicaciones, documentos y reservas con cumplimiento normativo. Más de 500 conjuntos y 25.000 unidades gestionadas.",
+          category: "SaaS · PropTech",
           status: "Activo"
-        },
-        {
-          title: "Gestión de Tareas",
-          description: "Aplicación de gestión de tareas con colaboración en tiempo real. Incluye notificaciones push, asignación inteligente de tareas y reportes de productividad avanzados.",
-          category: "Productividad",
-          status: "Desarrollo"
-        },
-        {
-          title: "Páramo de Guerrero",
-          description: "El proyecto páramo-de-guerrero es una aplicación web moderna diseñada para monitorear y optimizar la salud de las plantas utilizando inteligencia artificial y datos de sensores.",
-          category: "Aplicación Web",
-          status: "Completado"
-        },
-        {
-          title: "MyWhereToGo",
-          description: "MyWhereToGo es una plataforma web integral diseñada para facilitar el descubrimiento, la reseña y la reserva de lugares como restaurantes, atracciones y diversos puntos de interés.",
-          category: "Aplicación Web",
-          status: "Completado"
-        },
-        {
-          title: "Aplicación de Películas",
-          description: "Una aplicación de películas moderna y responsive construida con Next.js 13, con detalles de películas, trailers, reseñas y más. La aplicación utiliza la API de The Movie Database (TMDB) para obtener datos de películas.",
-          category: "Aplicación Web",
-          status: "Completado"
-        },
-        {
-          title: "Plataforma E-Commerce",
-          description: "Una plataforma de comercio electrónico segura con sistema de autenticación",
-          category: "Aplicación Web",
-          status: "Completado"
         }
       ],
       buttons: {
-        demo: 'Demo',
+        demo: 'Visitar sitio',
         code: 'Código'
+      },
+      roles: {
+        founder: 'Fundador'
       }
     },
     skills: {
@@ -141,45 +114,18 @@ export const translations = {
       title: 'Portfolio',
       items: [
         {
-          title: "E-Commerce Compensar",
-          description: "Complete e-commerce platform built with Java and microservices. Integrated payment system with Stripe, advanced inventory management and real-time analytics dashboard.",
-          category: "Desktop App",
+          title: "ConjuntoFácil",
+          description: "Comprehensive SaaS for horizontal property management in Colombia. 100% cloud platform that centralizes payments, communications, documents and bookings with full regulatory compliance. 500+ complexes and 25,000+ units managed.",
+          category: "SaaS · PropTech",
           status: "Active"
-        },
-        {
-          title: "Task Management",
-          description: "Task management application with real-time collaboration. Includes push notifications, intelligent task assignment and advanced productivity reports.",
-          category: "Productivity",
-          status: "Development"
-        },
-        {
-          title: "Paramo de Guerrero",
-          description: "The paramo-de-guerrero project is a modern web application designed to monitor and optimize plant health using artificial intelligence and sensor data.",
-          category: "Web App",
-          status: "Completed"
-        },
-        {
-          title: "MyWhereToGo",
-          description: "MyWhereToGo is a comprehensive web platform designed to facilitate the discovery, review, and booking of places such as restaurants, attractions, and various points of interest.",
-          category: "Web App",
-          status: "Completed"
-        },
-        {
-          title: "Movie App",
-          description: "A modern and responsive movie application built with Next.js 13, featuring movie details, trailers, reviews, and more. The application uses The Movie Database (TMDB) API to fetch movie data.",
-          category: "Web App",
-          status: "Completed"
-        },
-        {
-          title: "E-Commerce Platform",
-          description: "A secure E-commerce platform with authentication system",
-          category: "Web App",
-          status: "Completed"
         }
       ],
       buttons: {
-        demo: 'Demo',
+        demo: 'Visit site',
         code: 'Code'
+      },
+      roles: {
+        founder: 'Founder'
       }
     },
     skills: {
