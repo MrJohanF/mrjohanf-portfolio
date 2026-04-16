@@ -37,14 +37,69 @@ export default function Home({ t, isMobile, isLoaded, handleSectionChange }) {
 
   return (
     <motion.div
-      className={`text-center organic-transition w-full ${
+      className={`relative text-center organic-transition w-full ${
         isLoaded ? 'animate-fade-up' : 'opacity-0'
       } ${isMobile ? 'px-4' : 'px-6'}`}
       variants={containerVariants}
       initial="hidden"
       animate="visible"
     >
-      <div className="max-w-4xl mx-auto">
+      {/* Decoraciones editoriales laterales (solo desktop). Dan asimetría y
+       * contextualizan el hero sin necesidad de un retrato, convirtiendo la
+       * pieza en algo que se lee como un "document cover". */}
+      {!isMobile && (
+        <>
+          <motion.div
+            aria-hidden="true"
+            className="hidden lg:flex absolute left-0 top-1/2 -translate-y-1/2 flex-col items-start gap-3 font-mono text-[10px] tracking-[0.2em] uppercase text-white/35"
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 1.1, duration: 0.6 }}
+          >
+            <span className="w-8 h-px bg-white/20" />
+            <div className="flex flex-col gap-1">
+              <span className="text-white/60">2026</span>
+              <span>Portfolio</span>
+              <span className="text-white/25">— v2.1</span>
+            </div>
+            <span className="w-8 h-px bg-white/20" />
+          </motion.div>
+
+          <motion.div
+            aria-hidden="true"
+            className="hidden lg:flex absolute right-0 top-1/2 -translate-y-1/2 flex-col items-end gap-3 font-mono text-[10px] tracking-[0.2em] uppercase text-white/35"
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 1.3, duration: 0.6 }}
+          >
+            <span className="w-8 h-px bg-white/20" />
+            <div className="flex flex-col gap-1 items-end">
+              <span className="text-white/60">04°42′N</span>
+              <span className="text-white/60">74°04′W</span>
+              <span className="text-white/25">— Bogotá</span>
+            </div>
+            <span className="w-8 h-px bg-white/20" />
+          </motion.div>
+        </>
+      )}
+
+      {/* Monograma JF de fondo: glyph grande en Fraunces italic muy tenue.
+       * Sirve como marca decorativa detrás del nombre, reforzando el estilo
+       * editorial. Hereda la tipografía serif y es puramente decorativo. */}
+      {!isMobile && (
+        <motion.span
+          aria-hidden="true"
+          className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-[55%] font-serif italic text-white/[0.025] select-none leading-none whitespace-nowrap"
+          style={{ fontSize: 'clamp(20rem, 32vw, 40rem)' }}
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 1.6, ease: 'easeOut' }}
+        >
+          JF
+        </motion.span>
+      )}
+
+      <div className="relative max-w-4xl mx-auto">
         {/* Eyebrow / kicker editorial */}
         <motion.div
           className="flex items-center justify-center gap-3 mb-5"

@@ -310,24 +310,40 @@ export default function Navigation({
                   onClick={() => handleSectionChange(item.id)}
                   aria-label={item.label}
                   aria-current={isActive ? 'page' : undefined}
-                  className={`flex items-center space-x-2 px-4 py-2 rounded-full text-sm font-medium organic-transition ${
+                  className={`relative flex items-center space-x-2 px-4 py-2 rounded-full text-sm font-medium organic-transition ${
                     isActive
-                      ? 'bg-white text-black'
-                      : 'text-white/70 hover:text-white hover:bg-white/10'
+                      ? 'text-black'
+                      : 'text-white/70 hover:text-white'
                   }`}
                   variants={desktopItemVariants}
-                  whileHover={{
+                  whileHover={!isActive ? {
                     scale: 1.05,
                     y: -1,
                     transition: { type: "spring", damping: 15, stiffness: 300 }
-                  }}
+                  } : undefined}
                   whileTap={{
                     scale: 0.95,
                     transition: { type: "spring", damping: 15, stiffness: 400 }
                   }}
                 >
-                  <Icon className="w-4 h-4" aria-hidden="true" />
-                  <span className="hidden sm:block">{item.label}</span>
+                  {/* Indicador magnético: un único "pill" blanco que se desliza
+                   * entre botones al cambiar sección. Gracias a layoutId,
+                   * framer-motion interpola la posición/tamaño entre botones. */}
+                  {isActive && (
+                    <motion.span
+                      layoutId="nav-active-pill"
+                      aria-hidden="true"
+                      className="absolute inset-0 rounded-full bg-white shadow-[0_2px_16px_rgba(255,255,255,0.15)]"
+                      transition={{
+                        type: 'spring',
+                        damping: 28,
+                        stiffness: 380,
+                        mass: 0.5,
+                      }}
+                    />
+                  )}
+                  <Icon className="relative w-4 h-4" aria-hidden="true" />
+                  <span className="relative hidden sm:block">{item.label}</span>
                 </motion.button>
               )
             })}
