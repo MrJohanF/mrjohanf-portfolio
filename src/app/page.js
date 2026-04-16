@@ -20,6 +20,7 @@ import SectionIndicator from './components/SectionIndicator'
 import NavigationHints from './components/NavigationHints'
 import FloatingParticles from './components/FloatingParticles'
 import StatusBadge from './components/StatusBadge'
+import CustomCursor from './components/CustomCursor'
 import { projects } from './data/projects'
 import { skills } from './data/skills'
 import { translations } from './data/translations'
@@ -439,6 +440,8 @@ export default function Portfolio() {
       <NavigationHints isMobile={isMobile} t={t} />
 
       <StatusBadge t={t} language={language} isMobile={isMobile} />
+
+      {!isMobile && <CustomCursor />}
     </div>
   )
 }

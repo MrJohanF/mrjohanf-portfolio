@@ -129,9 +129,14 @@ export const translations = {
       items: [
         {
           title: "ConjuntoFácil",
-          description: "Comprehensive SaaS for horizontal property management in Colombia. 100% cloud platform that centralizes payments, communications, documents and bookings with full regulatory compliance. 500+ complexes and 25,000+ units managed.",
+          description: "Comprehensive SaaS for horizontal property management in Colombia. 100% cloud platform that centralizes payments, communications, documents and bookings with full regulatory compliance.",
           category: "SaaS · PropTech",
-          status: "Active"
+          status: "Active",
+          metrics: [
+            { value: "500+", label: "Complexes" },
+            { value: "25K+", label: "Units" },
+            { value: "99.9%", label: "Uptime" }
+          ]
         }
       ],
       buttons: {
