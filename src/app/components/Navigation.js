@@ -165,6 +165,7 @@ export default function Navigation({
       >
         <motion.button
           onClick={toggleLanguage}
+          aria-label={`Switch to ${language === 'es' ? 'English' : 'Español'}`}
           className={`flex items-center space-x-2 bg-white/5 glass-minimal rounded-full ${
             isMobile ? 'p-3' : 'p-3'
           } border border-white/10 hover:bg-white/10 hover:border-white/20 organic-transition group min-w-[60px] justify-center`}
@@ -192,6 +193,9 @@ export default function Navigation({
           <motion.button
             className="fixed top-4 left-4 z-[60] bg-white/5 glass-minimal rounded-full p-3 border border-white/10"
             onClick={() => setShowMobileMenu(!showMobileMenu)}
+            aria-label={showMobileMenu ? 'Cerrar menú' : 'Abrir menú'}
+            aria-expanded={showMobileMenu}
+            aria-controls="mobile-nav"
             variants={menuButtonVariants}
             initial="hidden"
             animate="visible"
@@ -220,6 +224,10 @@ export default function Navigation({
           <AnimatePresence>
             {showMobileMenu && (
               <motion.div
+                id="mobile-nav"
+                role="dialog"
+                aria-modal="true"
+                aria-label="Menú de navegación"
                 className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -227,7 +235,7 @@ export default function Navigation({
                 transition={{ duration: 0.2 }}
                 onClick={() => setShowMobileMenu(false)}
               >
-                <motion.div
+                <motion.nav
                   className="flex flex-col items-center justify-center h-full space-y-8"
                   variants={mobileMenuVariants}
                   initial="hidden"
@@ -235,15 +243,18 @@ export default function Navigation({
                   exit="exit"
                   onClick={(e) => e.stopPropagation()}
                 >
-                  {navigation.map((item, index) => {
+                  {navigation.map((item) => {
                     const Icon = item.icon
+                    const isActive = currentSection === item.id
                     return (
                       <motion.button
                         key={item.id}
                         onClick={() => handleSectionChange(item.id)}
+                        aria-label={item.label}
+                        aria-current={isActive ? 'page' : undefined}
                         className={`flex items-center space-x-4 px-8 py-4 rounded-full text-lg font-medium organic-transition ${
-                          currentSection === item.id 
-                            ? 'bg-white text-black' 
+                          isActive
+                            ? 'bg-white text-black'
                             : 'text-white/70 hover:text-white hover:bg-white/10'
                         } min-w-[200px] justify-start`}
                         variants={mobileItemVariants}
@@ -257,12 +268,12 @@ export default function Navigation({
                           transition: { type: "spring", damping: 15, stiffness: 400 }
                         }}
                       >
-                        <Icon className="w-6 h-6" />
+                        <Icon className="w-6 h-6" aria-hidden="true" />
                         <span>{item.label}</span>
                       </motion.button>
                     )
                   })}
-                </motion.div>
+                </motion.nav>
               </motion.div>
             )}
           </AnimatePresence>
@@ -270,6 +281,7 @@ export default function Navigation({
       ) : (
         /* Desktop Navigation */
         <motion.nav 
+          aria-label="Navegación principal"
           className="fixed top-8 left-1/2 -translate-x-1/2 z-50"
           variants={desktopNavVariants}
           initial="hidden"
@@ -289,29 +301,32 @@ export default function Navigation({
               }
             }}
           >
-            {navigation.map((item, index) => {
+            {navigation.map((item) => {
               const Icon = item.icon
+              const isActive = currentSection === item.id
               return (
                 <motion.button
                   key={item.id}
                   onClick={() => handleSectionChange(item.id)}
+                  aria-label={item.label}
+                  aria-current={isActive ? 'page' : undefined}
                   className={`flex items-center space-x-2 px-4 py-2 rounded-full text-sm font-medium organic-transition ${
-                    currentSection === item.id 
-                      ? 'bg-white text-black' 
+                    isActive
+                      ? 'bg-white text-black'
                       : 'text-white/70 hover:text-white hover:bg-white/10'
                   }`}
                   variants={desktopItemVariants}
-                  whileHover={{ 
+                  whileHover={{
                     scale: 1.05,
                     y: -1,
                     transition: { type: "spring", damping: 15, stiffness: 300 }
                   }}
-                  whileTap={{ 
+                  whileTap={{
                     scale: 0.95,
                     transition: { type: "spring", damping: 15, stiffness: 400 }
                   }}
                 >
-                  <Icon className="w-4 h-4" />
+                  <Icon className="w-4 h-4" aria-hidden="true" />
                   <span className="hidden sm:block">{item.label}</span>
                 </motion.button>
               )

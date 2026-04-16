@@ -70,6 +70,33 @@ export default function Portfolio() {
 
   const t = translations[language]
 
+  // Cargar idioma guardado o detectar del navegador al primer render
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem('portfolio-lang')
+      if (stored === 'es' || stored === 'en') {
+        setLanguage(stored)
+        return
+      }
+      const browserLang = navigator.language?.toLowerCase() || ''
+      setLanguage(browserLang.startsWith('es') ? 'es' : 'en')
+    } catch {
+      // localStorage puede fallar en modo privado / SSR
+    }
+  }, [])
+
+  // Mantener <html lang> sincronizado y persistir selección
+  useEffect(() => {
+    if (typeof document !== 'undefined') {
+      document.documentElement.lang = language
+    }
+    try {
+      localStorage.setItem('portfolio-lang', language)
+    } catch {
+      // ignorar
+    }
+  }, [language])
+
   const toggleLanguage = () => {
     setLanguage((prev) => (prev === 'es' ? 'en' : 'es'))
   }

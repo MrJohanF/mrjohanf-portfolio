@@ -1,8 +1,7 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 @import "tailwindcss";
 
 @theme {
-  --font-family-apple: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', system-ui, sans-serif;
+  --font-family-sans: var(--font-inter), -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
   --animate-fade-up: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   --animate-slide-up: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   --animate-scale-in: scaleIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
@@ -11,106 +10,88 @@
 }
 
 @keyframes fadeUp {
-  0% {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  0%   { opacity: 0; transform: translateY(30px); }
+  100% { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes slideUp {
-  0% {
-    opacity: 0;
-    transform: translateY(50px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  0%   { opacity: 0; transform: translateY(50px); }
+  100% { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes scaleIn {
-  0% {
-    opacity: 0;
-    transform: scale(0.9);
-  }
-  100% {
-    opacity: 1;
-    transform: scale(1);
-  }
+  0%   { opacity: 0; transform: scale(0.9); }
+  100% { opacity: 1; transform: scale(1); }
 }
 
 @keyframes floatSubtle {
-  0%, 100% { 
-    transform: translateY(0px);
-  }
-  50% { 
-    transform: translateY(-10px);
-  }
+  0%, 100% { transform: translateY(0px); }
+  50%      { transform: translateY(-10px); }
 }
 
 @keyframes gradientMove {
-  0%, 100% {
-    background-position: 0% 50%;
+  0%, 100% { background-position: 0% 50%; }
+  50%      { background-position: 100% 50%; }
+}
+
+@keyframes particleFloat {
+  0% {
+    transform: translate3d(0, 0, 0) scale(0);
+    opacity: 0;
   }
+  15% { opacity: var(--particle-opacity, 0.3); }
   50% {
-    background-position: 100% 50%;
+    transform: translate3d(0, -120px, 0) scale(1);
+  }
+  85% { opacity: var(--particle-opacity, 0.3); }
+  100% {
+    transform: translate3d(0, -240px, 0) scale(0);
+    opacity: 0;
   }
 }
 
-/* Configuración global */
+/* Base */
 * {
-  font-family: var(--font-family-apple);
+  font-family: var(--font-family-sans);
 }
 
 html {
-  scroll-behavior: smooth;
   font-feature-settings: 'cv01', 'cv02', 'cv03', 'cv04';
-  overflow: hidden; /* Ocultar scroll global */
+  overflow: hidden;
 }
 
 body {
-  overflow: hidden; /* Ocultar scroll del body */
+  overflow: hidden;
 }
 
-/* Perspectiva 3D para el carousel */
-.perspective-1000 {
-  perspective: 1000px;
+/* Focus visible globalmente (solo cuando se navega por teclado) */
+:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.7);
+  outline-offset: 2px;
+  border-radius: 4px;
 }
 
-/* ELIMINAR TODAS LAS SCROLLBARS */
-::-webkit-scrollbar {
-  display: none;
-  width: 0;
-  height: 0;
-}
+/* Quitar scrollbars manteniendo scroll funcional */
+::-webkit-scrollbar { display: none; width: 0; height: 0; }
+* { scrollbar-width: none; -ms-overflow-style: none; }
 
-/* Para Firefox */
-* {
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-}
-
-/* Asegurar que no aparezcan scrollbars */
-html, body, #__next, [data-nextjs-scroll-focus-boundary] {
+html,
+body,
+#__next,
+[data-nextjs-scroll-focus-boundary] {
   overflow: hidden !important;
 }
 
-/* Efectos suaves */
+/* Efectos */
 .glass-minimal {
   backdrop-filter: blur(40px);
   -webkit-backdrop-filter: blur(40px);
 }
 
-/* Transiciones orgánicas */
 .organic-transition {
   transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* Hover effects sutiles */
 .hover-lift {
   transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -119,11 +100,17 @@ html, body, #__next, [data-nextjs-scroll-focus-boundary] {
   transform: translateY(-8px);
 }
 
-/* Gradient animado de fondo */
 .animated-gradient {
   background: linear-gradient(-45deg, #000000, #0a0a0a, #1a1a1a, #0f0f0f, #000000);
   background-size: 400% 400%;
   animation: gradientMove 20s ease infinite;
+}
+
+.float-particle {
+  animation-name: particleFloat;
+  animation-iteration-count: infinite;
+  animation-timing-function: ease-in-out;
+  will-change: transform, opacity;
 }
 
 .line-clamp-2 {
@@ -138,4 +125,25 @@ html, body, #__next, [data-nextjs-scroll-focus-boundary] {
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
+}
+
+/* Respetar la preferencia del usuario de reducir movimiento */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .animated-gradient {
+    animation: none;
+    background: #0a0a0a;
+  }
+
+  .float-particle {
+    display: none;
+  }
 }
