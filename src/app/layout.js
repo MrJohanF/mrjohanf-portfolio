@@ -1,4 +1,4 @@
-import { Inter } from 'next/font/google'
+import { Inter, Fraunces } from 'next/font/google'
 import './globals.css'
 
 const inter = Inter({
@@ -6,6 +6,14 @@ const inter = Inter({
   display: 'swap',
   variable: '--font-inter',
   weight: ['300', '400', '500', '600', '700'],
+})
+
+const fraunces = Fraunces({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-fraunces',
+  weight: ['300', '400', '500'],
+  style: ['normal', 'italic'],
 })
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://mrjohanf.dev'
@@ -113,7 +121,7 @@ export const viewport = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="es" className={inter.variable} suppressHydrationWarning>
+    <html lang="es" className={`${inter.variable} ${fraunces.variable}`} suppressHydrationWarning>
       <body className="bg-black text-white antialiased">{children}</body>
     </html>
   )

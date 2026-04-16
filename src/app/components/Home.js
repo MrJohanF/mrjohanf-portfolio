@@ -72,29 +72,51 @@ export default function Home({ t, isMobile, isLoaded, handleSectionChange }) {
           {t.home.greeting}
         </motion.p>
 
-        {/* Nombre */}
+        {/* Nombre — split-text reveal con clip-path */}
         <motion.h1
-          className={`font-light tracking-tight text-white leading-[1.05] ${
+          className={`font-light tracking-[-0.035em] text-white leading-[1.05] text-balance ${
             isMobile
               ? 'text-5xl mb-6'
               : 'text-5xl md:text-6xl lg:text-7xl mb-6 md:mb-8'
           }`}
           variants={{
-            hidden: { opacity: 0, y: 30, scale: 0.96 },
+            hidden: {},
             visible: {
-              opacity: 1,
-              y: 0,
-              scale: 1,
               transition: {
-                type: "spring",
-                damping: 20,
-                stiffness: 150,
-                duration: 0.4
-              }
-            }
+                staggerChildren: 0.12,
+                delayChildren: 0.05,
+              },
+            },
           }}
+          aria-label={t.home.name}
         >
-          {t.home.name}
+          {t.home.name.split(' ').map((word, i, arr) => (
+            <span
+              key={`${word}-${i}`}
+              className={`inline-block overflow-hidden align-bottom ${
+                i < arr.length - 1 ? 'mr-[0.25em]' : ''
+              }`}
+              aria-hidden="true"
+            >
+              <motion.span
+                className="inline-block"
+                variants={{
+                  hidden: { y: '110%' },
+                  visible: {
+                    y: '0%',
+                    transition: {
+                      type: 'spring',
+                      damping: 22,
+                      stiffness: 160,
+                      mass: 0.9,
+                    },
+                  },
+                }}
+              >
+                {word}
+              </motion.span>
+            </span>
+          ))}
         </motion.h1>
 
         {/* Divisor sutil */}
@@ -115,7 +137,9 @@ export default function Home({ t, isMobile, isLoaded, handleSectionChange }) {
           variants={itemVariants}
         >
           <span>{t.home.title} </span>
-          <span className="text-white">{t.home.titleHighlight}</span>
+          <span className="font-serif italic text-white tracking-tight">
+            {t.home.titleHighlight}
+          </span>
         </motion.div>
 
         {/* Subtítulo */}

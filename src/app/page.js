@@ -18,6 +18,7 @@ import Navigation from './components/Navigation'
 import SectionIndicator from './components/SectionIndicator'
 import NavigationHints from './components/NavigationHints'
 import FloatingParticles from './components/FloatingParticles'
+import StatusBadge from './components/StatusBadge'
 import { projects } from './data/projects'
 import { skills } from './data/skills'
 import { translations } from './data/translations'
@@ -320,6 +321,8 @@ export default function Portfolio() {
 
       <FloatingParticles isMobile={isMobile} />
 
+      <div className="grain-overlay" aria-hidden="true" />
+
       <main
         className={`h-full ${
           isMobile
@@ -380,6 +383,8 @@ export default function Portfolio() {
       )}
 
       <NavigationHints isMobile={isMobile} t={t} />
+
+      <StatusBadge t={t} language={language} isMobile={isMobile} />
     </div>
   )
 }

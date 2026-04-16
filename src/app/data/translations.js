@@ -73,6 +73,10 @@ export const translations = {
       scrollProjects: 'Scroll para cambiar sección • Entra al área para navegar proyectos',
       scrollHorizontal: 'Scroll horizontal para navegar proyectos',
       tapNavigation: 'Toca la navegación para cambiar de sección'
+    },
+    status: {
+      available: 'Disponible para proyectos',
+      location: 'Bogotá'
     }
   },
   en: {
@@ -149,6 +153,10 @@ export const translations = {
       scrollProjects: 'Scroll to change section • Enter area to navigate projects',
       scrollHorizontal: 'Horizontal scroll to navigate projects',
       tapNavigation: 'Tap navigation to change sections'
+    },
+    status: {
+      available: 'Available for projects',
+      location: 'Bogotá'
     }
   }
 } 

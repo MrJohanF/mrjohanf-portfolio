@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion'
 import { ArrowDownTrayIcon } from '@heroicons/react/24/outline'
 import { contactInfo } from '../data/contact'
+import SpotlightCard from './SpotlightCard'
 
 export default function Contact({ t, isMobile, handleContactClick, handleDownloadCV }) {
   const containerVariants = {
@@ -105,7 +106,9 @@ export default function Contact({ t, isMobile, handleContactClick, handleDownloa
         {contactInfo.map((contact) => {
           const Icon = contact.icon
           return (
-            <motion.button
+            <SpotlightCard
+              as={motion.button}
+              size={280}
               key={contact.id}
               onClick={() => handleContactClick(contact.action)}
               aria-label={`${contact.label}: ${contact.value}`}
@@ -146,7 +149,7 @@ export default function Contact({ t, isMobile, handleContactClick, handleDownloa
                   {contact.value}
                 </span>
               </span>
-            </motion.button>
+            </SpotlightCard>
           )
         })}
       </motion.div>

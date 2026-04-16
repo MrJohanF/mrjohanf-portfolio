@@ -1,5 +1,7 @@
 /* src/app/components/Skills.js */
 import { motion } from 'framer-motion'
+import SpotlightCard from './SpotlightCard'
+import TechIcon, { hasTechIcon } from './TechIcon'
 
 export default function Skills({ t, isMobile }) {
   const skills = [
@@ -167,46 +169,54 @@ export default function Skills({ t, isMobile }) {
         </motion.p>
       </div>
       
-      <motion.div 
+      <motion.div
         className={`grid grid-cols-1 ${
-          isMobile 
-            ? 'gap-6 px-2' 
-            : 'md:grid-cols-2 gap-x-12 gap-y-6 max-w-4xl'
+          isMobile
+            ? 'gap-4 px-2'
+            : 'md:grid-cols-2 gap-x-6 gap-y-5 max-w-4xl'
         }`}
         variants={skillsContainerVariants}
       >
         {skills.map((skill, index) => (
-          <motion.div
-            key={skill.name}
-            className={`space-y-4 ${
-              isMobile ? 'bg-white/5 p-4 rounded-2xl backdrop-blur-sm' : ''
-            }`}
-            variants={skillVariants}
-          >
-            <div className="flex justify-between items-center">
-              <span className={`${
-                isMobile ? 'text-base font-medium' : 'text-lg font-medium'
-              }`}>{skill.name}</span>
-              <span className={`text-white/60 ${
-                isMobile ? 'text-sm font-medium' : ''
-              }`}>{skill.level}%</span>
-            </div>
-            <div className={`${
-              isMobile ? 'h-2' : 'h-1'
-            } bg-white/10 rounded-full overflow-hidden`}>
-              <motion.div
-                className="h-full bg-gradient-to-r from-white to-white/80 rounded-full"
-                initial={{ width: 0, opacity: 0.8 }}
-                animate={{ width: `${skill.level}%`, opacity: 1 }}
-                transition={{ 
-                  delay: 0.2 + index * 0.05,
-                  type: "spring",
-                  damping: 25,
-                  stiffness: 150,
-                  duration: 0.5
-                }}
-              />
-            </div>
+          <motion.div key={skill.name} variants={skillVariants}>
+            <SpotlightCard
+              size={260}
+              className={`space-y-3 rounded-2xl border border-white/10 ${
+                isMobile
+                  ? 'bg-white/5 p-5 backdrop-blur-sm'
+                  : 'bg-white/[0.03] p-5 hover:border-white/20 organic-transition'
+              }`}
+            >
+              <div className="flex justify-between items-center">
+                <span className={`flex items-center gap-2 ${
+                  isMobile ? 'text-base font-medium' : 'text-base font-medium'
+                }`}>
+                  {hasTechIcon(skill.name) && (
+                    <TechIcon name={skill.name} className="w-4 h-4 text-white/70" />
+                  )}
+                  {skill.name}
+                </span>
+                <span className={`text-white/50 tabular-nums ${
+                  isMobile ? 'text-sm font-medium' : 'text-sm'
+                }`}>{skill.level}%</span>
+              </div>
+              <div className={`${
+                isMobile ? 'h-2' : 'h-1'
+              } bg-white/10 rounded-full overflow-hidden`}>
+                <motion.div
+                  className="h-full bg-gradient-to-r from-white to-white/80 rounded-full"
+                  initial={{ width: 0, opacity: 0.8 }}
+                  animate={{ width: `${skill.level}%`, opacity: 1 }}
+                  transition={{
+                    delay: 0.2 + index * 0.05,
+                    type: "spring",
+                    damping: 25,
+                    stiffness: 150,
+                    duration: 0.5
+                  }}
+                />
+              </div>
+            </SpotlightCard>
           </motion.div>
         ))}
       </motion.div>
@@ -282,16 +292,19 @@ export default function Skills({ t, isMobile }) {
                 }}
               >
                 {group.tools.map((tool, toolIndex) => (
-                  <motion.div 
-                    key={tool} 
-                    className={`${
-                      isMobile 
-                        ? 'text-sm text-white/70 bg-white/5 px-3 py-2 rounded-full inline-block mx-1 mb-2' 
-                        : 'text-sm text-white/60'
+                  <motion.div
+                    key={tool}
+                    className={`inline-flex items-center gap-1.5 ${
+                      isMobile
+                        ? 'text-sm text-white/70 bg-white/5 px-3 py-2 rounded-full mx-1 mb-2'
+                        : 'text-sm text-white/60 hover:text-white/90 transition-colors'
                     }`}
                     variants={toolItemVariants}
                   >
-                    {tool}
+                    {hasTechIcon(tool) && (
+                      <TechIcon name={tool} className="w-3.5 h-3.5" />
+                    )}
+                    <span>{tool}</span>
                   </motion.div>
                 ))}
               </motion.div>
