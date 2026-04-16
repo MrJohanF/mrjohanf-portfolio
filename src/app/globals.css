@@ -292,6 +292,36 @@ body,
   overflow: hidden;
 }
 
+/* Optimizaciones para dispositivos touch (mobile/tablet). Desactivamos
+ * animaciones de fondo pesadas (aurora + grain) y reducimos blurs grandes
+ * porque el GPU mobile no tolera bien múltiples capas animadas con
+ * filter:blur() encima de transiciones, provocando stutters y refrescos
+ * visuales al cambiar de sección o abrir el menú. */
+@media (hover: none) and (pointer: coarse) {
+  .aurora-blobs::before,
+  .aurora-blobs::after,
+  .aurora-blobs > span {
+    animation: none;
+    filter: blur(60px);
+    opacity: 0.35;
+  }
+
+  .animated-gradient::before {
+    filter: none;
+  }
+
+  /* El grain con mix-blend-mode es costoso y casi no se nota en mobile */
+  .grain-overlay {
+    display: none;
+  }
+
+  /* Reducir el blur de cristal ayuda al GPU en overlays y botones */
+  .glass-minimal {
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+  }
+}
+
 /* Respetar la preferencia del usuario de reducir movimiento */
 @media (prefers-reduced-motion: reduce) {
   *,

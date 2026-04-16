@@ -228,15 +228,17 @@ export default function Navigation({
                 role="dialog"
                 aria-modal="true"
                 aria-label="Menú de navegación"
-                className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md"
+                // En mobile evitamos backdrop-filter (costoso en GPU durante
+                // enter/exit) y usamos un bg sólido con alta opacidad.
+                className="fixed inset-0 z-50 bg-black/92"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                transition={{ duration: 0.2 }}
+                transition={{ duration: 0.18 }}
                 onClick={() => setShowMobileMenu(false)}
               >
                 <motion.nav
-                  className="flex flex-col items-center justify-center h-full space-y-8"
+                  className="flex flex-col items-center justify-center h-full space-y-6"
                   variants={mobileMenuVariants}
                   initial="hidden"
                   animate="visible"
@@ -249,7 +251,13 @@ export default function Navigation({
                     return (
                       <motion.button
                         key={item.id}
-                        onClick={() => handleSectionChange(item.id)}
+                        onClick={() => {
+                          // Cerrar el menú ANTES de disparar la navegación
+                          // para que su AnimatePresence no se solape con la
+                          // transición de sección (evita stutters visuales).
+                          setShowMobileMenu(false)
+                          handleSectionChange(item.id)
+                        }}
                         aria-label={item.label}
                         aria-current={isActive ? 'page' : undefined}
                         className={`flex items-center space-x-4 px-8 py-4 rounded-full text-lg font-medium organic-transition ${
@@ -258,14 +266,9 @@ export default function Navigation({
                             : 'text-white/70 hover:text-white hover:bg-white/10'
                         } min-w-[200px] justify-start`}
                         variants={mobileItemVariants}
-                        whileHover={{ 
-                          scale: 1.05,
-                          x: 5,
-                          transition: { type: "spring", damping: 15, stiffness: 300 }
-                        }}
-                        whileTap={{ 
-                          scale: 0.95,
-                          transition: { type: "spring", damping: 15, stiffness: 400 }
+                        whileTap={{
+                          scale: 0.96,
+                          transition: { type: 'spring', damping: 15, stiffness: 400 },
                         }}
                       >
                         <Icon className="w-6 h-6" aria-hidden="true" />

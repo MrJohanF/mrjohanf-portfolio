@@ -28,9 +28,35 @@ import { translations } from './data/translations'
 
 const SECTION_ORDER = ['home', 'about', 'projects', 'skills', 'contact']
 
-// Transición entre secciones: fade + slide vertical sutil en la dirección del navegado.
-// `custom` recibe 1 (hacia adelante/down) o -1 (hacia atrás/up).
+// Transición entre secciones: fade + slide vertical sutil en la dirección
+// del navegado. En desktop añadimos `filter: blur()` para un efecto cinemático,
+// pero en mobile lo omitimos porque repintar toda la capa con blur cada
+// transición provoca stutters sobre el aurora y grain. `custom` recibe 1
+// (hacia adelante/down) o -1 (hacia atrás/up).
 const sectionTransitionVariants = {
+  enter: (direction) => ({
+    opacity: 0,
+    y: direction > 0 ? 16 : -16,
+  }),
+  center: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.32,
+      ease: [0.16, 1, 0.3, 1],
+    },
+  },
+  exit: (direction) => ({
+    opacity: 0,
+    y: direction > 0 ? -16 : 16,
+    transition: {
+      duration: 0.22,
+      ease: [0.7, 0, 0.84, 0],
+    },
+  }),
+}
+
+const sectionTransitionDesktopVariants = {
   enter: (direction) => ({
     opacity: 0,
     y: direction > 0 ? 24 : -24,
@@ -384,7 +410,11 @@ export default function Portfolio() {
               <motion.div
                 key={currentSection}
                 custom={sectionDirection}
-                variants={sectionTransitionVariants}
+                variants={
+                  isMobile
+                    ? sectionTransitionVariants
+                    : sectionTransitionDesktopVariants
+                }
                 initial="enter"
                 animate="center"
                 exit="exit"
