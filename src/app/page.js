@@ -29,54 +29,32 @@ import { translations } from './data/translations'
 const SECTION_ORDER = ['home', 'about', 'projects', 'skills', 'contact']
 
 // Transición entre secciones: fade + slide vertical sutil en la dirección
-// del navegado. En desktop añadimos `filter: blur()` para un efecto cinemático,
-// pero en mobile lo omitimos porque repintar toda la capa con blur cada
-// transición provoca stutters sobre el aurora y grain. `custom` recibe 1
-// (hacia adelante/down) o -1 (hacia atrás/up).
+// del navegado. En desktop añadimos `filter: blur()` para un efecto
+// cinemático, en mobile usamos `filter: 'none'` (más rápido y evita que
+// Chrome Android cree una capa compuesta de baja calidad que desenfoca el
+// texto). Se pasan via `custom` un objeto `{ direction, isMobile }` para
+// evitar el switcheo de variantes mid-render.
 const sectionTransitionVariants = {
-  enter: (direction) => ({
+  enter: ({ direction, isMobile }) => ({
     opacity: 0,
-    y: direction > 0 ? 16 : -16,
+    y: direction > 0 ? (isMobile ? 16 : 24) : isMobile ? -16 : -24,
+    filter: isMobile ? 'none' : 'blur(6px)',
   }),
-  center: {
+  center: ({ isMobile } = {}) => ({
     opacity: 1,
     y: 0,
+    filter: 'none',
     transition: {
-      duration: 0.32,
+      duration: isMobile ? 0.32 : 0.45,
       ease: [0.16, 1, 0.3, 1],
     },
-  },
-  exit: (direction) => ({
-    opacity: 0,
-    y: direction > 0 ? -16 : 16,
-    transition: {
-      duration: 0.22,
-      ease: [0.7, 0, 0.84, 0],
-    },
   }),
-}
-
-const sectionTransitionDesktopVariants = {
-  enter: (direction) => ({
+  exit: ({ direction, isMobile }) => ({
     opacity: 0,
-    y: direction > 0 ? 24 : -24,
-    filter: 'blur(6px)',
-  }),
-  center: {
-    opacity: 1,
-    y: 0,
-    filter: 'blur(0px)',
+    y: direction > 0 ? (isMobile ? -16 : -24) : isMobile ? 16 : 24,
+    filter: isMobile ? 'none' : 'blur(6px)',
     transition: {
-      duration: 0.45,
-      ease: [0.16, 1, 0.3, 1],
-    },
-  },
-  exit: (direction) => ({
-    opacity: 0,
-    y: direction > 0 ? -24 : 24,
-    filter: 'blur(6px)',
-    transition: {
-      duration: 0.3,
+      duration: isMobile ? 0.22 : 0.3,
       ease: [0.7, 0, 0.84, 0],
     },
   }),
@@ -406,15 +384,14 @@ export default function Portfolio() {
           } flex items-center justify-center`}
         >
           <div className="w-full max-w-7xl relative">
-            <AnimatePresence mode="wait" custom={sectionDirection}>
+            <AnimatePresence
+              mode="wait"
+              custom={{ direction: sectionDirection, isMobile }}
+            >
               <motion.div
                 key={currentSection}
-                custom={sectionDirection}
-                variants={
-                  isMobile
-                    ? sectionTransitionVariants
-                    : sectionTransitionDesktopVariants
-                }
+                custom={{ direction: sectionDirection, isMobile }}
+                variants={sectionTransitionVariants}
                 initial="enter"
                 animate="center"
                 exit="exit"
