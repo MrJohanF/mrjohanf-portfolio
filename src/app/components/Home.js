@@ -6,50 +6,34 @@ export default function Home({ t, isMobile, isLoaded, handleSectionChange }) {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
-      transition: {
-        staggerChildren: 0.08,
-        delayChildren: 0.1
-      }
-    }
+      transition: { staggerChildren: 0.08, delayChildren: 0.1 },
+    },
   }
 
   const itemVariants = {
-    hidden: {
-      opacity: 0,
-      y: 20,
-      scale: 0.95
-    },
+    hidden: { opacity: 0, y: 20, scale: 0.95 },
     visible: {
       opacity: 1,
       y: 0,
       scale: 1,
-      transition: {
-        type: "spring",
-        damping: 25,
-        stiffness: 200,
-        duration: 0.3
-      }
-    }
+      transition: { type: 'spring', damping: 25, stiffness: 200, duration: 0.3 },
+    },
   }
 
   const buttonVariants = {
-    hidden: {
-      opacity: 0,
-      y: 20,
-      scale: 0.9
-    },
+    hidden: { opacity: 0, y: 20, scale: 0.9 },
     visible: {
       opacity: 1,
       y: 0,
       scale: 1,
-      transition: {
-        type: "spring",
-        damping: 20,
-        stiffness: 300,
-        duration: 0.25
-      }
-    }
+      transition: { type: 'spring', damping: 20, stiffness: 300, duration: 0.25 },
+    },
   }
+
+  // Divide el nombre en palabras para el split-text reveal. La última
+  // palabra se renderiza en Fraunces italic para crear contraste editorial.
+  const nameParts = t.home.name.split(' ')
+  const lastWordIndex = nameParts.length - 1
 
   return (
     <motion.div
@@ -61,130 +45,130 @@ export default function Home({ t, isMobile, isLoaded, handleSectionChange }) {
       animate="visible"
     >
       <div className="max-w-4xl mx-auto">
-
-        {/* Saludo */}
-        <motion.p
-          className={`text-white/60 font-medium mb-3 ${
-            isMobile ? 'text-base' : 'text-base md:text-lg'
-          }`}
+        {/* Eyebrow / kicker editorial */}
+        <motion.div
+          className="flex items-center justify-center gap-3 mb-5"
           variants={itemVariants}
         >
-          {t.home.greeting}
-        </motion.p>
+          <span
+            aria-hidden="true"
+            className="h-px w-8 bg-white/25"
+          />
+          <span className="font-mono text-[11px] tracking-[0.22em] uppercase text-white/50">
+            {t.home.greeting}
+          </span>
+          <span
+            aria-hidden="true"
+            className="h-px w-8 bg-white/25"
+          />
+        </motion.div>
 
-        {/* Nombre — split-text reveal con clip-path */}
+        {/* Nombre — split-text reveal con mezcla de Inter y Fraunces italic */}
         <motion.h1
-          className={`font-light tracking-[-0.035em] text-white leading-[1.05] text-balance ${
+          className={`font-light tracking-[-0.04em] text-white leading-[0.95] text-balance ${
             isMobile
-              ? 'text-5xl mb-6'
-              : 'text-5xl md:text-6xl lg:text-7xl mb-6 md:mb-8'
+              ? 'text-[3.5rem] mb-6'
+              : 'text-6xl md:text-7xl lg:text-[7.5rem] mb-7 md:mb-9'
           }`}
           variants={{
             hidden: {},
             visible: {
-              transition: {
-                staggerChildren: 0.12,
-                delayChildren: 0.05,
-              },
+              transition: { staggerChildren: 0.12, delayChildren: 0.05 },
             },
           }}
           aria-label={t.home.name}
         >
-          {t.home.name.split(' ').map((word, i, arr) => (
-            <span
-              key={`${word}-${i}`}
-              className={`inline-block overflow-hidden align-bottom ${
-                i < arr.length - 1 ? 'mr-[0.25em]' : ''
-              }`}
-              aria-hidden="true"
-            >
-              <motion.span
-                className="inline-block"
-                variants={{
-                  hidden: { y: '110%' },
-                  visible: {
-                    y: '0%',
-                    transition: {
-                      type: 'spring',
-                      damping: 22,
-                      stiffness: 160,
-                      mass: 0.9,
-                    },
-                  },
-                }}
+          {nameParts.map((word, i) => {
+            const isLast = i === lastWordIndex && nameParts.length > 1
+            return (
+              <span
+                key={`${word}-${i}`}
+                className={`inline-block overflow-hidden align-bottom ${
+                  i < lastWordIndex ? 'mr-[0.22em]' : ''
+                }`}
+                aria-hidden="true"
               >
-                {word}
-              </motion.span>
-            </span>
-          ))}
+                <motion.span
+                  className={`inline-block ${
+                    isLast ? 'font-serif italic font-normal' : ''
+                  }`}
+                  variants={{
+                    hidden: { y: '110%' },
+                    visible: {
+                      y: '0%',
+                      transition: {
+                        type: 'spring',
+                        damping: 22,
+                        stiffness: 160,
+                        mass: 0.9,
+                      },
+                    },
+                  }}
+                >
+                  {word}
+                </motion.span>
+              </span>
+            )
+          })}
         </motion.h1>
 
-        {/* Divisor sutil */}
-        <motion.div
-          className={`h-0.5 bg-white/40 mx-auto ${
-            isMobile ? 'w-12 mb-6' : 'w-16 mb-8'
-          }`}
-          variants={itemVariants}
-        />
-
-        {/* Título principal */}
-        <motion.div
-          className={`text-white/80 font-light mx-auto ${
+        {/* Título + highlight */}
+        <motion.p
+          className={`text-white/70 font-light mx-auto tracking-tight ${
             isMobile
-              ? 'text-base max-w-sm mb-5'
-              : 'text-lg md:text-xl lg:text-2xl max-w-3xl mb-6'
+              ? 'text-base max-w-sm mb-4'
+              : 'text-lg md:text-xl lg:text-[1.35rem] max-w-3xl mb-5'
           }`}
           variants={itemVariants}
         >
-          <span>{t.home.title} </span>
+          <span>{t.home.title}</span>{' '}
           <span className="font-serif italic text-white tracking-tight">
             {t.home.titleHighlight}
           </span>
-        </motion.div>
+          <span className="text-white/70">.</span>
+        </motion.p>
 
         {/* Subtítulo */}
         <motion.p
-          className={`text-white/60 mx-auto leading-relaxed ${
+          className={`text-white/50 mx-auto leading-relaxed ${
             isMobile
-              ? 'text-sm max-w-sm mb-8'
-              : 'text-sm md:text-base max-w-2xl mb-10'
+              ? 'text-sm max-w-sm mb-9'
+              : 'text-sm md:text-base max-w-2xl mb-11'
           }`}
           variants={itemVariants}
         >
           {t.home.subtitle}
         </motion.p>
 
-        {/* Botones */}
+        {/* CTAs con jerarquía clara: primario = pill blanco, secundario = ghost con flecha */}
         <motion.div
           className={`flex items-center justify-center ${
-            isMobile ? 'flex-col gap-3' : 'flex-row gap-4'
+            isMobile ? 'flex-col gap-4' : 'flex-row gap-5'
           }`}
           variants={{
             hidden: { opacity: 0 },
             visible: {
               opacity: 1,
-              transition: {
-                staggerChildren: 0.05,
-                delayChildren: 0.1
-              }
-            }
+              transition: { staggerChildren: 0.05, delayChildren: 0.1 },
+            },
           }}
         >
           <motion.button
             onClick={() => handleSectionChange('projects')}
-            className={`group flex items-center justify-center gap-2 bg-white text-black rounded-full font-medium hover-lift organic-transition shadow-lg ${
+            className={`group flex items-center justify-center gap-2 bg-white text-black rounded-full font-medium organic-transition shadow-[0_8px_30px_rgb(255,255,255,0.12)] hover:shadow-[0_10px_40px_rgb(255,255,255,0.2)] ${
               isMobile
                 ? 'px-7 py-3.5 text-sm w-full max-w-xs'
-                : 'px-7 py-3 md:px-8 md:py-3.5 text-sm md:text-base'
+                : 'px-8 py-3.5 md:px-9 md:py-4 text-sm md:text-base'
             }`}
             variants={buttonVariants}
             whileHover={{
-              scale: 1.04,
-              transition: { type: "spring", damping: 15, stiffness: 300 }
+              scale: 1.03,
+              y: -2,
+              transition: { type: 'spring', damping: 15, stiffness: 300 },
             }}
             whileTap={{
-              scale: 0.96,
-              transition: { type: "spring", damping: 15, stiffness: 400 }
+              scale: 0.97,
+              transition: { type: 'spring', damping: 15, stiffness: 400 },
             }}
           >
             <span>{t.home.viewWork}</span>
@@ -195,24 +179,27 @@ export default function Home({ t, isMobile, isLoaded, handleSectionChange }) {
             />
           </motion.button>
 
+          {/* CTA secundario: texto puro con subrayado animado, sin borde */}
           <motion.button
             onClick={() => handleSectionChange('contact')}
-            className={`flex items-center justify-center border border-white/30 text-white rounded-full font-medium hover:border-white/50 hover:bg-white/10 organic-transition ${
-              isMobile
-                ? 'px-7 py-3.5 text-sm w-full max-w-xs'
-                : 'px-7 py-3 md:px-8 md:py-3.5 text-sm md:text-base'
+            className={`group relative inline-flex items-center gap-2 text-white/75 hover:text-white organic-transition ${
+              isMobile ? 'text-sm py-2' : 'text-sm md:text-base py-2'
             }`}
             variants={buttonVariants}
-            whileHover={{
-              scale: 1.04,
-              transition: { type: "spring", damping: 15, stiffness: 300 }
-            }}
-            whileTap={{
-              scale: 0.96,
-              transition: { type: "spring", damping: 15, stiffness: 400 }
-            }}
+            whileTap={{ scale: 0.97 }}
           >
-            <span>{t.home.contact}</span>
+            <span className="relative">
+              {t.home.contact}
+              <span
+                aria-hidden="true"
+                className="absolute left-0 -bottom-0.5 h-px w-full origin-left scale-x-0 bg-current group-hover:scale-x-100 transition-transform duration-500 ease-out"
+              />
+            </span>
+            <ArrowRightIcon
+              className={`-rotate-45 group-hover:rotate-0 group-hover:translate-x-0.5 organic-transition ${
+                isMobile ? 'w-3.5 h-3.5' : 'w-4 h-4'
+              }`}
+            />
           </motion.button>
         </motion.div>
       </div>

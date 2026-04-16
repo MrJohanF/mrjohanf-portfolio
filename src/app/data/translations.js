@@ -39,9 +39,14 @@ export const translations = {
       items: [
         {
           title: "ConjuntoFácil",
-          description: "SaaS integral para la gestión de propiedad horizontal en Colombia. Plataforma 100% en la nube que centraliza pagos, comunicaciones, documentos y reservas con cumplimiento normativo. Más de 500 conjuntos y 25.000 unidades gestionadas.",
+          description: "SaaS integral para la gestión de propiedad horizontal en Colombia. Plataforma 100% en la nube que centraliza pagos, comunicaciones, documentos y reservas con cumplimiento normativo.",
           category: "SaaS · PropTech",
-          status: "Activo"
+          status: "Activo",
+          metrics: [
+            { value: "500+", label: "Conjuntos" },
+            { value: "25K+", label: "Unidades" },
+            { value: "99.9%", label: "Uptime" }
+          ]
         }
       ],
       buttons: {
